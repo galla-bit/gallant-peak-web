@@ -3,6 +3,16 @@ import {Link,NavLink,Route,Routes,useLocation} from 'react-router-dom';
 const garments={"T-shirt":50,"Hoodie":70,"Trackpants":70,"Winter tracksuit":130,"Bomber jacket":130} as const;
 const prints={"None":0,"Small — up to 10×10 cm":10,"Medium — up to 20×20 cm":15,"Large — 30×30 cm":25,"Sleeve":15,"30×60 cm":65,"30×70 cm":75,"30×MAX":85} as const;
 const nav=[['Shop','/shop'],['Custom','/custom'],['TCG Hunt','/tcg-hunt'],['Our Story','/story'],['Contact','/contact']];
+const pageMetadata:Record<string,{title:string;description:string}>={
+  '/':{title:'Gallant Peak | Rise Without Permission',description:'Gallant Peak — apparel, custom and community from Whanganui, Aotearoa.'},
+  '/shop':{title:'Shop | Gallant Peak',description:'Explore Gallant Peak apparel collections, releases and limited drops.'},
+  '/custom':{title:'Custom | Gallant Peak',description:'Estimate Gallant Peak custom apparel pricing before artwork and feasibility review.'},
+  '/tcg-hunt':{title:'TCG Hunt | Gallant Peak',description:'Explore the Gallant Peak TCG Hunt presentation for delayed, public-safe New Zealand retail availability.'},
+  '/story':{title:'Our Story | Gallant Peak',description:'Read the Gallant Peak story, grounded in Whanganui, Aotearoa, courage, progress and community.'},
+  '/contact':{title:'Contact | Gallant Peak',description:'Contact Gallant Peak for general enquiries, custom work, collaborations and business enquiries.'},
+  '/admin':{title:'Admin Preview | Gallant Peak',description:'Preview the Gallant Peak web admin information architecture. Production authentication is not connected.'},
+};
+const notFoundMetadata={title:'Page Not Found | Gallant Peak',description:'The Gallant Peak page you requested could not be found.'};
 function Layout({children}:{children:React.ReactNode}){return <><a className="skip-link" href="#main-content" onClick={event=>{event.preventDefault();document.getElementById("main-content")?.focus();}}>Skip to content</a><header><Link className="brand" to="/">GP <span>GALLANT PEAK</span></Link><nav>{nav.map(([n,p])=><NavLink key={p} to={p}>{n}</NavLink>)}</nav></header>{children}<footer><b>GALLANT PEAK</b><p>Whanganui, Aotearoa · Apparel · Custom · Community</p><small>© 2026 Gallant Peak Limited</small></footer></>}
 function Home(){return <Layout><main id="main-content" tabIndex={-1}><section className="hero"><div className="eyebrow">WHANGANUI · AOTEAROA</div><h1>RISE<br/>WITHOUT<br/><i>PERMISSION.</i></h1><p className="lead">Apparel. Custom. Community.</p><div className="actions"><Link className="button" to="/shop">SHOP GALLANT PEAK</Link><Link className="button ghost" to="/story">OUR STORY</Link></div><div className="framework">PEOPLE <span>·</span> PLACES <span>·</span> PURPOSE <span>·</span> PROGRESS</div></section><section><div className="eyebrow">THE HOME FRONT</div><h2>BUILT FROM WHERE<br/>WE STAND.</h2><p className="wide">Gallant Peak is a Whanganui-born brand built around clothing, custom work and community. The climb is progress: learning, improving and continuing upward. The peak isn't status. It's who you become on the way.</p></section><section className="routes"><Link to="/shop"><b>01</b><h3>APPAREL</h3><p>Premium streetwear with comfort at its core.</p><strong>EXPLORE SHOP →</strong></Link><Link to="/custom"><b>02</b><h3>CUSTOM</h3><p>Your design. Your garment. Made by Gallant Peak.</p><strong>GET AN ESTIMATE →</strong></Link><Link to="/tcg-hunt"><b>03</b><h3>TCG HUNT</h3><p>Collecting, releases and legitimate NZ retail stock intelligence.</p><strong>EXPLORE TCG HUNT →</strong></Link></section><section className="statement"><div className="eyebrow">THE STANDARD</div><h2>VICTORY ISN'T<br/>GIVEN. <i>IT'S EARNED.</i></h2></section></main></Layout>}
 function Shop(){return <Layout><main id="main-content" tabIndex={-1} className="page"><div className="eyebrow">GALLANT PEAK APPAREL</div><h1>SHOP</h1><div className="notice">REVIEW BUILD · COMMERCE CONNECTION IN PROGRESS</div><p className="wide">Summer and winter ranges, new releases and limited drops will live here. This review build does not accept payments or pretend stock is live.</p><div className="placeholder-grid">{['SUMMER','WINTER','NEW RELEASES','LIMITED DROPS'].map(x=><div className="placeholder" key={x}><span>COLLECTION</span><h3>{x}</h3><p>Product photography and inventory connection pending.</p></div>)}</div></main></Layout>}
@@ -11,13 +21,25 @@ function Tcg(){return <Layout><main id="main-content" tabIndex={-1} className="p
 function Story(){return <Layout><main id="main-content" tabIndex={-1} className="page"><div className="eyebrow">OUR STORY</div><h1>THE CLIMB<br/><i>MEANS SOMETHING.</i></h1><div className="story"><p><b>GALLANT</b> is courage — acting despite difficulty.</p><p><b>PEAK</b> is something to work toward. Not wealth or status, but becoming better in character and in the choices we make.</p><p>The climb is progress: improvement, perseverance, learning and overcoming odds. Gallant Peak began as a concept in 2024 and became a company in 2026.</p><p>Whanganui, the awa and the maunga belong to the foundation of where this story comes from. They are not marketing scenery. Place and whakapapa are treated as identity and context, while the brand's climb remains the language of progress.</p></div></main></Layout>}
 function Contact(){return <Layout><main id="main-content" tabIndex={-1} className="page"><div className="eyebrow">CONTACT</div><h1>START THE<br/><i>CONVERSATION.</i></h1><p className="wide">General enquiries, Custom work, collaborations and business enquiries will be routed here once the verified contact channels are connected.</p><div className="notice">CONTACT ENDPOINT · CONNECTION PENDING</div></main></Layout>}
 function Admin(){const cats=['Products · prices · sizes · stock','Collections','Homepage content · media','Custom pricing · quote settings','Shipping · pickup','TCG Hunt settings','Social · contact','SEO','Announcements','Feature switches'];return <main id="main-content" tabIndex={-1} className="admin"><div className="eyebrow">GALLANT PEAK CONTROL</div><h1>ADMIN PREVIEW</h1><div className="warning"><b>NOT A PRODUCTION LOGIN</b><p>Authentication and server-side authorization are not connected in this review build. No passwords, API keys or payment credentials are exposed here.</p></div><h2>SETTINGS ARCHITECTURE</h2><div className="settings">{cats.map(x=><div key={x}>{x}<span>EDIT →</span></div>)}</div><Link className="button" to="/">RETURN TO SITE</Link></main>}
+function NotFound(){return <Layout><main id="main-content" tabIndex={-1} className="page"><div className="eyebrow">404</div><h1>PAGE NOT FOUND</h1><p className="wide">The page you requested does not exist in this Gallant Peak review build.</p><Link className="button" to="/">RETURN HOME</Link></main></Layout>}
 export default function App(){
   const {pathname}=useLocation();
   const previousPath=useRef(pathname);
+  useEffect(()=>{
+    const metadata=pageMetadata[pathname]??notFoundMetadata;
+    document.title=metadata.title;
+    let description=document.querySelector('meta[name="description"]');
+    if(!description){
+      description=document.createElement('meta');
+      description.setAttribute('name','description');
+      document.head.appendChild(description);
+    }
+    description.setAttribute('content',metadata.description);
+  },[pathname]);
   useEffect(()=>{
     if(previousPath.current===pathname)return;
     previousPath.current=pathname;
     document.getElementById('main-content')?.focus({preventScroll:true});
     window.scrollTo(0,0);
   },[pathname]);
-  return <Routes><Route path="/" element={<Home/>}/><Route path="/shop" element={<Shop/>}/><Route path="/custom" element={<Custom/>}/><Route path="/tcg-hunt" element={<Tcg/>}/><Route path="/story" element={<Story/>}/><Route path="/contact" element={<Contact/>}/><Route path="/admin" element={<Admin/>}/><Route path="*" element={<Home/>}/></Routes>}
+  return <Routes><Route path="/" element={<Home/>}/><Route path="/shop" element={<Shop/>}/><Route path="/custom" element={<Custom/>}/><Route path="/tcg-hunt" element={<Tcg/>}/><Route path="/story" element={<Story/>}/><Route path="/contact" element={<Contact/>}/><Route path="/admin" element={<Admin/>}/><Route path="*" element={<NotFound/>}/></Routes>}
