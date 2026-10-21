@@ -40,4 +40,14 @@ describe('Custom estimator', () => {
     expect(screen.getByText('$190')).toBeTruthy();
     expect(screen.queryByRole('alert')).toBeNull();
   });
+
+  it('announces the changing total through a polite atomic status region', () => {
+    renderEstimator();
+    const status = screen.getByRole('status');
+    expect(status.getAttribute('aria-live')).toBe('polite');
+    expect(status.getAttribute('aria-atomic')).toBe('true');
+    expect(status.textContent).toContain('$95');
+    fireEvent.change(screen.getByLabelText('QUANTITY'), {target: {value: '2'}});
+    expect(status.textContent).toContain('$190');
+  });
 });
