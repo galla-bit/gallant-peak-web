@@ -45,4 +45,18 @@ describe('Page navigation', () => {
     expect(window.location.hash).toBe('#/custom');
     expect(screen.getByText('$95')).toBeTruthy();
   });
+
+  it('renders a dedicated not-found page for an unknown route', () => {
+    render(<MemoryRouter initialEntries={['/missing-page']}><App/></MemoryRouter>);
+    expect(screen.getByRole('heading', {level: 1}).textContent).toBe('PAGE NOT FOUND');
+    expect(screen.getByRole('link', {name: 'RETURN HOME'})).toBeTruthy();
+  });
+
+  it('sets route-specific document metadata', () => {
+    render(<MemoryRouter initialEntries={['/custom']}><App/></MemoryRouter>);
+    expect(document.title).toBe('Custom | Gallant Peak');
+    expect(document.querySelector('meta[name="description"]')?.getAttribute('content')).toBe(
+      'Estimate Gallant Peak custom apparel pricing before artwork and feasibility review.',
+    );
+  });
 });
