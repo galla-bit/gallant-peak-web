@@ -12,6 +12,11 @@ const ready: TcgFeedResult = {status:'ready',rejectedItems:1,snapshot:{schema_ve
 ]}};
 
 describe('TcgRadar', () => {
+  it('shows a neutral loading state while a configured public feed is being requested', () => {
+    render(<TcgRadar feed={{status:'loading'}}/>);
+    expect(screen.getByRole('status').textContent).toMatch(/loading/i);
+    expect(screen.queryByText(/in stock/i)).toBeNull();
+  });
   it('shows safe status messages when unconfigured or unavailable', () => {
     const {rerender}=render(<TcgRadar feed={{status:'unconfigured'}}/>);
     expect(screen.getByRole('status').textContent).toMatch(/not connected/i);
