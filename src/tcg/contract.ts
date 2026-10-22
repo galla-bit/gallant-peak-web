@@ -2,6 +2,7 @@ import type {TcgAvailability, TcgPublicItem, TcgPublicSnapshot} from './types';
 
 const AVAILABILITY = new Set<TcgAvailability>(['in_stock', 'limited', 'out_of_stock', 'unknown']);
 const PRICE = /^\d+(?:\.\d{1,2})?$/;
+const PUBLIC_MINIMUM_DELAY_SECONDS = 900;
 
 function record(value: unknown): value is Record<string, unknown> {
   return typeof value === 'object' && value !== null && !Array.isArray(value);
@@ -24,11 +25,12 @@ function httpsUrl(value: unknown): value is string {
   }
 }
 
-function parseItem(value: unknown): TcgPublicItem | null {
+function parseItem(value: unknown, generatedMs: number): TcgPublicItem | null {
   if (!record(value)) return null;
   if (!nonEmpty(value.id) || !nonEmpty(value.game) || !nonEmpty(value.product) || !nonEmpty(value.retailer)) return null;
   if (!AVAILABILITY.has(value.availability as TcgAvailability)) return null;
   if (!validDate(value.observed_at) || !httpsUrl(value.retailer_url)) return null;
+  if (generatedMs - Date.parse(value.observed_at) < PUBLIC_MINIMUM_DELAY_SECONDS * 1000) return null;
   if (value.price_nzd !== undefined && (typeof value.price_nzd !== 'string' || !PRICE.test(value.price_nzd))) return null;
 
   return {
@@ -55,14 +57,15 @@ export function parseTcgPublicSnapshot(
   if (generatedMs > nowMs) return {snapshot: null, rejectedItems: 0, reason: 'future-generated-at'};
   if (nowMs - generatedMs > maxAgeMs) return {snapshot: null, rejectedItems: 0, reason: 'stale'};
   if (value.delayed !== true || !Array.isArray(value.items)) return {snapshot: null, rejectedItems: 0, reason: 'invalid-snapshot'};
+  if (value.minimum_delay_seconds !== PUBLIC_MINIMUM_DELAY_SECONDS) return {snapshot: null, rejectedItems: 0, reason: 'invalid-minimum-delay'};
 
   const items: TcgPublicItem[] = [];
   let rejectedItems = 0;
   for (const candidate of value.items) {
-    const item = parseItem(candidate);
+    const item = parseItem(candidate, generatedMs);
     if (item) items.push(item);
     else rejectedItems += 1;
   }
 
-  return {snapshot: {schema_version: 1, generated_at: value.generated_at, delayed: true, items}, rejectedItems};
+  return {snapshot: {schema_version: 1, generated_at: value.generated_at, delayed: true, minimum_delay_seconds: 900, items}, rejectedItems};
 }
