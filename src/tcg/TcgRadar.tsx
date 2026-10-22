@@ -8,6 +8,7 @@ export function TcgRadar({feed}:{feed:TcgFeedResult}) {
   const [game,setGame]=useState('all');
   const [availability,setAvailability]=useState('all');
   const games=useMemo(()=>feed.status==='ready' ? [...new Set(feed.snapshot.items.map(item=>item.game))].sort() : [],[feed]);
+  if(feed.status==='loading') return <div className="notice" role="status"><strong>RADAR STATUS · LOADING</strong><br/>Requesting the delayed public TCG Hunt feed. No stock is shown until validation completes.</div>;
   if(feed.status==='unconfigured') return <div className="notice" role="status"><strong>RADAR STATUS · NOT CONNECTED</strong><br/>The public TCG Hunt feed is not connected in this build. No stock is being simulated.</div>;
   if(feed.status==='unavailable') return <div className="notice" role="status"><strong>RADAR STATUS · UNAVAILABLE</strong><br/>Validated public stock data is currently unavailable. No cached demo stock is shown.</div>;
   const items=feed.snapshot.items.filter(item=>(game==='all'||item.game===game)&&(availability==='all'||item.availability===availability));
