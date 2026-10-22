@@ -30,8 +30,9 @@ describe('loadTcgFeed', () => {
     expect(result.status).toBe('unavailable');
   });
 
-  it('fails closed for stale, unsupported, or invalid-delay payloads and never substitutes fixture stock', async () => {
-    for (const bad of [{...payload,generated_at:'2026-10-20T01:50:00Z'},{...payload,schema_version:2},{...payload,minimum_delay_seconds:600}]) {
+  it('fails closed for stale, unsupported, invalid-delay, or too-recent payloads and never substitutes fixture stock', async () => {
+    const tooRecent = {...payload,items:[{...payload.items[0],observed_at:'2026-10-22T01:40:01Z'}]};
+    for (const bad of [{...payload,generated_at:'2026-10-20T01:50:00Z'},{...payload,schema_version:2},{...payload,minimum_delay_seconds:600},tooRecent]) {
       const result = await loadTcgFeed({endpoint:'https://public.example/feed.json',nowMs,maxAgeMs:3600000,fetcher:(async()=>({ok:true,json:async()=>bad})) as unknown as typeof fetch});
       expect(result.status).toBe('unavailable');
     }
