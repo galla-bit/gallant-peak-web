@@ -14,23 +14,23 @@ const ready: TcgFeedResult = {status:'ready',rejectedItems:1,snapshot:{schema_ve
 describe('TcgRadar', () => {
   it('shows safe status messages when unconfigured or unavailable', () => {
     const {rerender}=render(<TcgRadar feed={{status:'unconfigured'}}/>);
-    expect(screen.getByText(/not connected/i)).toBeInTheDocument();
+    expect(screen.getByRole('status').textContent).toMatch(/not connected/i);
     rerender(<TcgRadar feed={{status:'unavailable',reason:'stale'}}/>);
-    expect(screen.getByText(/unavailable/i)).toBeInTheDocument();
+    expect(screen.getByRole('status').textContent).toMatch(/unavailable/i);
   });
   it('renders delayed validated stock without implying unknown is available', () => {
     render(<TcgRadar feed={ready}/>);
-    expect(screen.getByText(/delayed/i)).toBeInTheDocument();
-    expect(screen.getByText('Booster Box')).toBeInTheDocument();
-    expect(screen.getByText('NZ$189.99')).toBeInTheDocument();
-    expect(screen.getByText('Unknown')).toBeInTheDocument();
-    expect(screen.getByRole('link',{name:/view at retailer a/i})).toHaveAttribute('rel','noreferrer');
-    expect(screen.getByText(/1 invalid record/i)).toBeInTheDocument();
+    expect(screen.getByText(/^DELAYED PUBLIC STOCK INTELLIGENCE$/i)).toBeTruthy();
+    expect(screen.getByText('Booster Box')).toBeTruthy();
+    expect(screen.getByText('NZ$189.99')).toBeTruthy();
+    expect(screen.getByText('Unknown')).toBeTruthy();
+    expect(screen.getByRole('link',{name:/view at retailer a/i}).getAttribute('rel')).toBe('noreferrer');
+    expect(screen.getByText(/1 invalid record/i)).toBeTruthy();
   });
   it('filters by game', () => {
     render(<TcgRadar feed={ready}/>);
     fireEvent.change(screen.getByLabelText(/game/i),{target:{value:'One Piece'}});
-    expect(screen.queryByText('Booster Box')).not.toBeInTheDocument();
-    expect(screen.getByText('Display')).toBeInTheDocument();
+    expect(screen.queryByText('Booster Box')).toBeNull();
+    expect(screen.getByText('Display')).toBeTruthy();
   });
 });
