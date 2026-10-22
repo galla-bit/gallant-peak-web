@@ -17,6 +17,7 @@ describe('TCG Hunt page', () => {
     expect(screen.getByRole('heading', {level:1}).textContent).toBe('FIND THE DROP.NOT THE MARKUP.');
     expect(screen.getByText(/Retailers remain the sellers/i)).toBeTruthy();
     expect(screen.getByRole('status').textContent).toMatch(/not connected/i);
+    expect(screen.getByRole('status').textContent).toMatch(/at least 15 minutes/i);
     expect(screen.queryByText(/^DELAYED PUBLIC STOCK INTELLIGENCE$/i)).toBeNull();
   });
 });
