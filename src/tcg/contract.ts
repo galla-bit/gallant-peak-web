@@ -19,18 +19,24 @@ function validDate(value: unknown): value is string {
 function httpsUrl(value: unknown): value is string {
   if (!nonEmpty(value)) return false;
   try {
-    return new URL(value).protocol === 'https:';
+    const url = new URL(value);
+    return url.protocol === 'https:' && url.username === '' && url.password === '';
   } catch {
     return false;
   }
 }
 
-function parseItem(value: unknown, generatedMs: number): TcgPublicItem | null {
+function violatesMinimumDelay(value: unknown, generatedMs: number): boolean {
+  return record(value)
+    && validDate(value.observed_at)
+    && generatedMs - Date.parse(value.observed_at) < PUBLIC_MINIMUM_DELAY_SECONDS * 1000;
+}
+
+function parseItem(value: unknown): TcgPublicItem | null {
   if (!record(value)) return null;
   if (!nonEmpty(value.id) || !nonEmpty(value.game) || !nonEmpty(value.product) || !nonEmpty(value.retailer)) return null;
   if (!AVAILABILITY.has(value.availability as TcgAvailability)) return null;
   if (!validDate(value.observed_at) || !httpsUrl(value.retailer_url)) return null;
-  if (generatedMs - Date.parse(value.observed_at) < PUBLIC_MINIMUM_DELAY_SECONDS * 1000) return null;
   if (value.price_nzd !== undefined && (typeof value.price_nzd !== 'string' || !PRICE.test(value.price_nzd))) return null;
 
   return {
@@ -62,7 +68,10 @@ export function parseTcgPublicSnapshot(
   const items: TcgPublicItem[] = [];
   let rejectedItems = 0;
   for (const candidate of value.items) {
-    const item = parseItem(candidate, generatedMs);
+    if (violatesMinimumDelay(candidate, generatedMs)) {
+      return {snapshot: null, rejectedItems: 0, reason: 'minimum-delay-violation'};
+    }
+    const item = parseItem(candidate);
     if (item) items.push(item);
     else rejectedItems += 1;
   }
