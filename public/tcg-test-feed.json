@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "generated_at": "2099-01-01T00:00:00Z",
+  "generated_at": "2026-10-22T05:20:00Z",
   "delayed": true,
   "items": [
     {
@@ -10,7 +10,7 @@
       "retailer": "SYNTHETIC TEST RETAILER",
       "price_nzd": "189.99",
       "availability": "in_stock",
-      "observed_at": "2099-01-01T00:00:00Z",
+      "observed_at": "2026-10-22T05:15:00Z",
       "retailer_url": "https://example.com/tcg-test"
     }
   ]
