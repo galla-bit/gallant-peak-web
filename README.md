@@ -22,10 +22,12 @@ Dependencies are pinned and locked so local checks and CI use the same versions.
 
 TCG Hunt remains the sole stock-intelligence authority. The web application consumes only its deliberately public, versioned and delayed client contract; it does not collect retailer stock or inspect trusted monitoring state.
 
-`VITE_TCG_PUBLIC_FEED_URL` is optional and must point to an HTTPS public JSON snapshot. When it is absent, the TCG radar reports that it is not connected. When a configured request fails, is stale, has an unsupported schema, or otherwise fails validation, the radar reports unavailable and does not substitute demo inventory.
+Public contract v1 requires `delayed: true` and `minimum_delay_seconds: 900`. Each public item must preserve the original validated `observed_at` value and must be at least 15 minutes old at artifact generation. Missing or altered delay metadata, too-recent items, stale artifacts, unsupported schemas, unsafe links and malformed records fail closed according to the contract tests. The UI explicitly states that the free public feed is delayed by at least 15 minutes and shows a human-readable age alongside the original observation timestamp.
 
-The fixture under `src/tcg/fixtures` contains fictional example data for tests and review only. It is never a runtime fallback. No real TCG Hunt endpoint is configured by this repository milestone; connecting public egress remains a separate backend approval gate.
+`VITE_TCG_PUBLIC_FEED_URL` is optional and must point to an HTTPS public JSON snapshot. When it is absent, the TCG radar reports that it is not connected. When a configured request fails or otherwise fails validation, the radar reports unavailable and does not substitute demo inventory.
+
+The fixture under `src/tcg/fixtures` contains fictional example data for tests and review only. It is never a runtime fallback. No real TCG Hunt endpoint is configured by this repository milestone; producer/public egress remains a separate TCG Hunt approval and implementation gate.
 
 ## Architecture
 
-This repository owns web presentation only. Shared stock intelligence remains in `gallant-peak-tcg-hunt`; web, future mobile clients and Discord consume TCG Hunt-owned conclusions rather than maintaining independent stock authority.
+This repository owns web presentation only. Shared stock intelligence remains in `gallant-peak-tcg-hunt`; web, future mobile clients and Discord consume TCG Hunt-owned conclusions rather than maintaining independent stock authority. The web client never receives private/near-live streams, pending public states, credentials, trusted bridge state or internal publication timing metadata.
