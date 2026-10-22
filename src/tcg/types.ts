@@ -15,5 +15,6 @@ export interface TcgPublicSnapshot {
   schema_version: 1;
   generated_at: string;
   delayed: true;
+  minimum_delay_seconds: 900;
   items: TcgPublicItem[];
 }
