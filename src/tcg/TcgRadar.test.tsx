@@ -6,9 +6,9 @@ import type {TcgFeedResult} from './feed';
 
 afterEach(cleanup);
 
-const ready: TcgFeedResult = {status:'ready',rejectedItems:1,snapshot:{schema_version:1,generated_at:'2026-10-22T01:50:00Z',delayed:true,items:[
-  {id:'p',game:'Pokemon',product:'Booster Box',retailer:'Retailer A',price_nzd:'189.99',availability:'in_stock',observed_at:'2026-10-22T01:45:00Z',retailer_url:'https://example.com/p'},
-  {id:'o',game:'One Piece',product:'Display',retailer:'Retailer B',availability:'unknown',observed_at:'2026-10-22T01:44:00Z',retailer_url:'https://example.com/o'},
+const ready: TcgFeedResult = {status:'ready',rejectedItems:1,snapshot:{schema_version:1,generated_at:'2026-10-22T01:50:00Z',delayed:true,minimum_delay_seconds:900,items:[
+  {id:'p',game:'Pokemon',product:'Booster Box',retailer:'Retailer A',price_nzd:'189.99',availability:'in_stock',observed_at:'2026-10-22T01:35:00Z',retailer_url:'https://example.com/p'},
+  {id:'o',game:'One Piece',product:'Display',retailer:'Retailer B',availability:'unknown',observed_at:'2026-10-22T01:34:00Z',retailer_url:'https://example.com/o'},
 ]}};
 
 describe('TcgRadar', () => {
