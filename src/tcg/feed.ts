@@ -2,6 +2,7 @@ import {parseTcgPublicSnapshot} from './contract';
 import type {TcgPublicSnapshot} from './types';
 
 export type TcgFeedResult =
+  | {status: 'loading'}
   | {status: 'ready'; snapshot: TcgPublicSnapshot; rejectedItems: number}
   | {status: 'unconfigured'}
   | {status: 'unavailable'; reason: string};
