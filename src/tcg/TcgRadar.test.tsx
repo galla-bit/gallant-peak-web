@@ -1,7 +1,10 @@
-import {fireEvent, render, screen} from '@testing-library/react';
-import {describe, expect, it} from 'vitest';
+// @vitest-environment jsdom
+import {cleanup, fireEvent, render, screen} from '@testing-library/react';
+import {afterEach, describe, expect, it} from 'vitest';
 import {TcgRadar} from './TcgRadar';
 import type {TcgFeedResult} from './feed';
+
+afterEach(cleanup);
 
 const ready: TcgFeedResult = {status:'ready',rejectedItems:1,snapshot:{schema_version:1,generated_at:'2026-10-22T01:50:00Z',delayed:true,items:[
   {id:'p',game:'Pokemon',product:'Booster Box',retailer:'Retailer A',price_nzd:'189.99',availability:'in_stock',observed_at:'2026-10-22T01:45:00Z',retailer_url:'https://example.com/p'},
