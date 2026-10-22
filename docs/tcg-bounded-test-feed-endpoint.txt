@@ -1,4 +1,0 @@
-Synthetic branch-scoped endpoint:
-https://raw.githubusercontent.com/galla-bit/gallant-peak-web/test/tcg-hunt-bounded-feed/public/tcg-test-feed.json
-
-TEST DATA ONLY. Not genuine retailer stock.
