@@ -29,6 +29,7 @@ describe('TcgRadar', () => {
     expect(screen.getByText('Booster Box')).toBeTruthy();
     expect(screen.getByText('NZ$189.99')).toBeTruthy();
     expect(screen.getByText('Unknown', {selector: '.tcg-status--unknown'})).toBeTruthy();
+    expect(screen.getByText('Price not supplied')).toBeTruthy();
     expect(screen.getByRole('link',{name:/view at retailer a/i}).getAttribute('rel')).toBe('noreferrer');
     expect(screen.getByText(/1 invalid record/i)).toBeTruthy();
   });
@@ -37,5 +38,15 @@ describe('TcgRadar', () => {
     fireEvent.change(screen.getByLabelText(/game/i),{target:{value:'One Piece'}});
     expect(screen.queryByText('Booster Box')).toBeNull();
     expect(screen.getByText('Display')).toBeTruthy();
+  });
+  it('filters by availability without promoting unknown stock', () => {
+    render(<TcgRadar feed={ready}/>);
+    fireEvent.change(screen.getByLabelText(/availability/i),{target:{value:'in_stock'}});
+    expect(screen.getByText('Booster Box')).toBeTruthy();
+    expect(screen.queryByText('Display')).toBeNull();
+    fireEvent.change(screen.getByLabelText(/availability/i),{target:{value:'unknown'}});
+    expect(screen.queryByText('Booster Box')).toBeNull();
+    expect(screen.getByText('Display')).toBeTruthy();
+    expect(screen.getByText('Unknown', {selector: '.tcg-status--unknown'})).toBeTruthy();
   });
 });
