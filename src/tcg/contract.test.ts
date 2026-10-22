@@ -48,11 +48,11 @@ describe('TCG public v1 contract', () => {
     expect(result.reason).toBe('invalid-minimum-delay');
   });
 
-  it('rejects an item observed less than 15 minutes before artifact generation', () => {
+  it('fails closed when any item proves the producer violated the 15-minute publication gate', () => {
     const tooRecent = {...validItem, id:'too-recent', observed_at:'2026-10-22T01:40:01Z'};
     const result = parseTcgPublicSnapshot({...validSnapshot, items:[validItem, tooRecent]}, now, 60 * 60 * 1000);
-    expect(result.snapshot?.items).toHaveLength(1);
-    expect(result.rejectedItems).toBe(1);
+    expect(result.snapshot).toBeNull();
+    expect(result.reason).toBe('minimum-delay-violation');
   });
 
   it('rejects an item with an unknown availability value', () => {
@@ -61,10 +61,16 @@ describe('TCG public v1 contract', () => {
     expect(result.rejectedItems).toBe(1);
   });
 
-  it('rejects malformed IDs, timestamps and non-HTTPS retailer URLs at item level', () => {
-    const items = [validItem,{...validItem,id:''},{...validItem,id:'bad-time',observed_at:'yesterday'},{...validItem,id:'bad-url',retailer_url:'javascript:alert(1)'}];
+  it('rejects malformed IDs, timestamps and unsafe retailer URLs at item level', () => {
+    const items = [
+      validItem,
+      {...validItem,id:''},
+      {...validItem,id:'bad-time',observed_at:'yesterday'},
+      {...validItem,id:'bad-url',retailer_url:'javascript:alert(1)'},
+      {...validItem,id:'credential-url',retailer_url:'https://user:pass@retailer.example/product'},
+    ];
     const result = parseTcgPublicSnapshot({...validSnapshot, items}, now, 60 * 60 * 1000);
     expect(result.snapshot?.items).toHaveLength(1);
-    expect(result.rejectedItems).toBe(3);
+    expect(result.rejectedItems).toBe(4);
   });
 });
