@@ -1,0 +1,33 @@
+name: Validate bounded TCG test feed
+
+on:
+  pull_request:
+    paths:
+      - 'public/tcg-test-feed.json'
+      - 'src/tcg/**'
+      - 'docs/tcg-bounded-test-feed.md'
+      - '.github/workflows/tcg-bounded-feed.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+      - name: Setup Node
+        uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+      - name: Install dependencies
+        run: npm ci
+      - name: Test
+        run: npm test
+      - name: Build review consumer against branch-scoped synthetic HTTPS feed
+        env:
+          VITE_TCG_PUBLIC_FEED_URL: https://raw.githubusercontent.com/galla-bit/gallant-peak-web/test/tcg-hunt-bounded-feed/public/tcg-test-feed.json
+        run: npm run build
