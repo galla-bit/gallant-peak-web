@@ -23,7 +23,7 @@ describe('TcgRadar', () => {
     expect(screen.getByText(/^DELAYED PUBLIC STOCK INTELLIGENCE$/i)).toBeTruthy();
     expect(screen.getByText('Booster Box')).toBeTruthy();
     expect(screen.getByText('NZ$189.99')).toBeTruthy();
-    expect(screen.getByText('Unknown')).toBeTruthy();
+    expect(screen.getByText('Unknown', {selector: '.tcg-status--unknown'})).toBeTruthy();
     expect(screen.getByRole('link',{name:/view at retailer a/i}).getAttribute('rel')).toBe('noreferrer');
     expect(screen.getByText(/1 invalid record/i)).toBeTruthy();
   });
