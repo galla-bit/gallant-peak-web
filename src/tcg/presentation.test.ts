@@ -1,6 +1,7 @@
 import {describe, expect, it} from 'vitest';
 import {filterProductGroups, groupTcgItems} from './presentation';
 import type {TcgPublicItem} from './types';
+import {parseTcgPublicSnapshot} from './contract';
 
 function offer(overrides: Partial<TcgPublicItem> = {}): TcgPublicItem {
   return {id:'a', game:'Pokemon', product:'Booster Box', retailer:'Retailer A',
@@ -78,5 +79,18 @@ describe('product grouping', () => {
 
   it('handles an empty snapshot', () => {
     expect(groupTcgItems([])).toEqual([]);
+  });
+
+  it('does not advertise an infinite price from an accepted oversized price string', () => {
+    const nowMs = Date.parse('2026-10-27T12:00:00Z');
+    const parsed = parseTcgPublicSnapshot({
+      schema_version:1, delayed:true, generated_at:new Date(nowMs).toISOString(),
+      items:[offer({availability:'in_stock', price_nzd:'9'.repeat(309)})],
+    }, nowMs, 60000);
+    expect(parsed.snapshot?.items).toHaveLength(1);
+    const group = groupTcgItems(parsed.snapshot!.items)[0];
+    expect(group.lowestAvailablePriceNzd).toBeUndefined();
+    expect(group.aggregateAvailability).toBe('in_stock');
+    expect(group.offers).toEqual(parsed.snapshot!.items);
   });
 });

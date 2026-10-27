@@ -27,7 +27,7 @@ export function groupTcgItems(items: TcgPublicItem[]): ProductGroup[] {
     const precedence: TcgAvailability[] = ['in_stock', 'limited', 'unknown', 'out_of_stock'];
     const prices = offers.filter(offer =>
       (offer.availability === 'in_stock' || offer.availability === 'limited') && offer.price_nzd !== undefined,
-    ).map(offer => Number(offer.price_nzd));
+    ).map(offer => Number(offer.price_nzd)).filter(Number.isFinite);
     return {
       key, game:offers[0].game, product:offers[0].product, offers,
       retailerCount:new Set(offers.map(offer=>offer.retailer)).size,
