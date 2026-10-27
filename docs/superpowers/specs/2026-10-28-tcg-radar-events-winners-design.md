@@ -2,11 +2,11 @@
 
 ## Intent
 
-Extend the product-first TCG Radar from PR #13 with an Events surface that helps New Zealand players discover upcoming organised-play competitions at specified retailers and see the most recently published winner for completed competitions.
+Extend the product-first TCG Radar from PR #13 with an Events surface that helps New Zealand players discover upcoming organised-play competitions at specified retailers and see the winners from the three most recent eligible completed competitions.
 
 The customer flow becomes:
 
-**Discover product/release → find where to play → inspect event details → register/view at organiser → return later to see the published winner.**
+**Discover product/release → find where to play → inspect event details → register/view at organiser → return later to see recent published winners.**
 
 Primary Radar navigation becomes **Products | New & Upcoming | Events | Stores**.
 
@@ -17,7 +17,7 @@ Primary Radar navigation becomes **Products | New & Upcoming | Events | Stores**
 - Support Pokémon, One Piece, Dragon Ball, Yu-Gi-Oh, and future games without a game-specific event model.
 - Use a hybrid source strategy: official game/organised-play sources where available plus the retailer/organiser's own published event information.
 - Retain source provenance and freshness so Gallant Peak does not become the authority for facts it republishes.
-- Show only the most recently published winner/result information requested by the user, not Top 4/Top 8 standings.
+- Show Recent Winners for the three most recent eligible competitions that have passed and have a verified published winner. Each result is winner-only; no Top 4/Top 8 standings.
 - Keep stock, releases, events, results, and retailer relationships as separate truth domains so failure in one does not corrupt another.
 - Keep registration and checkout external to Gallant Peak.
 
@@ -25,6 +25,7 @@ Primary Radar navigation becomes **Products | New & Upcoming | Events | Stores**
 
 - Running tournaments, registrations, payments, brackets, standings, or player accounts on Gallant Peak.
 - Publishing Top 4/Top 8 standings.
+- Showing more than the three most recent eligible completed competitions in Recent Winners.
 - Guessing winners, deck archetypes, formats, fees, capacities, registration status, or event times.
 - Scraping private retailer systems, credentials, trade data, or unpublished organiser information.
 - Treating a retailer as an event host merely because Gallant Peak monitors its stock.
@@ -118,7 +119,9 @@ Sort upcoming events chronologically by start time. Events with the same start t
 
 ### Recent Winners
 
-Recent Winners is intentionally winner-only. For each eligible completed event with a verified published result, display:
+Recent Winners is intentionally winner-only and limited to the three most recent eligible competitions that have passed and have a verified published winner. Determine recency from the validated competition start/event timestamp, not the time Gallant Peak discovered or republished the result. Sort newest completed competition first and take the first three qualifying results.
+
+For each displayed result, show:
 
 - winner's published name or handle exactly as the source presents it
 - game
@@ -131,7 +134,7 @@ Recent Winners is intentionally winner-only. For each eligible completed event w
 
 Do not display Top 4, Top 8, runner-up, standings, or inferred deck information.
 
-If a completed event has no publicly identified winner, it does not produce a winner card. The UI may state that no published recent winner is available; it must not imply the event had no winner.
+If a completed event has no publicly identified winner, it does not produce a winner card and does not consume one of the three Recent Winners slots. The UI may state that no published recent winner is available; it must not imply the event had no winner.
 
 ## Privacy and identity
 
@@ -156,7 +159,7 @@ Keep domains independent:
 - **TCG Hunt public stock projection → Products**
 - **GallantDiscoveries/public release projection → New & Upcoming**
 - **Approved event sources → validated Events public projection → Upcoming Events**
-- **Approved published result sources → validated Results public projection → Recent Winners**
+- **Approved published result sources → validated Results public projection → Recent Winners (latest three qualifying completed competitions)**
 - **Public retailer registry/projection → Stores and retailer relationship metadata**
 
 A failure or unconfigured state in Events/Results must fail closed only for that surface. Products remains usable when its own validated feed is healthy. Likewise, stock failure does not erase a healthy event projection.
@@ -191,9 +194,9 @@ An Events failure must not be rendered as `no events exist`; it is `event inform
 
 Implementation uses TDD.
 
-Pure model tests should cover chronological sorting, future/past classification, explicit optional fields, deterministic ties, game/retailer/region filters, winner-only mapping, missing deck archetype, missing winner exclusion, source provenance, and conflict/invalid-record fail-closed behavior where that responsibility exists in the client contract.
+Pure model tests should cover chronological sorting, future/past classification, explicit optional fields, deterministic ties, game/retailer/region filters, winner-only mapping, latest-three completed-competition selection, missing deck archetype, missing winner exclusion without consuming a slot, source provenance, and conflict/invalid-record fail-closed behavior where that responsibility exists in the client contract.
 
-React tests should cover the fourth Events tab, independent Events/Results states, upcoming cards, external organiser links, Recent Winners winner-only presentation, absence of Top 4/Top 8 content, filtering, and preservation of Products/New & Upcoming/Stores behavior from PR #13.
+React tests should cover the fourth Events tab, independent Events/Results states, upcoming cards, external organiser links, Recent Winners limited to three winner-only results, absence of Top 4/Top 8 content, filtering, and preservation of Products/New & Upcoming/Stores behavior from PR #13.
 
 Regression tests must prove no runtime fixture fallback and no coupling between stock feed failure and event/result presentation state.
 
@@ -207,6 +210,6 @@ Regression tests must prove no runtime fixture fallback and no coupling between 
 
 ## What remains to the builder
 
-After this design is approved, create a detailed TDD implementation plan against the exact PR #13 repository structure. Keep event/result types and presentation logic separate from stock grouping. Prefer small modules/components over expanding the main Radar component into a monolith. Reuse existing view navigation and styling patterns.
+Create/execute the detailed TDD implementation plan against the exact PR #13 repository structure. Keep event/result types and presentation logic separate from stock grouping. Prefer small modules/components over expanding the main Radar component into a monolith. Reuse existing view navigation and styling patterns.
 
-The implementation plan should explicitly test winner-only behavior, source links, independent domain failure, and the prohibition on runtime demo fallback. Backend ingestion, automated retailer searches, official event-system adapters, and GallantDiscoveries/public projection changes remain separate future work requiring their own approval.
+The implementation must explicitly test winner-only behavior, latest-three completed competition selection, source links, independent domain failure, and the prohibition on runtime demo fallback. Backend ingestion, automated retailer searches, official event-system adapters, and GallantDiscoveries/public projection changes remain separate future work requiring their own approval.
