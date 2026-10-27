@@ -5,6 +5,16 @@ import {RadarViews} from './RadarViews';
 
 afterEach(cleanup);
 describe('Radar views', () => {
+  it('places selectable Events between New & Upcoming and Stores while Products remains initial', () => {
+    render(<RadarViews products={<p>Validated products</p>} events={<p>Independent events</p>}/>);
+    expect(screen.getAllByRole('button').map(button=>button.textContent)).toEqual(['Products','New & Upcoming','Events','Stores']);
+    const events=screen.getByRole('button',{name:'Events'});
+    events.focus();
+    expect(document.activeElement).toBe(events);
+    fireEvent.click(events);
+    expect(events.getAttribute('aria-pressed')).toBe('true');
+    expect(screen.getByRole('region',{name:'Events'}).textContent).toBe('Independent events');
+  });
   it('selects Products initially and restores supplied product content on return', () => {
     render(<RadarViews products={<p>Validated products</p>}/>);
     expect(screen.getByRole('button', {name:'Products', pressed:true})).toBeTruthy();
