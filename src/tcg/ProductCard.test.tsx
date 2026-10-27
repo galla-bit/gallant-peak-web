@@ -1,11 +1,14 @@
 // @vitest-environment jsdom
 import {cleanup, fireEvent, render, screen, within} from '@testing-library/react';
-import {afterEach, describe, expect, it} from 'vitest';
+import {afterEach, describe, expect, it, vi} from 'vitest';
 import {ProductCard} from './ProductCard';
 import {groupTcgItems} from './presentation';
 import type {TcgPublicItem} from './types';
 
-afterEach(cleanup);
+afterEach(() => {
+  cleanup();
+  vi.useRealTimers();
+});
 const offers: TcgPublicItem[] = [
   {id:'a', game:'Pokemon', product:'Booster Box', retailer:'Retailer A', price_nzd:'189.99',
     availability:'in_stock', observed_at:'2026-10-27T10:00:00Z', retailer_url:'https://example.com/a'},
@@ -17,6 +20,8 @@ const offers: TcgPublicItem[] = [
 
 describe('ProductCard', () => {
   it('shows a collapsed product summary with truthful availability, price and freshness', () => {
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date('2026-10-27T10:25:00Z'));
     const {container} = render(<ProductCard group={groupTcgItems(offers)[0]}/>);
     expect(screen.getByRole('article')).toBeTruthy();
     expect(screen.getByRole('heading', {name:'Booster Box'})).toBeTruthy();
@@ -24,6 +29,7 @@ describe('ProductCard', () => {
     expect(screen.getByText('In stock')).toBeTruthy();
     expect(screen.getByText('2 retailers')).toBeTruthy();
     expect(screen.getByText('From NZ$189.99')).toBeTruthy();
+    expect(screen.getByText(/Detected 25 minutes ago/i)).toBeTruthy();
     expect(container.querySelector('time')?.dateTime).toBe(offers[0].observed_at);
     expect(screen.getByRole('button', {name:/compare retailers/i}).getAttribute('aria-expanded')).toBe('false');
     expect(screen.queryByRole('link')).toBeNull();

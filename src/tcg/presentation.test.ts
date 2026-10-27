@@ -84,7 +84,7 @@ describe('product grouping', () => {
   it('does not advertise an infinite price from an accepted oversized price string', () => {
     const nowMs = Date.parse('2026-10-27T12:00:00Z');
     const parsed = parseTcgPublicSnapshot({
-      schema_version:1, delayed:true, generated_at:new Date(nowMs).toISOString(),
+      schema_version:1, delayed:true, minimum_delay_seconds:900, generated_at:new Date(nowMs).toISOString(),
       items:[offer({availability:'in_stock', price_nzd:'9'.repeat(309)})],
     }, nowMs, 60000);
     expect(parsed.snapshot?.items).toHaveLength(1);
