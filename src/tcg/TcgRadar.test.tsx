@@ -1,5 +1,5 @@
 // @vitest-environment jsdom
-import {cleanup, fireEvent, render, screen} from '@testing-library/react';
+import {cleanup, fireEvent, render, screen, within} from '@testing-library/react';
 import {afterEach, describe, expect, it, vi} from 'vitest';
 import {TcgRadar} from './TcgRadar';
 import type {TcgFeedResult} from './feed';
@@ -11,6 +11,7 @@ afterEach(() => {
 
 const ready: TcgFeedResult = {status:'ready',rejectedItems:1,snapshot:{schema_version:1,generated_at:'2026-10-22T01:50:00Z',delayed:true,minimum_delay_seconds:900,items:[
   {id:'p',game:'Pokemon',product:'Booster Box',retailer:'Retailer A',price_nzd:'189.99',availability:'in_stock',observed_at:'2026-10-22T01:35:00Z',retailer_url:'https://example.com/p'},
+  {id:'p2',game:'Pokemon',product:'Booster Box',retailer:'Retailer C',price_nzd:'179.99',availability:'limited',observed_at:'2026-10-22T01:33:00Z',retailer_url:'https://example.com/p2'},
   {id:'o',game:'One Piece',product:'Display',retailer:'Retailer B',availability:'unknown',observed_at:'2026-10-22T01:34:00Z',retailer_url:'https://example.com/o'},
 ]}};
 
@@ -36,12 +37,19 @@ describe('TcgRadar', () => {
     expect(screen.getByText(/^DELAYED PUBLIC STOCK INTELLIGENCE$/i)).toBeTruthy();
     expect(screen.getByText(/delayed by at least 15 minutes/i)).toBeTruthy();
     expect(screen.getByText('Booster Box')).toBeTruthy();
-    expect(screen.getByText('NZ$189.99')).toBeTruthy();
+    expect(screen.getByText('From NZ$179.99')).toBeTruthy();
     expect(screen.getByText('Unknown', {selector: '.tcg-status--unknown'})).toBeTruthy();
+    fireEvent.click(screen.getByRole('button',{name:/compare retailers for Display/i}));
     expect(screen.getByText('Price not supplied')).toBeTruthy();
-    expect(screen.getByText(/Detected 25 minutes ago/i)).toBeTruthy();
+    fireEvent.click(screen.getByRole('button',{name:/compare retailers for Booster Box/i}));
+    expect(screen.getAllByText(/Detected 25 minutes ago/i).length).toBeGreaterThan(0);
     expect(screen.getByRole('link',{name:/view at retailer a/i}).getAttribute('rel')).toBe('noreferrer');
     expect(screen.getByText(/1 invalid record/i)).toBeTruthy();
+  });
+  it('groups two retailer offers under one product heading', () => {
+    render(<TcgRadar feed={ready}/>);
+    expect(screen.getAllByRole('heading',{name:'Booster Box'})).toHaveLength(1);
+    expect(screen.getByText('2 retailers')).toBeTruthy();
   });
   it('filters by game', () => {
     render(<TcgRadar feed={ready}/>);
@@ -58,5 +66,48 @@ describe('TcgRadar', () => {
     expect(screen.queryByText('Booster Box')).toBeNull();
     expect(screen.getByText('Display')).toBeTruthy();
     expect(screen.getByText('Unknown', {selector: '.tcg-status--unknown'})).toBeTruthy();
+  });
+  it('keeps a product when a non-summary offer matches the exact state', () => {
+    render(<TcgRadar feed={ready}/>);
+    fireEvent.change(screen.getByLabelText(/availability/i),{target:{value:'limited'}});
+    expect(screen.getByRole('heading',{name:'Booster Box'})).toBeTruthy();
+    expect(screen.getByText('In stock',{selector:'.tcg-status--in_stock'})).toBeTruthy();
+    expect(screen.queryByRole('heading',{name:'Display'})).toBeNull();
+  });
+  it('reports zero matching products', () => {
+    render(<TcgRadar feed={ready}/>);
+    fireEvent.change(screen.getByLabelText(/availability/i),{target:{value:'out_of_stock'}});
+    expect(screen.getByText('No validated results match these filters.')).toBeTruthy();
+    expect(screen.queryByRole('article')).toBeNull();
+  });
+  it.each(['loading','unconfigured','unavailable'] as const)('withholds previously rendered stock when feed becomes %s', (status) => {
+    const {rerender}=render(<TcgRadar feed={ready}/>);
+    rerender(<TcgRadar feed={status==='unavailable'?{status,reason:'stale'}:{status}}/>);
+    expect(screen.queryByText('Booster Box')).toBeNull();
+    expect(screen.queryByRole('article')).toBeNull();
+    expect(screen.queryByRole('link')).toBeNull();
+    expect(screen.getByRole('status').textContent).toMatch(status==='loading'?/loading/i:status==='unconfigured'?/not connected/i:/unavailable/i);
+    expect(screen.getByRole('status').textContent).toMatch(/at least 15 minutes/i);
+    expect(screen.queryByText(/MythicDeck|\$XX\.XX/)).toBeNull();
+  });
+  it('switches Cards and Compact presentation without changing product or offer truth', () => {
+    render(<TcgRadar feed={ready}/>);
+    const cards=screen.getByRole('button',{name:'Cards',pressed:true});
+    const results=screen.getByRole('list',{name:'Products'});
+    expect(results.classList.contains('tcg-product-grid--compact')).toBe(false);
+    fireEvent.click(screen.getByRole('button',{name:/compare retailers for Booster Box/i}));
+    const offerLinks=screen.getAllByRole('link').map(link=>link.getAttribute('href'));
+    const headings=screen.getAllByRole('heading',{level:3}).map(heading=>heading.textContent);
+    fireEvent.click(screen.getByRole('button',{name:'Compact'}));
+    expect(screen.getByRole('button',{name:'Compact',pressed:true})).toBeTruthy();
+    expect(results.classList.contains('tcg-product-grid--compact')).toBe(true);
+    expect(screen.getAllByRole('heading',{level:3}).map(heading=>heading.textContent)).toEqual(headings);
+    expect(screen.getAllByRole('link').map(link=>link.getAttribute('href'))).toEqual(offerLinks);
+    expect(within(results).getAllByRole('article')).toHaveLength(2);
+    expect(screen.getByRole('button',{name:/hide retailers for Booster Box/i}).getAttribute('aria-expanded')).toBe('true');
+    fireEvent.click(cards);
+    expect(cards.getAttribute('aria-pressed')).toBe('true');
+    expect(results.classList.contains('tcg-product-grid--compact')).toBe(false);
+    expect(screen.getAllByRole('link').map(link=>link.getAttribute('href'))).toEqual(offerLinks);
   });
 });
