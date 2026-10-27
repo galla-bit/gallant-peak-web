@@ -1,4 +1,4 @@
-import {useId, useState} from 'react';
+import {useEffect, useId, useState} from 'react';
 import {EVENTS_MAX_AGE_MS} from './contract';
 import type {PublicDomain, TcgEventsFeedResult} from './feed';
 import {filterEventRecords, getRecentWinners, getUpcomingEvents} from './presentation';
@@ -26,7 +26,27 @@ function DomainNotice({status,results=false}:{status:string;results?:boolean}) {
       `${subject} unavailable. This does not mean ${results?'nobody won':'no events exist'}.`}</p>;
 }
 
-export function EventsView({feed,now=Date.now()}:{feed:TcgEventsFeedResult;now?:number}) {
+export function EventsView({feed,now:providedNow}:{feed:TcgEventsFeedResult;now?:number}) {
+  const [clock,setClock]=useState(()=>Date.now());
+  const now=providedNow??Math.max(clock,Date.now());
+  useEffect(()=>{
+    if (providedNow!==undefined) return;
+    const boundaries:number[]=[];
+    for (const domain of [feed.events,feed.winners]) {
+      if (domain.status!=='ready') continue;
+      const expiry=Date.parse(domain.generatedAt)+EVENTS_MAX_AGE_MS+1;
+      if (expiry<=now) continue;
+      boundaries.push(expiry);
+      for (const item of domain.items) {
+        const boundary='starts_at' in item?Date.parse(item.starts_at):Date.parse(item.event_at)+1;
+        if (boundary>now) boundaries.push(boundary);
+      }
+    }
+    if (!boundaries.length) return;
+    const next=boundaries.reduce((a,b)=>Math.min(a,b));
+    const timer=setTimeout(()=>setClock(Date.now()),Math.min(2147483647,Math.max(1,next-Date.now())));
+    return ()=>clearTimeout(timer);
+  },[feed,now,providedNow]);
   const id=useId();
   const [game,setGame]=useState('all');
   const [organiser,setOrganiser]=useState('all');

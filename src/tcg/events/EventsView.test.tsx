@@ -1,12 +1,28 @@
 // @vitest-environment jsdom
-import {cleanup, fireEvent, render, screen, within} from '@testing-library/react';
-import {afterEach, describe, expect, it} from 'vitest';
+import {act, cleanup, fireEvent, render, screen, within} from '@testing-library/react';
+import {afterEach, describe, expect, it, vi} from 'vitest';
 import {EventsView} from './EventsView';
 import {inactiveEventsFeed} from './feed';
 import {event, NOW, readyFeed, snapshot, winner} from './test-fixtures';
 
-afterEach(cleanup);
+afterEach(()=>{cleanup();vi.useRealTimers();});
 describe('Events and Recent Winners', () => {
+  it('removes an event at its start boundary without a reload or network polling', () => {
+    vi.useFakeTimers();vi.setSystemTime(NOW);
+    render(<EventsView feed={readyFeed(snapshot({events:[event({starts_at:new Date(NOW+1000).toISOString()})]}))}/>);
+    expect(screen.getByRole('heading',{name:'Published competition'})).toBeTruthy();
+    act(()=>vi.advanceTimersByTime(1000));
+    expect(screen.queryByRole('heading',{name:'Published competition'})).toBeNull();
+    expect(screen.getByText('No upcoming events match these filters.')).toBeTruthy();
+  });
+  it('expires displayed projections while the page remains open', () => {
+    vi.useFakeTimers();vi.setSystemTime(NOW);
+    render(<EventsView feed={readyFeed()}/>);
+    act(()=>vi.advanceTimersByTime(3600001));
+    expect(screen.queryByRole('article')).toBeNull();
+    expect(screen.getByRole('region',{name:'Upcoming Events'}).textContent).toMatch(/information unavailable/i);
+    expect(screen.getByRole('region',{name:'Recent Winners'}).textContent).toMatch(/results unavailable/i);
+  });
   it('shows explicit event details, provenance and external registration without inventing optional facts', () => {
     render(<EventsView now={NOW} feed={readyFeed(snapshot({events:[event({city:'Whanganui',region:'Manawatū-Whanganui',
       format:'Standard',entry_fee:'NZ$10',registration_status:'Open'})]}))}/>);

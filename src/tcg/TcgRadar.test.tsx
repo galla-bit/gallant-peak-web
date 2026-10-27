@@ -47,7 +47,7 @@ describe('TcgRadar', () => {
     expect(screen.queryByText(/invalid event records/)).toBeNull();
   });
   it('loads only an independently configured public events endpoint', async () => {
-    const fetcher=vi.fn(async()=>({ok:true,json:async()=>snapshot()}));
+    const fetcher=vi.fn(async(_input:RequestInfo|URL,_init?:RequestInit)=>({ok:true,json:async()=>snapshot()}));
     vi.stubGlobal('fetch',fetcher);
     render(<TcgRadar feed={{status:'unconfigured'}} now={NOW} eventsEndpoint="https://example.com/public-events"/>);
     fireEvent.click(screen.getByRole('button',{name:'Events'}));
