@@ -1,4 +1,6 @@
 // Test-only public projection examples; never imported by production modules.
+import {parseTcgEventsSnapshot} from './contract';
+import type {TcgEventsFeedResult} from './feed';
 export const NOW = Date.parse('2026-10-28T00:00:00Z');
 export function event(overrides: Record<string, unknown> = {}) {
   return {id:'event-a', game:'Pokemon', name:'Published competition', organiser_id:'store-a',
@@ -14,4 +16,14 @@ export function winner(overrides: Record<string, unknown> = {}) {
 }
 export function snapshot(overrides: Record<string, unknown> = {}) {
   return {schema_version:1, generated_at:new Date(NOW).toISOString(), events:[event()], winners:[winner()], ...overrides};
+}
+export function readyFeed(input:unknown=snapshot()): TcgEventsFeedResult {
+  const parsed=parseTcgEventsSnapshot(input,NOW);
+  const value=parsed.snapshot!;
+  return {
+    events:value.events===null?{status:'unavailable',reason:'invalid-events'}:
+      {status:'ready',items:value.events,generatedAt:value.generated_at,rejectedItems:parsed.rejectedEvents},
+    winners:value.winners===null?{status:'unavailable',reason:'invalid-results'}:
+      {status:'ready',items:value.winners,generatedAt:value.generated_at,rejectedItems:parsed.rejectedWinners},
+  };
 }
