@@ -10,6 +10,11 @@ function observedTime(timestamp: string) {
   return <time dateTime={timestamp}>{new Date(timestamp).toLocaleString('en-NZ', {timeZone:'Pacific/Auckland'})} NZ time</time>;
 }
 
+function detectedAge(observedAt:string) {
+  const minutes=Math.max(0,Math.floor((Date.now()-Date.parse(observedAt))/60000));
+  return `Detected ${minutes} minute${minutes===1?'':'s'} ago`;
+}
+
 export function ProductCard({group}: {group: ProductGroup}) {
   const [expanded, setExpanded] = useState(false);
   const comparisonId = useId();
@@ -20,7 +25,7 @@ export function ProductCard({group}: {group: ProductGroup}) {
       <p className={`tcg-status tcg-status--${group.aggregateAvailability}`}>{labels[group.aggregateAvailability]}</p>
       <p>{group.retailerCount} {group.retailerCount === 1 ? 'retailer' : 'retailers'}</p>
       <p>{group.lowestAvailablePriceNzd !== undefined ? `From NZ$${group.lowestAvailablePriceNzd.toFixed(2)}` : 'No available price supplied'}</p>
-      <p className="muted">Latest offer observed {observedTime(group.latestObservedAt)}</p>
+      <p className="muted">{detectedAge(group.latestObservedAt)} · Latest offer observed {observedTime(group.latestObservedAt)}</p>
       <button type="button" aria-expanded={expanded} aria-controls={comparisonId} onClick={()=>setExpanded(!expanded)}>
         {expanded ? 'Hide' : 'Compare'} retailers for {group.product}
       </button>
@@ -31,7 +36,7 @@ export function ProductCard({group}: {group: ProductGroup}) {
           <strong>{offer.retailer}</strong>
           <p className={`tcg-status tcg-status--${offer.availability}`}>{labels[offer.availability]}</p>
           <p>{offer.price_nzd !== undefined ? `NZ$${offer.price_nzd}` : 'Price not supplied'}</p>
-          <p className="muted">Observed {observedTime(offer.observed_at)}</p>
+          <p className="muted">{detectedAge(offer.observed_at)} · Observed {observedTime(offer.observed_at)}</p>
           <a href={offer.retailer_url} target="_blank" rel="noreferrer">View at {offer.retailer}</a>
         </li>)}
       </ul>}

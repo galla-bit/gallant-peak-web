@@ -6,6 +6,7 @@ import {ProductCard} from './ProductCard';
 import {RadarViews} from './RadarViews';
 
 const labels: Record<TcgAvailability,string>={in_stock:'In stock',limited:'Limited',out_of_stock:'Out of stock',unknown:'Unknown'};
+const PUBLIC_DELAY_COPY='The free public feed is delayed by at least 15 minutes.';
 
 export function TcgRadar({feed}:{feed:TcgFeedResult}) {
   const [game,setGame]=useState('all');
@@ -13,12 +14,12 @@ export function TcgRadar({feed}:{feed:TcgFeedResult}) {
   const [displayMode,setDisplayMode]=useState<'cards'|'compact'>('cards');
   const groups=useMemo(()=>feed.status==='ready' ? groupTcgItems(feed.snapshot.items) : [],[feed]);
   const games=useMemo(()=>[...new Set(groups.map(group=>group.game))].sort(),[groups]);
-  if(feed.status==='loading') return <div className="notice" role="status"><strong>RADAR STATUS · LOADING</strong><br/>Requesting the delayed public TCG Hunt feed. No stock is shown until validation completes.</div>;
-  if(feed.status==='unconfigured') return <div className="notice" role="status"><strong>RADAR STATUS · NOT CONNECTED</strong><br/>The public TCG Hunt feed is not connected in this build. No stock is being simulated.</div>;
-  if(feed.status==='unavailable') return <div className="notice" role="status"><strong>RADAR STATUS · UNAVAILABLE</strong><br/>Validated public stock data is currently unavailable. No cached demo stock is shown.</div>;
+  if(feed.status==='loading') return <div className="notice" role="status"><strong>RADAR STATUS · LOADING</strong><br/>{PUBLIC_DELAY_COPY} Requesting validated public TCG Hunt data. No stock is shown until validation completes.</div>;
+  if(feed.status==='unconfigured') return <div className="notice" role="status"><strong>RADAR STATUS · NOT CONNECTED</strong><br/>{PUBLIC_DELAY_COPY} The public TCG Hunt feed is not connected in this build. No stock is being simulated.</div>;
+  if(feed.status==='unavailable') return <div className="notice" role="status"><strong>RADAR STATUS · UNAVAILABLE</strong><br/>{PUBLIC_DELAY_COPY} Validated public stock data is currently unavailable. No cached demo stock is shown.</div>;
   const products=filterProductGroups(groups,{game,availability});
   return <section className="tcg-radar" aria-labelledby="tcg-radar-title">
-    <div className="section-head"><div><p className="eyebrow">DELAYED PUBLIC STOCK INTELLIGENCE</p><h2 id="tcg-radar-title">NZ RETAIL RADAR</h2></div><p>Observed stock is deliberately delayed. Confirm availability and checkout with the retailer.</p></div>
+    <div className="section-head"><div><p className="eyebrow">DELAYED PUBLIC STOCK INTELLIGENCE</p><h2 id="tcg-radar-title">NZ RETAIL RADAR</h2></div><p>{PUBLIC_DELAY_COPY} Confirm availability and checkout with the retailer.</p></div>
     <RadarViews products={<>
     <div className="tcg-filters">
       <label>Game<select value={game} onChange={event=>setGame(event.target.value)}><option value="all">All games</option>{games.map(value=><option key={value}>{value}</option>)}</select></label>
@@ -35,6 +36,5 @@ export function TcgRadar({feed}:{feed:TcgFeedResult}) {
     </ul>
     {products.length===0 && <p role="status">No validated results match these filters.</p>}
     </>}/>
-
   </section>;
 }

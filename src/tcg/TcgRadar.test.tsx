@@ -1,38 +1,48 @@
 // @vitest-environment jsdom
 import {cleanup, fireEvent, render, screen, within} from '@testing-library/react';
-import {afterEach, describe, expect, it} from 'vitest';
+import {afterEach, describe, expect, it, vi} from 'vitest';
 import {TcgRadar} from './TcgRadar';
 import type {TcgFeedResult} from './feed';
 
-afterEach(cleanup);
+afterEach(() => {
+  cleanup();
+  vi.useRealTimers();
+});
 
-const ready: TcgFeedResult = {status:'ready',rejectedItems:1,snapshot:{schema_version:1,generated_at:'2026-10-22T01:50:00Z',delayed:true,items:[
-  {id:'p',game:'Pokemon',product:'Booster Box',retailer:'Retailer A',price_nzd:'189.99',availability:'in_stock',observed_at:'2026-10-22T01:45:00Z',retailer_url:'https://example.com/p'},
-  {id:'p2',game:'Pokemon',product:'Booster Box',retailer:'Retailer C',price_nzd:'179.99',availability:'limited',observed_at:'2026-10-22T01:43:00Z',retailer_url:'https://example.com/p2'},
-  {id:'o',game:'One Piece',product:'Display',retailer:'Retailer B',availability:'unknown',observed_at:'2026-10-22T01:44:00Z',retailer_url:'https://example.com/o'},
+const ready: TcgFeedResult = {status:'ready',rejectedItems:1,snapshot:{schema_version:1,generated_at:'2026-10-22T01:50:00Z',delayed:true,minimum_delay_seconds:900,items:[
+  {id:'p',game:'Pokemon',product:'Booster Box',retailer:'Retailer A',price_nzd:'189.99',availability:'in_stock',observed_at:'2026-10-22T01:35:00Z',retailer_url:'https://example.com/p'},
+  {id:'p2',game:'Pokemon',product:'Booster Box',retailer:'Retailer C',price_nzd:'179.99',availability:'limited',observed_at:'2026-10-22T01:33:00Z',retailer_url:'https://example.com/p2'},
+  {id:'o',game:'One Piece',product:'Display',retailer:'Retailer B',availability:'unknown',observed_at:'2026-10-22T01:34:00Z',retailer_url:'https://example.com/o'},
 ]}};
 
 describe('TcgRadar', () => {
   it('shows a neutral loading state while a configured public feed is being requested', () => {
     render(<TcgRadar feed={{status:'loading'}}/>);
     expect(screen.getByRole('status').textContent).toMatch(/loading/i);
+    expect(screen.getByRole('status').textContent).toMatch(/at least 15 minutes/i);
     expect(screen.queryByText(/in stock/i)).toBeNull();
   });
   it('shows safe status messages when unconfigured or unavailable', () => {
     const {rerender}=render(<TcgRadar feed={{status:'unconfigured'}}/>);
     expect(screen.getByRole('status').textContent).toMatch(/not connected/i);
+    expect(screen.getByRole('status').textContent).toMatch(/at least 15 minutes/i);
     rerender(<TcgRadar feed={{status:'unavailable',reason:'stale'}}/>);
     expect(screen.getByRole('status').textContent).toMatch(/unavailable/i);
+    expect(screen.getByRole('status').textContent).toMatch(/at least 15 minutes/i);
   });
   it('renders delayed validated stock without implying unknown is available', () => {
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date('2026-10-22T02:00:00Z'));
     render(<TcgRadar feed={ready}/>);
     expect(screen.getByText(/^DELAYED PUBLIC STOCK INTELLIGENCE$/i)).toBeTruthy();
+    expect(screen.getByText(/delayed by at least 15 minutes/i)).toBeTruthy();
     expect(screen.getByText('Booster Box')).toBeTruthy();
     expect(screen.getByText('From NZ$179.99')).toBeTruthy();
     expect(screen.getByText('Unknown', {selector: '.tcg-status--unknown'})).toBeTruthy();
     fireEvent.click(screen.getByRole('button',{name:/compare retailers for Display/i}));
     expect(screen.getByText('Price not supplied')).toBeTruthy();
     fireEvent.click(screen.getByRole('button',{name:/compare retailers for Booster Box/i}));
+    expect(screen.getAllByText(/Detected 25 minutes ago/i).length).toBeGreaterThan(0);
     expect(screen.getByRole('link',{name:/view at retailer a/i}).getAttribute('rel')).toBe('noreferrer');
     expect(screen.getByText(/1 invalid record/i)).toBeTruthy();
   });
@@ -77,6 +87,7 @@ describe('TcgRadar', () => {
     expect(screen.queryByRole('article')).toBeNull();
     expect(screen.queryByRole('link')).toBeNull();
     expect(screen.getByRole('status').textContent).toMatch(status==='loading'?/loading/i:status==='unconfigured'?/not connected/i:/unavailable/i);
+    expect(screen.getByRole('status').textContent).toMatch(/at least 15 minutes/i);
     expect(screen.queryByText(/MythicDeck|\$XX\.XX/)).toBeNull();
   });
   it('switches Cards and Compact presentation without changing product or offer truth', () => {
