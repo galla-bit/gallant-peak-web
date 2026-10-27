@@ -10,6 +10,7 @@ const labels: Record<TcgAvailability,string>={in_stock:'In stock',limited:'Limit
 export function TcgRadar({feed}:{feed:TcgFeedResult}) {
   const [game,setGame]=useState('all');
   const [availability,setAvailability]=useState('all');
+  const [displayMode,setDisplayMode]=useState<'cards'|'compact'>('cards');
   const groups=useMemo(()=>feed.status==='ready' ? groupTcgItems(feed.snapshot.items) : [],[feed]);
   const games=useMemo(()=>[...new Set(groups.map(group=>group.game))].sort(),[groups]);
   if(feed.status==='loading') return <div className="notice" role="status"><strong>RADAR STATUS · LOADING</strong><br/>Requesting the delayed public TCG Hunt feed. No stock is shown until validation completes.</div>;
@@ -25,7 +26,13 @@ export function TcgRadar({feed}:{feed:TcgFeedResult}) {
     </div>
     {feed.rejectedItems>0 && <p className="muted" role="status">{feed.rejectedItems} invalid record{feed.rejectedItems===1?'':'s'} withheld.</p>}
     <p className="muted">Filters select products with at least one matching offer. Compare retailers to see every observation.</p>
-    <div className="tcg-product-grid">{products.map(group=><ProductCard key={group.key} group={group}/>)}</div>
+    <div className="tcg-display-toggle" role="group" aria-label="Product display">
+      <button type="button" aria-pressed={displayMode==='cards'} onClick={()=>setDisplayMode('cards')}>Cards</button>
+      <button type="button" aria-pressed={displayMode==='compact'} onClick={()=>setDisplayMode('compact')}>Compact</button>
+    </div>
+    <ul className={`tcg-product-grid${displayMode==='compact'?' tcg-product-grid--compact':''}`} aria-label="Products">
+      {products.map(group=><li key={group.key}><ProductCard group={group}/></li>)}
+    </ul>
     {products.length===0 && <p role="status">No validated results match these filters.</p>}
     </>}/>
 

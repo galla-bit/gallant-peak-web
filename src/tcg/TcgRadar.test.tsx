@@ -1,5 +1,5 @@
 // @vitest-environment jsdom
-import {cleanup, fireEvent, render, screen} from '@testing-library/react';
+import {cleanup, fireEvent, render, screen, within} from '@testing-library/react';
 import {afterEach, describe, expect, it} from 'vitest';
 import {TcgRadar} from './TcgRadar';
 import type {TcgFeedResult} from './feed';
@@ -78,5 +78,25 @@ describe('TcgRadar', () => {
     expect(screen.queryByRole('link')).toBeNull();
     expect(screen.getByRole('status').textContent).toMatch(status==='loading'?/loading/i:status==='unconfigured'?/not connected/i:/unavailable/i);
     expect(screen.queryByText(/MythicDeck|\$XX\.XX/)).toBeNull();
+  });
+  it('switches Cards and Compact presentation without changing product or offer truth', () => {
+    render(<TcgRadar feed={ready}/>);
+    const cards=screen.getByRole('button',{name:'Cards',pressed:true});
+    const results=screen.getByRole('list',{name:'Products'});
+    expect(results.classList.contains('tcg-product-grid--compact')).toBe(false);
+    fireEvent.click(screen.getByRole('button',{name:/compare retailers for Booster Box/i}));
+    const offerLinks=screen.getAllByRole('link').map(link=>link.getAttribute('href'));
+    const headings=screen.getAllByRole('heading',{level:3}).map(heading=>heading.textContent);
+    fireEvent.click(screen.getByRole('button',{name:'Compact'}));
+    expect(screen.getByRole('button',{name:'Compact',pressed:true})).toBeTruthy();
+    expect(results.classList.contains('tcg-product-grid--compact')).toBe(true);
+    expect(screen.getAllByRole('heading',{level:3}).map(heading=>heading.textContent)).toEqual(headings);
+    expect(screen.getAllByRole('link').map(link=>link.getAttribute('href'))).toEqual(offerLinks);
+    expect(within(results).getAllByRole('article')).toHaveLength(2);
+    expect(screen.getByRole('button',{name:/hide retailers for Booster Box/i}).getAttribute('aria-expanded')).toBe('true');
+    fireEvent.click(cards);
+    expect(cards.getAttribute('aria-pressed')).toBe('true');
+    expect(results.classList.contains('tcg-product-grid--compact')).toBe(false);
+    expect(screen.getAllByRole('link').map(link=>link.getAttribute('href'))).toEqual(offerLinks);
   });
 });
