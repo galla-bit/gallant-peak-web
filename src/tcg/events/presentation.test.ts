@@ -44,6 +44,10 @@ describe('latest three winner-only results', () => {
     expect(getRecentWinners(values,NOW)).toHaveLength(1);
     expect(getRecentWinners([...values,{...values[0],winner:'Conflicting name'}],NOW)).toEqual([]);
   });
+  it('resolves conflicts across past and future records before temporal qualification', () => {
+    const values=winners([winner(),winner({id:'conflicted-date',event_at:'2026-10-29T00:00:00Z'})]);
+    expect(getRecentWinners(values,NOW)).toEqual([]);
+  });
   it('filters before the latest-three limit and never infers a deck or transforms a handle', () => {
     const values=winners([1,2,3,4,5].map(day=>winner({id:`w${day}`,event_id:`e${day}`,game:day>2?'One Piece':'Pokemon',
       winner:' @Exact✨ ',event_at:`2026-10-${20+day}T00:00:00Z`})));

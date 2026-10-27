@@ -11,7 +11,8 @@ describe('independent events feed', () => {
     expect(result).toEqual({events:{status:'unconfigured'},winners:{status:'unconfigured'}});
     expect(fetcher).not.toHaveBeenCalled();
   });
-  it.each(['http://example.com/data','https://example.com/data?token=secret','bad'])('rejects unsafe endpoint %s before contact', async endpoint => {
+  it.each(['http://example.com/data','https://example.com/data?token=secret','bad',
+    'https://localhost./data','https://service.local./data','https://service.internal./data'])('rejects unsafe endpoint %s before contact', async endpoint => {
     const fetcher=vi.fn();
     const result=await loadTcgEventsFeed({endpoint,now:NOW,fetcher});
     expect(result.events.status).toBe('unavailable');

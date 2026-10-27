@@ -16,7 +16,7 @@ export function safePublicUrl(value: unknown): value is string {
   try {
     const url=new URL(value);
     return url.protocol==='https:' && !url.username && !url.password && !url.search && !url.hash &&
-      url.hostname.includes('.') && !/^[\d.]+$/.test(url.hostname) && !url.hostname.includes(':') &&
+      url.hostname.includes('.') && !url.hostname.endsWith('.') && !/^[\d.]+$/.test(url.hostname) && !url.hostname.includes(':') &&
       !/(?:\.local|\.localhost|\.internal)$/.test(url.hostname);
   } catch { return false; }
 }

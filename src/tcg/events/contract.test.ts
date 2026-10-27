@@ -14,7 +14,8 @@ describe('events/results public contract', () => {
     expect(parsed.rejectedWinners).toBe(0);
   });
   it.each(['http://example.com/a','https://user:pass@example.com/a','https://example.com/a?token=secret',
-    'https://example.com/a#secret','https://localhost/a','https://127.0.0.1/a','https://[::1]/a'])('rejects unsafe public source and registration links %s', url => {
+    'https://example.com/a#secret','https://localhost/a','https://127.0.0.1/a','https://[::1]/a',
+    'https://localhost./a','https://service.local./a','https://service.internal./a'])('rejects unsafe public source and registration links %s', url => {
     const parsed=parseTcgEventsSnapshot(snapshot({events:[event({source_url:url}),event({event_url:url})],winners:[winner({source_url:url})]}),NOW);
     expect(parsed.snapshot?.events).toEqual([]);
     expect(parsed.snapshot?.winners).toEqual([]);

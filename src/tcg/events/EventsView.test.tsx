@@ -7,6 +7,22 @@ import {event, NOW, readyFeed, snapshot, winner} from './test-fixtures';
 
 afterEach(()=>{cleanup();vi.useRealTimers();});
 describe('Events and Recent Winners', () => {
+  it('does not resurrect a conflicted competition when filtering out one conflicting record', () => {
+    render(<EventsView now={NOW} feed={readyFeed(snapshot({winners:[winner({winner:'Alice'}),
+      winner({id:'conflict',game:'One Piece',winner:'Bob'})]}))}/>);
+    expect(screen.queryByText('Alice')).toBeNull();
+    fireEvent.change(screen.getByLabelText('Event game'),{target:{value:'Pokemon'}});
+    expect(screen.queryByText('Alice')).toBeNull();
+    expect(screen.getByText('No published recent winner is available.')).toBeTruthy();
+  });
+  it('updates when an event enters the selected upcoming window without interaction', () => {
+    vi.useFakeTimers();vi.setSystemTime(NOW);
+    render(<EventsView feed={readyFeed(snapshot({events:[event({starts_at:new Date(NOW+7*86400000+1000).toISOString()})]}))}/>);
+    fireEvent.change(screen.getByLabelText('Upcoming window'),{target:{value:'7'}});
+    expect(screen.queryByRole('heading',{name:'Published competition'})).toBeNull();
+    act(()=>vi.advanceTimersByTime(1000));
+    expect(screen.getByRole('heading',{name:'Published competition'})).toBeTruthy();
+  });
   it('removes an event at its start boundary without a reload or network polling', () => {
     vi.useFakeTimers();vi.setSystemTime(NOW);
     render(<EventsView feed={readyFeed(snapshot({events:[event({starts_at:new Date(NOW+1000).toISOString()})]}))}/>);

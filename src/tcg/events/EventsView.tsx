@@ -28,6 +28,7 @@ function DomainNotice({status,results=false}:{status:string;results?:boolean}) {
 
 export function EventsView({feed,now:providedNow}:{feed:TcgEventsFeedResult;now?:number}) {
   const [clock,setClock]=useState(()=>Date.now());
+  const [windowDays,setWindowDays]=useState('all');
   const now=providedNow??Math.max(clock,Date.now());
   useEffect(()=>{
     if (providedNow!==undefined) return;
@@ -40,18 +41,21 @@ export function EventsView({feed,now:providedNow}:{feed:TcgEventsFeedResult;now?
       for (const item of domain.items) {
         const boundary='starts_at' in item?Date.parse(item.starts_at):Date.parse(item.event_at)+1;
         if (boundary>now) boundaries.push(boundary);
+        if ('starts_at' in item && windowDays!=='all') {
+          const entersWindow=Date.parse(item.starts_at)-Number(windowDays)*86400000;
+          if (entersWindow>now) boundaries.push(entersWindow);
+        }
       }
     }
     if (!boundaries.length) return;
     const next=boundaries.reduce((a,b)=>Math.min(a,b));
     const timer=setTimeout(()=>setClock(Date.now()),Math.min(2147483647,Math.max(1,next-Date.now())));
     return ()=>clearTimeout(timer);
-  },[feed,now,providedNow]);
+  },[feed,now,providedNow,windowDays]);
   const id=useId();
   const [game,setGame]=useState('all');
   const [organiser,setOrganiser]=useState('all');
   const [region,setRegion]=useState('all');
-  const [windowDays,setWindowDays]=useState('all');
   const events=fresh(feed.events,now);
   const winners=fresh(feed.winners,now);
   const records=[...(events.status==='ready'?events.items:[]),...(winners.status==='ready'?winners.items:[])];
@@ -61,7 +65,7 @@ export function EventsView({feed,now:providedNow}:{feed:TcgEventsFeedResult;now?
   const filters={game,organiser,region};
   const upcoming=events.status==='ready'?getUpcomingEvents(filterEventRecords(events.items,filters),now)
     .filter(item=>windowDays==='all'||Date.parse(item.starts_at)<=now+Number(windowDays)*86400000):[];
-  const recent=winners.status==='ready'?getRecentWinners(filterEventRecords(winners.items,filters),now):[];
+  const recent=winners.status==='ready'?getRecentWinners(winners.items,now,undefined,filters):[];
   return <div className="tcg-events">
     {(events.status==='ready'||winners.status==='ready')&&<>
       <div className="tcg-event-filters">
