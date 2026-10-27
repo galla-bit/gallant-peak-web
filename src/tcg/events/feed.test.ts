@@ -41,9 +41,9 @@ describe('independent events feed', () => {
   });
   it('does not mutate or reinterpret a separately loaded stock snapshot', async () => {
     const stock=await loadTcgFeed({nowMs:NOW,maxAgeMs:3600000,endpoint:'https://example.com/stock',fetcher:fetcherFor({
-      schema_version:1,delayed:true,generated_at:new Date(NOW).toISOString(),items:[{
+      schema_version:1,delayed:true,minimum_delay_seconds:900,generated_at:new Date(NOW).toISOString(),items:[{
         id:'stock',game:'Pokemon',product:'Box',retailer:'Store',availability:'unknown',
-        observed_at:new Date(NOW).toISOString(),retailer_url:'https://example.com/item',
+        observed_at:new Date(NOW-900000).toISOString(),retailer_url:'https://example.com/item',
       }],
     })});
     const before=JSON.stringify(stock);
