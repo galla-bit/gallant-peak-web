@@ -1,10 +1,11 @@
 // @vitest-environment jsdom
-import {cleanup, fireEvent, render, screen, within} from '@testing-library/react';
-import {afterEach, describe, expect, it} from 'vitest';
+import {cleanup, fireEvent, render, screen, waitFor, within} from '@testing-library/react';
+import {afterEach, describe, expect, it, vi} from 'vitest';
 import {TcgRadar} from './TcgRadar';
 import type {TcgFeedResult} from './feed';
+import {event, NOW, readyFeed, snapshot, winner} from './events/test-fixtures';
 
-afterEach(cleanup);
+afterEach(()=>{cleanup();vi.unstubAllGlobals();});
 
 const ready: TcgFeedResult = {status:'ready',rejectedItems:1,snapshot:{schema_version:1,generated_at:'2026-10-22T01:50:00Z',delayed:true,items:[
   {id:'p',game:'Pokemon',product:'Booster Box',retailer:'Retailer A',price_nzd:'189.99',availability:'in_stock',observed_at:'2026-10-22T01:45:00Z',retailer_url:'https://example.com/p'},
@@ -13,6 +14,47 @@ const ready: TcgFeedResult = {status:'ready',rejectedItems:1,snapshot:{schema_ve
 ]}};
 
 describe('TcgRadar', () => {
+  it('keeps healthy Products usable while Events is unavailable', () => {
+    render(<TcgRadar feed={ready} now={NOW} eventsFeed={readyFeed(snapshot({events:null,winners:null}))}/>);
+    expect(screen.getByRole('heading',{name:'Booster Box'})).toBeTruthy();
+    fireEvent.click(screen.getByRole('button',{name:'Events'}));
+    expect(screen.getByRole('region',{name:'Upcoming Events'}).textContent).toMatch(/unavailable/i);
+    fireEvent.click(screen.getByRole('button',{name:'Products'}));
+    expect(screen.getByRole('heading',{name:'Booster Box'})).toBeTruthy();
+  });
+  it('keeps Events usable when stock is unavailable and limits results to three competitions', () => {
+    const winners=[1,2,3,4,5].map(day=>winner({id:`w${day}`,event_id:`e${day}`,winner:`Handle ${day}`,
+      event_at:`2026-10-${20+day}T00:00:00Z`}));
+    render(<TcgRadar feed={{status:'unavailable',reason:'stale'}} now={NOW} eventsFeed={readyFeed(snapshot({winners}))}/>);
+    fireEvent.click(screen.getByRole('button',{name:'Events'}));
+    expect(screen.getByRole('heading',{name:'Published competition'})).toBeTruthy();
+    const results=screen.getByRole('region',{name:'Recent Winners'});
+    expect(within(results).getAllByRole('article')).toHaveLength(3);
+    expect(results.textContent).not.toMatch(/Handle 1|Handle 2/);
+    expect(results.textContent).toMatch(/Handle 5/);
+  });
+  it('keeps Events filters and rejected-record counts separate from stock', () => {
+    render(<TcgRadar feed={ready} now={NOW} eventsFeed={readyFeed(snapshot({events:[event(),event({eligible:false}),event({eligible:false})],
+      winners:[winner({winner:''})]}))}/>);
+    fireEvent.click(screen.getByRole('button',{name:'Events'}));
+    expect(screen.getByText('2 invalid event records withheld.')).toBeTruthy();
+    expect(screen.getByText('1 invalid result records withheld.')).toBeTruthy();
+    fireEvent.change(screen.getByLabelText('Event organiser'),{target:{value:'store-a'}});
+    fireEvent.change(screen.getByLabelText('Upcoming window'),{target:{value:'7'}});
+    expect(screen.getByRole('heading',{name:'Published competition'})).toBeTruthy();
+    fireEvent.click(screen.getByRole('button',{name:'Products'}));
+    expect(screen.getByText(/1 invalid record withheld/)).toBeTruthy();
+    expect(screen.queryByText(/invalid event records/)).toBeNull();
+  });
+  it('loads only an independently configured public events endpoint', async () => {
+    const fetcher=vi.fn(async()=>({ok:true,json:async()=>snapshot()}));
+    vi.stubGlobal('fetch',fetcher);
+    render(<TcgRadar feed={{status:'unconfigured'}} now={NOW} eventsEndpoint="https://example.com/public-events"/>);
+    fireEvent.click(screen.getByRole('button',{name:'Events'}));
+    await waitFor(()=>expect(screen.getByRole('heading',{name:'Published competition'})).toBeTruthy());
+    expect(fetcher).toHaveBeenCalledTimes(1);
+    expect(fetcher.mock.calls[0][0]).toBe('https://example.com/public-events');
+  });
   it('shows a neutral loading state while a configured public feed is being requested', () => {
     render(<TcgRadar feed={{status:'loading'}}/>);
     expect(screen.getByRole('status').textContent).toMatch(/loading/i);

@@ -1,7 +1,7 @@
-import {useId} from 'react';
+import {useId, useState} from 'react';
 import {EVENTS_MAX_AGE_MS} from './contract';
 import type {PublicDomain, TcgEventsFeedResult} from './feed';
-import {getRecentWinners, getUpcomingEvents} from './presentation';
+import {filterEventRecords, getRecentWinners, getUpcomingEvents} from './presentation';
 import type {PublicProvenance} from './types';
 
 function fresh<T>(domain:PublicDomain<T>, now:number): PublicDomain<T> {
@@ -28,11 +28,30 @@ function DomainNotice({status,results=false}:{status:string;results?:boolean}) {
 
 export function EventsView({feed,now=Date.now()}:{feed:TcgEventsFeedResult;now?:number}) {
   const id=useId();
+  const [game,setGame]=useState('all');
+  const [organiser,setOrganiser]=useState('all');
+  const [region,setRegion]=useState('all');
+  const [windowDays,setWindowDays]=useState('all');
   const events=fresh(feed.events,now);
   const winners=fresh(feed.winners,now);
-  const upcoming=events.status==='ready'?getUpcomingEvents(events.items,now):[];
-  const recent=winners.status==='ready'?getRecentWinners(winners.items,now):[];
+  const records=[...(events.status==='ready'?events.items:[]),...(winners.status==='ready'?winners.items:[])];
+  const games=[...new Set(records.map(item=>item.game))].sort();
+  const organisers=[...new Map(records.map(item=>[item.organiser_id,item.organiser])).entries()].sort((a,b)=>a[1].localeCompare(b[1],'en-NZ'));
+  const regions=[...new Set(records.flatMap(item=>item.region?[item.region]:[]))].sort();
+  const filters={game,organiser,region};
+  const upcoming=events.status==='ready'?getUpcomingEvents(filterEventRecords(events.items,filters),now)
+    .filter(item=>windowDays==='all'||Date.parse(item.starts_at)<=now+Number(windowDays)*86400000):[];
+  const recent=winners.status==='ready'?getRecentWinners(filterEventRecords(winners.items,filters),now):[];
   return <div className="tcg-events">
+    {(events.status==='ready'||winners.status==='ready')&&<>
+      <div className="tcg-event-filters">
+        <label>Event game<select value={game} onChange={event=>setGame(event.target.value)}><option value="all">All games</option>{games.map(value=><option key={value}>{value}</option>)}</select></label>
+        <label>Event organiser<select value={organiser} onChange={event=>setOrganiser(event.target.value)}><option value="all">All organisers</option>{organisers.map(([value,label])=><option key={value} value={value}>{label}</option>)}</select></label>
+        {regions.length>0&&<label>Event region<select value={region} onChange={event=>setRegion(event.target.value)}><option value="all">All regions</option>{regions.map(value=><option key={value}>{value}</option>)}</select></label>}
+        <label>Upcoming window<select value={windowDays} onChange={event=>setWindowDays(event.target.value)}><option value="all">All future dates</option><option value="7">Next 7 days</option><option value="30">Next 30 days</option></select></label>
+      </div>
+      <p className="muted">Game, organiser and region filter both lists. The upcoming window applies only to future events.</p>
+    </>}
     <section className="tcg-event-section" aria-labelledby={`${id}-upcoming`}>
       <h3 id={`${id}-upcoming`}>Upcoming Events</h3>
       {events.status!=='ready'?<DomainNotice status={events.status}/>:<>

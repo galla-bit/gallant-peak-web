@@ -1,5 +1,5 @@
 // @vitest-environment jsdom
-import {cleanup, render, screen, within} from '@testing-library/react';
+import {cleanup, fireEvent, render, screen, within} from '@testing-library/react';
 import {afterEach, describe, expect, it} from 'vitest';
 import {EventsView} from './EventsView';
 import {inactiveEventsFeed} from './feed';
@@ -60,5 +60,27 @@ describe('Events and Recent Winners', () => {
     rerender(<EventsView now={NOW} feed={readyFeed(snapshot({events:[],winners:[]}))}/>);
     expect(screen.getByText('No upcoming events match these filters.')).toBeTruthy();
     expect(screen.getByText('No published recent winner is available.')).toBeTruthy();
+  });
+  it('filters explicit game, organiser, region and upcoming window with truthful no-match states', () => {
+    render(<EventsView now={NOW} feed={readyFeed(snapshot({events:[event({region:'Whanganui'}),event({id:'b',game:'One Piece',organiser_id:'b',
+      organiser:'Test Organiser B',region:'Auckland',starts_at:'2026-11-20T00:00:00Z'})]}))}/>);
+    fireEvent.change(screen.getByLabelText('Event game'),{target:{value:'One Piece'}});
+    fireEvent.change(screen.getByLabelText('Event organiser'),{target:{value:'b'}});
+    fireEvent.change(screen.getByLabelText('Event region'),{target:{value:'Auckland'}});
+    fireEvent.change(screen.getByLabelText('Upcoming window'),{target:{value:'7'}});
+    expect(screen.getByText('No upcoming events match these filters.')).toBeTruthy();
+    fireEvent.change(screen.getByLabelText('Upcoming window'),{target:{value:'30'}});
+    expect(screen.getByRole('region',{name:'Upcoming Events'}).textContent).toContain('Test Organiser B');
+    expect(screen.getByRole('region',{name:'Upcoming Events'}).textContent).not.toContain('Test Organiser A');
+  });
+  it('applies game filters before filling the three winner slots', () => {
+    const results=[1,2,3,4,5].map(day=>winner({id:`w${day}`,event_id:`e${day}`,game:day>2?'One Piece':'Pokemon',
+      winner:`Winner ${day}`,event_at:`2026-10-${20+day}T00:00:00Z`}));
+    render(<EventsView now={NOW} feed={readyFeed(snapshot({winners:results}))}/>);
+    fireEvent.change(screen.getByLabelText('Event game'),{target:{value:'Pokemon'}});
+    const region=screen.getByRole('region',{name:'Recent Winners'});
+    expect(within(region).getAllByRole('article')).toHaveLength(2);
+    expect(within(region).getByText('Winner 2')).toBeTruthy();
+    expect(within(region).getByText('Winner 1')).toBeTruthy();
   });
 });
