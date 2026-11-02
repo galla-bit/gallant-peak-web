@@ -1,0 +1,3477 @@
+{
+  "components": {
+    "responses": {
+      "SafeError": {
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/ApiError"
+            }
+          }
+        },
+        "description": "Fixed safe error category"
+      }
+    },
+    "schemas": {
+      "AccessibleStores": {
+        "additionalProperties": false,
+        "properties": {
+          "schema_version": {
+            "const": 1,
+            "type": "integer"
+          },
+          "stores": {
+            "items": {
+              "additionalProperties": false,
+              "properties": {
+                "id": {
+                  "maxLength": 128,
+                  "minLength": 1,
+                  "pattern": "^[A-Za-z0-9._:-]+$",
+                  "type": "string"
+                },
+                "name": {
+                  "maxLength": 200,
+                  "minLength": 1,
+                  "type": "string"
+                },
+                "organiser_id": {
+                  "maxLength": 128,
+                  "minLength": 1,
+                  "pattern": "^[A-Za-z0-9._:-]+$",
+                  "type": "string"
+                }
+              },
+              "required": [
+                "id",
+                "name",
+                "organiser_id"
+              ],
+              "type": "object"
+            },
+            "type": "array"
+          }
+        },
+        "required": [
+          "schema_version",
+          "stores"
+        ],
+        "type": "object"
+      },
+      "ApiError": {
+        "additionalProperties": false,
+        "properties": {
+          "error": {
+            "additionalProperties": false,
+            "properties": {
+              "code": {
+                "type": "string"
+              },
+              "request_id": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "code",
+              "request_id"
+            ],
+            "type": "object"
+          }
+        },
+        "required": [
+          "error"
+        ],
+        "type": "object"
+      },
+      "DomainPublicationState": {
+        "additionalProperties": false,
+        "properties": {
+          "domain": {
+            "enum": [
+              "retailers",
+              "events",
+              "winners",
+              "releases"
+            ],
+            "title": "Domain",
+            "type": "string"
+          },
+          "state": {
+            "enum": [
+              "queued",
+              "acknowledged",
+              "not_required",
+              "unknown"
+            ],
+            "title": "State",
+            "type": "string"
+          }
+        },
+        "required": [
+          "domain",
+          "state"
+        ],
+        "title": "DomainPublicationState",
+        "type": "object"
+      },
+      "EmptyBody": {
+        "additionalProperties": false,
+        "properties": {},
+        "title": "EmptyBody",
+        "type": "object"
+      },
+      "EventBody": {
+        "additionalProperties": false,
+        "properties": {
+          "city": {
+            "anyOf": [
+              {
+                "maxLength": 200,
+                "minLength": 1,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "City"
+          },
+          "entry_fee": {
+            "anyOf": [
+              {
+                "maxLength": 200,
+                "minLength": 1,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Entry Fee"
+          },
+          "event_url": {
+            "format": "uri",
+            "maxLength": 2048,
+            "minLength": 1,
+            "pattern": "^https://[^@?#]+$",
+            "title": "Event Url",
+            "type": "string"
+          },
+          "format": {
+            "anyOf": [
+              {
+                "maxLength": 200,
+                "minLength": 1,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Format"
+          },
+          "game": {
+            "maxLength": 200,
+            "minLength": 1,
+            "title": "Game",
+            "type": "string"
+          },
+          "name": {
+            "maxLength": 200,
+            "minLength": 1,
+            "title": "Name",
+            "type": "string"
+          },
+          "region": {
+            "anyOf": [
+              {
+                "maxLength": 200,
+                "minLength": 1,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Region"
+          },
+          "registration_status": {
+            "anyOf": [
+              {
+                "maxLength": 200,
+                "minLength": 1,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Registration Status"
+          },
+          "source_url": {
+            "format": "uri",
+            "maxLength": 2048,
+            "minLength": 1,
+            "pattern": "^https://[^@?#]+$",
+            "title": "Source Url",
+            "type": "string"
+          },
+          "starts_at": {
+            "maxLength": 200,
+            "minLength": 1,
+            "title": "Starts At",
+            "type": "string"
+          },
+          "state": {
+            "enum": [
+              "DRAFT",
+              "PUBLISHED",
+              "CANCELLED"
+            ],
+            "maxLength": 200,
+            "minLength": 1,
+            "title": "State",
+            "type": "string"
+          },
+          "timezone": {
+            "enum": [
+              "UTC",
+              "Pacific/Auckland"
+            ],
+            "maxLength": 200,
+            "minLength": 1,
+            "title": "Timezone",
+            "type": "string"
+          }
+        },
+        "required": [
+          "name",
+          "game",
+          "starts_at",
+          "timezone",
+          "event_url",
+          "source_url",
+          "state"
+        ],
+        "title": "EventBody",
+        "type": "object"
+      },
+      "EventDTO": {
+        "additionalProperties": false,
+        "properties": {
+          "fields": {
+            "additionalProperties": false,
+            "properties": {
+              "city": {
+                "anyOf": [
+                  {
+                    "maxLength": 200,
+                    "minLength": 1,
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "City"
+              },
+              "entry_fee": {
+                "anyOf": [
+                  {
+                    "maxLength": 200,
+                    "minLength": 1,
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Entry Fee"
+              },
+              "event_url": {
+                "format": "uri",
+                "maxLength": 2048,
+                "minLength": 1,
+                "pattern": "^https://[^@?#]+$",
+                "title": "Event Url",
+                "type": "string"
+              },
+              "format": {
+                "anyOf": [
+                  {
+                    "maxLength": 200,
+                    "minLength": 1,
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Format"
+              },
+              "game": {
+                "maxLength": 200,
+                "minLength": 1,
+                "title": "Game",
+                "type": "string"
+              },
+              "name": {
+                "maxLength": 200,
+                "minLength": 1,
+                "title": "Name",
+                "type": "string"
+              },
+              "region": {
+                "anyOf": [
+                  {
+                    "maxLength": 200,
+                    "minLength": 1,
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Region"
+              },
+              "registration_status": {
+                "anyOf": [
+                  {
+                    "maxLength": 200,
+                    "minLength": 1,
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Registration Status"
+              },
+              "source_url": {
+                "format": "uri",
+                "maxLength": 2048,
+                "minLength": 1,
+                "pattern": "^https://[^@?#]+$",
+                "title": "Source Url",
+                "type": "string"
+              },
+              "starts_at": {
+                "maxLength": 200,
+                "minLength": 1,
+                "title": "Starts At",
+                "type": "string"
+              },
+              "timezone": {
+                "enum": [
+                  "UTC",
+                  "Pacific/Auckland"
+                ],
+                "maxLength": 200,
+                "minLength": 1,
+                "title": "Timezone",
+                "type": "string"
+              }
+            },
+            "required": [
+              "name",
+              "game",
+              "starts_at",
+              "timezone",
+              "event_url",
+              "source_url"
+            ],
+            "type": "object"
+          },
+          "id": {
+            "maxLength": 128,
+            "minLength": 1,
+            "pattern": "^[A-Za-z0-9._:-]+$",
+            "type": "string"
+          },
+          "kind": {
+            "const": "event",
+            "type": "string"
+          },
+          "organiser_id": {
+            "maxLength": 128,
+            "minLength": 1,
+            "pattern": "^[A-Za-z0-9._:-]+$",
+            "readOnly": true,
+            "type": "string"
+          },
+          "retailer_id": {
+            "maxLength": 128,
+            "minLength": 1,
+            "pattern": "^[A-Za-z0-9._:-]+$",
+            "type": "string"
+          },
+          "revision": {
+            "minimum": 1,
+            "type": "integer"
+          },
+          "schema_version": {
+            "const": 1,
+            "type": "integer"
+          },
+          "state": {
+            "enum": [
+              "DRAFT",
+              "PUBLISHED",
+              "CANCELLED"
+            ],
+            "maxLength": 200,
+            "minLength": 1,
+            "title": "State",
+            "type": "string"
+          },
+          "updated_at": {
+            "format": "date-time",
+            "type": "string"
+          }
+        },
+        "required": [
+          "schema_version",
+          "id",
+          "retailer_id",
+          "kind",
+          "revision",
+          "state",
+          "fields",
+          "updated_at",
+          "organiser_id"
+        ],
+        "type": "object"
+      },
+      "EventList": {
+        "additionalProperties": false,
+        "properties": {
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/EventDTO"
+            },
+            "type": "array"
+          },
+          "next_after_id": {
+            "anyOf": [
+              {
+                "maxLength": 128,
+                "minLength": 1,
+                "pattern": "^[A-Za-z0-9._:-]+$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "schema_version": {
+            "const": 1,
+            "type": "integer"
+          }
+        },
+        "required": [
+          "schema_version",
+          "items",
+          "next_after_id"
+        ],
+        "type": "object"
+      },
+      "ListingBody": {
+        "additionalProperties": false,
+        "properties": {
+          "description": {
+            "maxLength": 10000,
+            "minLength": 1,
+            "title": "Description",
+            "type": "string"
+          },
+          "game": {
+            "maxLength": 200,
+            "minLength": 1,
+            "title": "Game",
+            "type": "string"
+          },
+          "name": {
+            "maxLength": 200,
+            "minLength": 1,
+            "title": "Name",
+            "type": "string"
+          },
+          "product_url": {
+            "format": "uri",
+            "maxLength": 2048,
+            "minLength": 1,
+            "pattern": "^https://[^@?#]+$",
+            "title": "Product Url",
+            "type": "string"
+          },
+          "state": {
+            "enum": [
+              "DRAFT",
+              "PUBLISHED",
+              "WITHDRAWN"
+            ],
+            "maxLength": 200,
+            "minLength": 1,
+            "title": "State",
+            "type": "string"
+          }
+        },
+        "required": [
+          "name",
+          "description",
+          "game",
+          "product_url",
+          "state"
+        ],
+        "title": "ListingBody",
+        "type": "object"
+      },
+      "ListingDTO": {
+        "additionalProperties": false,
+        "properties": {
+          "fields": {
+            "additionalProperties": false,
+            "properties": {
+              "description": {
+                "maxLength": 10000,
+                "minLength": 1,
+                "title": "Description",
+                "type": "string"
+              },
+              "game": {
+                "maxLength": 200,
+                "minLength": 1,
+                "title": "Game",
+                "type": "string"
+              },
+              "name": {
+                "maxLength": 200,
+                "minLength": 1,
+                "title": "Name",
+                "type": "string"
+              },
+              "product_url": {
+                "format": "uri",
+                "maxLength": 2048,
+                "minLength": 1,
+                "pattern": "^https://[^@?#]+$",
+                "title": "Product Url",
+                "type": "string"
+              }
+            },
+            "required": [
+              "name",
+              "description",
+              "game",
+              "product_url"
+            ],
+            "type": "object"
+          },
+          "id": {
+            "maxLength": 128,
+            "minLength": 1,
+            "pattern": "^[A-Za-z0-9._:-]+$",
+            "type": "string"
+          },
+          "kind": {
+            "const": "listing",
+            "type": "string"
+          },
+          "retailer_id": {
+            "maxLength": 128,
+            "minLength": 1,
+            "pattern": "^[A-Za-z0-9._:-]+$",
+            "type": "string"
+          },
+          "revision": {
+            "minimum": 1,
+            "type": "integer"
+          },
+          "schema_version": {
+            "const": 1,
+            "type": "integer"
+          },
+          "state": {
+            "enum": [
+              "DRAFT",
+              "PUBLISHED",
+              "WITHDRAWN"
+            ],
+            "maxLength": 200,
+            "minLength": 1,
+            "title": "State",
+            "type": "string"
+          },
+          "updated_at": {
+            "format": "date-time",
+            "type": "string"
+          }
+        },
+        "required": [
+          "schema_version",
+          "id",
+          "retailer_id",
+          "kind",
+          "revision",
+          "state",
+          "fields",
+          "updated_at"
+        ],
+        "type": "object"
+      },
+      "ListingList": {
+        "additionalProperties": false,
+        "properties": {
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/ListingDTO"
+            },
+            "type": "array"
+          },
+          "next_after_id": {
+            "anyOf": [
+              {
+                "maxLength": 128,
+                "minLength": 1,
+                "pattern": "^[A-Za-z0-9._:-]+$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "schema_version": {
+            "const": 1,
+            "type": "integer"
+          }
+        },
+        "required": [
+          "schema_version",
+          "items",
+          "next_after_id"
+        ],
+        "type": "object"
+      },
+      "LoggedOut": {
+        "additionalProperties": false,
+        "properties": {
+          "authenticated": {
+            "const": false,
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "authenticated"
+        ],
+        "type": "object"
+      },
+      "LoginRedirect": {
+        "additionalProperties": false,
+        "properties": {
+          "authorization_url": {
+            "format": "uri",
+            "type": "string"
+          }
+        },
+        "required": [
+          "authorization_url"
+        ],
+        "type": "object"
+      },
+      "NewsBody": {
+        "additionalProperties": false,
+        "properties": {
+          "body": {
+            "maxLength": 10000,
+            "minLength": 1,
+            "title": "Body",
+            "type": "string"
+          },
+          "source_url": {
+            "format": "uri",
+            "maxLength": 2048,
+            "minLength": 1,
+            "pattern": "^https://[^@?#]+$",
+            "title": "Source Url",
+            "type": "string"
+          },
+          "state": {
+            "enum": [
+              "DRAFT",
+              "PUBLISHED",
+              "WITHDRAWN"
+            ],
+            "maxLength": 200,
+            "minLength": 1,
+            "title": "State",
+            "type": "string"
+          },
+          "title": {
+            "maxLength": 200,
+            "minLength": 1,
+            "title": "Title",
+            "type": "string"
+          }
+        },
+        "required": [
+          "title",
+          "body",
+          "source_url",
+          "state"
+        ],
+        "title": "NewsBody",
+        "type": "object"
+      },
+      "NewsDTO": {
+        "additionalProperties": false,
+        "properties": {
+          "fields": {
+            "additionalProperties": false,
+            "properties": {
+              "body": {
+                "maxLength": 10000,
+                "minLength": 1,
+                "title": "Body",
+                "type": "string"
+              },
+              "source_url": {
+                "format": "uri",
+                "maxLength": 2048,
+                "minLength": 1,
+                "pattern": "^https://[^@?#]+$",
+                "title": "Source Url",
+                "type": "string"
+              },
+              "title": {
+                "maxLength": 200,
+                "minLength": 1,
+                "title": "Title",
+                "type": "string"
+              }
+            },
+            "required": [
+              "title",
+              "body",
+              "source_url"
+            ],
+            "type": "object"
+          },
+          "id": {
+            "maxLength": 128,
+            "minLength": 1,
+            "pattern": "^[A-Za-z0-9._:-]+$",
+            "type": "string"
+          },
+          "kind": {
+            "const": "news",
+            "type": "string"
+          },
+          "retailer_id": {
+            "maxLength": 128,
+            "minLength": 1,
+            "pattern": "^[A-Za-z0-9._:-]+$",
+            "type": "string"
+          },
+          "revision": {
+            "minimum": 1,
+            "type": "integer"
+          },
+          "schema_version": {
+            "const": 1,
+            "type": "integer"
+          },
+          "state": {
+            "enum": [
+              "DRAFT",
+              "PUBLISHED",
+              "WITHDRAWN"
+            ],
+            "maxLength": 200,
+            "minLength": 1,
+            "title": "State",
+            "type": "string"
+          },
+          "updated_at": {
+            "format": "date-time",
+            "type": "string"
+          }
+        },
+        "required": [
+          "schema_version",
+          "id",
+          "retailer_id",
+          "kind",
+          "revision",
+          "state",
+          "fields",
+          "updated_at"
+        ],
+        "type": "object"
+      },
+      "NewsList": {
+        "additionalProperties": false,
+        "properties": {
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/NewsDTO"
+            },
+            "type": "array"
+          },
+          "next_after_id": {
+            "anyOf": [
+              {
+                "maxLength": 128,
+                "minLength": 1,
+                "pattern": "^[A-Za-z0-9._:-]+$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "schema_version": {
+            "const": 1,
+            "type": "integer"
+          }
+        },
+        "required": [
+          "schema_version",
+          "items",
+          "next_after_id"
+        ],
+        "type": "object"
+      },
+      "ProfileBody": {
+        "additionalProperties": false,
+        "properties": {
+          "description": {
+            "maxLength": 10000,
+            "minLength": 1,
+            "title": "Description",
+            "type": "string"
+          },
+          "name": {
+            "maxLength": 200,
+            "minLength": 1,
+            "title": "Name",
+            "type": "string"
+          },
+          "source_url": {
+            "format": "uri",
+            "maxLength": 2048,
+            "minLength": 1,
+            "pattern": "^https://[^@?#]+$",
+            "title": "Source Url",
+            "type": "string"
+          },
+          "state": {
+            "enum": [
+              "DRAFT",
+              "PUBLISHED",
+              "WITHDRAWN"
+            ],
+            "maxLength": 200,
+            "minLength": 1,
+            "title": "State",
+            "type": "string"
+          }
+        },
+        "required": [
+          "name",
+          "description",
+          "source_url",
+          "state"
+        ],
+        "title": "ProfileBody",
+        "type": "object"
+      },
+      "ProfileDTO": {
+        "additionalProperties": false,
+        "properties": {
+          "fields": {
+            "additionalProperties": false,
+            "properties": {
+              "description": {
+                "maxLength": 10000,
+                "minLength": 1,
+                "title": "Description",
+                "type": "string"
+              },
+              "name": {
+                "maxLength": 200,
+                "minLength": 1,
+                "title": "Name",
+                "type": "string"
+              },
+              "source_url": {
+                "format": "uri",
+                "maxLength": 2048,
+                "minLength": 1,
+                "pattern": "^https://[^@?#]+$",
+                "title": "Source Url",
+                "type": "string"
+              }
+            },
+            "required": [
+              "name",
+              "description",
+              "source_url"
+            ],
+            "type": "object"
+          },
+          "id": {
+            "maxLength": 128,
+            "minLength": 1,
+            "pattern": "^[A-Za-z0-9._:-]+$",
+            "type": "string"
+          },
+          "kind": {
+            "const": "profile",
+            "type": "string"
+          },
+          "retailer_id": {
+            "maxLength": 128,
+            "minLength": 1,
+            "pattern": "^[A-Za-z0-9._:-]+$",
+            "type": "string"
+          },
+          "revision": {
+            "minimum": 1,
+            "type": "integer"
+          },
+          "schema_version": {
+            "const": 1,
+            "type": "integer"
+          },
+          "state": {
+            "enum": [
+              "DRAFT",
+              "PUBLISHED",
+              "WITHDRAWN"
+            ],
+            "maxLength": 200,
+            "minLength": 1,
+            "title": "State",
+            "type": "string"
+          },
+          "updated_at": {
+            "format": "date-time",
+            "type": "string"
+          }
+        },
+        "required": [
+          "schema_version",
+          "id",
+          "retailer_id",
+          "kind",
+          "revision",
+          "state",
+          "fields",
+          "updated_at"
+        ],
+        "type": "object"
+      },
+      "ProfileList": {
+        "additionalProperties": false,
+        "properties": {
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/ProfileDTO"
+            },
+            "type": "array"
+          },
+          "next_after_id": {
+            "anyOf": [
+              {
+                "maxLength": 128,
+                "minLength": 1,
+                "pattern": "^[A-Za-z0-9._:-]+$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "schema_version": {
+            "const": 1,
+            "type": "integer"
+          }
+        },
+        "required": [
+          "schema_version",
+          "items",
+          "next_after_id"
+        ],
+        "type": "object"
+      },
+      "PublicationDTO": {
+        "additionalProperties": false,
+        "properties": {
+          "domains": {
+            "items": {
+              "$ref": "#/components/schemas/DomainPublicationState"
+            },
+            "title": "Domains",
+            "type": "array"
+          },
+          "id": {
+            "title": "Id",
+            "type": "string"
+          },
+          "revision": {
+            "title": "Revision",
+            "type": "integer"
+          },
+          "schema_version": {
+            "const": 1,
+            "title": "Schema Version",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "schema_version",
+          "id",
+          "revision",
+          "domains"
+        ],
+        "title": "PublicationDTO",
+        "type": "object"
+      },
+      "ResultBody": {
+        "additionalProperties": false,
+        "properties": {
+          "deck_archetype": {
+            "anyOf": [
+              {
+                "maxLength": 200,
+                "minLength": 1,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Deck Archetype"
+          },
+          "event_at": {
+            "maxLength": 200,
+            "minLength": 1,
+            "title": "Event At",
+            "type": "string"
+          },
+          "source_url": {
+            "format": "uri",
+            "maxLength": 2048,
+            "minLength": 1,
+            "pattern": "^https://[^@?#]+$",
+            "title": "Source Url",
+            "type": "string"
+          },
+          "supersedes_revision": {
+            "anyOf": [
+              {
+                "minimum": 1,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Supersedes Revision"
+          },
+          "winner": {
+            "maxLength": 200,
+            "minLength": 1,
+            "title": "Winner",
+            "type": "string"
+          }
+        },
+        "required": [
+          "event_at",
+          "winner",
+          "source_url"
+        ],
+        "title": "ResultBody",
+        "type": "object"
+      },
+      "ResultDTO": {
+        "additionalProperties": false,
+        "properties": {
+          "event_id": {
+            "maxLength": 128,
+            "minLength": 1,
+            "pattern": "^[A-Za-z0-9._:-]+$",
+            "readOnly": true,
+            "type": "string"
+          },
+          "fields": {
+            "additionalProperties": false,
+            "properties": {
+              "deck_archetype": {
+                "anyOf": [
+                  {
+                    "maxLength": 200,
+                    "minLength": 1,
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Deck Archetype"
+              },
+              "event_at": {
+                "maxLength": 200,
+                "minLength": 1,
+                "title": "Event At",
+                "type": "string"
+              },
+              "source_url": {
+                "format": "uri",
+                "maxLength": 2048,
+                "minLength": 1,
+                "pattern": "^https://[^@?#]+$",
+                "title": "Source Url",
+                "type": "string"
+              },
+              "winner": {
+                "maxLength": 200,
+                "minLength": 1,
+                "title": "Winner",
+                "type": "string"
+              }
+            },
+            "required": [
+              "event_at",
+              "winner",
+              "source_url"
+            ],
+            "type": "object"
+          },
+          "id": {
+            "maxLength": 128,
+            "minLength": 1,
+            "pattern": "^[A-Za-z0-9._:-]+$",
+            "type": "string"
+          },
+          "kind": {
+            "const": "result",
+            "type": "string"
+          },
+          "organiser_id": {
+            "maxLength": 128,
+            "minLength": 1,
+            "pattern": "^[A-Za-z0-9._:-]+$",
+            "readOnly": true,
+            "type": "string"
+          },
+          "retailer_id": {
+            "maxLength": 128,
+            "minLength": 1,
+            "pattern": "^[A-Za-z0-9._:-]+$",
+            "type": "string"
+          },
+          "revision": {
+            "minimum": 1,
+            "type": "integer"
+          },
+          "schema_version": {
+            "const": 1,
+            "type": "integer"
+          },
+          "state": {
+            "const": "PUBLISHED",
+            "type": "string"
+          },
+          "updated_at": {
+            "format": "date-time",
+            "type": "string"
+          }
+        },
+        "required": [
+          "schema_version",
+          "id",
+          "retailer_id",
+          "kind",
+          "revision",
+          "state",
+          "fields",
+          "updated_at",
+          "organiser_id",
+          "event_id"
+        ],
+        "type": "object"
+      },
+      "ResultList": {
+        "additionalProperties": false,
+        "properties": {
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/ResultDTO"
+            },
+            "type": "array"
+          },
+          "next_after_id": {
+            "anyOf": [
+              {
+                "maxLength": 128,
+                "minLength": 1,
+                "pattern": "^[A-Za-z0-9._:-]+$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "schema_version": {
+            "const": 1,
+            "type": "integer"
+          }
+        },
+        "required": [
+          "schema_version",
+          "items",
+          "next_after_id"
+        ],
+        "type": "object"
+      },
+      "SavedReceipt": {
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "maxLength": 128,
+            "minLength": 1,
+            "pattern": "^[A-Za-z0-9._:-]+$",
+            "type": "string"
+          },
+          "publication_status": {
+            "enum": [
+              "queued",
+              "not_required"
+            ],
+            "type": "string"
+          },
+          "revision": {
+            "minimum": 1,
+            "type": "integer"
+          },
+          "schema_version": {
+            "const": 1,
+            "type": "integer"
+          }
+        },
+        "required": [
+          "schema_version",
+          "id",
+          "revision",
+          "publication_status"
+        ],
+        "type": "object"
+      },
+      "SessionDTO": {
+        "additionalProperties": false,
+        "properties": {
+          "authenticated": {
+            "type": "boolean"
+          },
+          "csrf_token": {
+            "minLength": 43,
+            "type": "string"
+          },
+          "expires_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "required": [
+          "authenticated",
+          "csrf_token",
+          "expires_at"
+        ],
+        "type": "object"
+      }
+    },
+    "securitySchemes": {
+      "RetailerSession": {
+        "description": "Opaque server session; current account/store membership/capabilities are checked server-side. No bearer fallback.",
+        "in": "cookie",
+        "name": "__Host-gp_retailer",
+        "type": "apiKey"
+      }
+    }
+  },
+  "info": {
+    "description": "Synthetic qualification only. No real identity provider, retailer, frontend connection or production serving is configured.",
+    "title": "Gallant Peak private retailer API",
+    "version": "1.0.0"
+  },
+  "openapi": "3.1.0",
+  "paths": {
+    "/api/retailer/v1/me/stores": {
+      "get": {
+        "operationId": "stores_api_retailer_v1_me_stores_get",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AccessibleStores"
+                }
+              }
+            },
+            "description": "Success"
+          },
+          "400": {
+            "$ref": "#/components/responses/SafeError"
+          },
+          "401": {
+            "$ref": "#/components/responses/SafeError"
+          },
+          "403": {
+            "$ref": "#/components/responses/SafeError"
+          },
+          "404": {
+            "$ref": "#/components/responses/SafeError"
+          },
+          "409": {
+            "$ref": "#/components/responses/SafeError"
+          },
+          "412": {
+            "$ref": "#/components/responses/SafeError"
+          },
+          "413": {
+            "$ref": "#/components/responses/SafeError"
+          },
+          "415": {
+            "$ref": "#/components/responses/SafeError"
+          },
+          "422": {
+            "$ref": "#/components/responses/SafeError"
+          },
+          "428": {
+            "$ref": "#/components/responses/SafeError"
+          },
+          "429": {
+            "$ref": "#/components/responses/SafeError"
+          },
+          "503": {
+            "$ref": "#/components/responses/SafeError"
+          }
+        },
+        "security": [
+          {
+            "RetailerSession": []
+          }
+        ],
+        "summary": "Stores"
+      }
+    },
+    "/api/retailer/v1/stores/{store_id}/events": {
+      "get": {
+        "operationId": "events_api_retailer_v1_stores__store_id__events_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "store_id",
+            "required": true,
+            "schema": {
+              "maxLength": 128,
+              "minLength": 1,
+              "pattern": "^[A-Za-z0-9._:-]+$",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "limit",
+            "schema": {
+              "default": 50,
+              "maximum": 100,
+              "minimum": 1,
+              "type": "integer"
+            }
+          },
+          {
+            "in": "query",
+            "name": "after_id",
+            "schema": {
+              "maxLength": 128,
+              "minLength": 1,
+              "pattern": "^[A-Za-z0-9._:-]+$",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EventList"
+                }
+              }
+            },
+            "description": "Success"
+          },
+          "400": {
+            "$ref": "#/components/responses/SafeError"
+          },
+          "401": {
+            "$ref": "#/components/responses/SafeError"
+          },
+          "403": {
+            "$ref": "#/components/responses/SafeError"
+          },
+          "404": {
+            "$ref": "#/components/responses/SafeError"
+          },
+          "409": {
+            "$ref": "#/components/responses/SafeError"
+          },
+          "412": {
+            "$ref": "#/components/responses/SafeError"
+          },
+          "413": {
+            "$ref": "#/components/responses/SafeError"
+          },
+          "415": {
+            "$ref": "#/components/responses/SafeError"
+          },
+          "422": {
+            "$ref": "#/components/responses/SafeError"
+          },
+          "428": {
+            "$ref": "#/components/responses/SafeError"
+          },
+          "429": {
+            "$ref": "#/components/responses/SafeError"
+          },
+          "503": {
+            "$ref": "#/components/responses/SafeError"
+          }
+        },
+        "security": [
+          {
+            "RetailerSession": []
+          }
+        ],
+        "summary": "Events"
+      },
+      "post": {
+        "operationId": "create_api_retailer_v1_stores__store_id__events_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "store_id",
+            "required": true,
+            "schema": {
+              "maxLength": 128,
+              "minLength": 1,
+              "pattern": "^[A-Za-z0-9._:-]+$",
+              "type": "string"
+            }
+          },
+          {
+            "description": "Per-account command key; matching retries require current permission.",
+            "in": "header",
+            "name": "Idempotency-Key",
+            "required": true,
+            "schema": {
+              "maxLength": 128,
+              "minLength": 1,
+              "pattern": "^[A-Za-z0-9._:-]+$",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "Origin",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "X-CSRF-Token",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/EventBody"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SavedReceipt"
+                }
+              }
+            },
+            "description": "Saved/acknowledged state never asserts public visibility"
+          },
+          "400": {
+            "$ref": "#/components/responses/SafeError"
+          },
+          "401": {
+            "$ref": "#/components/responses/SafeError"
+          },
+          "403": {
+            "$ref": "#/components/responses/SafeError"
+          },
+          "404": {
+            "$ref": "#/components/responses/SafeError"
+          },
+          "409": {
+            "$ref": "#/components/responses/SafeError"
+          },
+          "412": {
+            "$ref": "#/components/responses/SafeError"
+          },
+          "413": {
+            "$ref": "#/components/responses/SafeError"
+          },
+          "415": {
+            "$ref": "#/components/responses/SafeError"
+          },
+          "422": {
+            "$ref": "#/components/responses/SafeError"
+          },
+          "428": {
+            "$ref": "#/components/responses/SafeError"
+          },
+          "429": {
+            "$ref": "#/components/responses/SafeError"
+          },
+          "503": {
+            "$ref": "#/components/responses/SafeError"
+          }
+        },
+        "security": [
+          {
+            "RetailerSession": []
+          }
+        ],
+        "summary": "Create"
+      }
+    },
+    "/api/retailer/v1/stores/{store_id}/events/{event_id}": {
+      "get": {
+        "operationId": "event_api_retailer_v1_stores__store_id__events__event_id__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "store_id",
+            "required": true,
+            "schema": {
+              "maxLength": 128,
+              "minLength": 1,
+              "pattern": "^[A-Za-z0-9._:-]+$",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "event_id",
+            "required": true,
+            "schema": {
+              "maxLength": 128,
+              "minLength": 1,
+              "pattern": "^[A-Za-z0-9._:-]+$",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EventDTO"
+                }
+              }
+            },
+            "description": "Success"
+          },
+          "400": {
+            "$ref": "#/components/responses/SafeError"
+          },
+          "401": {
+            "$ref": "#/components/responses/SafeError"
+          },
+          "403": {
+            "$ref": "#/components/responses/SafeError"
+          },
+          "404": {
+            "$ref": "#/components/responses/SafeError"
+          },
+          "409": {
+            "$ref": "#/components/responses/SafeError"
+          },
+          "412": {
+            "$ref": "#/components/responses/SafeError"
+          },
+          "413": {
+            "$ref": "#/components/responses/SafeError"
+          },
+          "415": {
+            "$ref": "#/components/responses/SafeError"
+          },
+          "422": {
+            "$ref": "#/components/responses/SafeError"
+          },
+          "428": {
+            "$ref": "#/components/responses/SafeError"
+          },
+          "429": {
+            "$ref": "#/components/responses/SafeError"
+          },
+          "503": {
+            "$ref": "#/components/responses/SafeError"
+          }
+        },
+        "security": [
+          {
+            "RetailerSession": []
+          }
+        ],
+        "summary": "Event"
+      },
+      "put": {
+        "operationId": "update_api_retailer_v1_stores__store_id__events__event_id__put",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "store_id",
+            "required": true,
+            "schema": {
+              "maxLength": 128,
+              "minLength": 1,
+              "pattern": "^[A-Za-z0-9._:-]+$",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "event_id",
+            "required": true,
+            "schema": {
+              "maxLength": 128,
+              "minLength": 1,
+              "pattern": "^[A-Za-z0-9._:-]+$",
+              "type": "string"
+            }
+          },
+          {
+            "description": "Per-account command key; matching retries require current permission.",
+            "in": "header",
+            "name": "Idempotency-Key",
+            "required": true,
+            "schema": {
+              "maxLength": 128,
+              "minLength": 1,
+              "pattern": "^[A-Za-z0-9._:-]+$",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "If-Match",
+            "required": true,
+            "schema": {
+              "pattern": "^\"r[1-9][0-9]*\"$",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "Origin",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "X-CSRF-Token",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/EventBody"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SavedReceipt"
+                }
+              }
+            },
+            "description": "Saved/acknowledged state never asserts public visibility"
+          },
+          "400": {
+            "$ref": "#/components/responses/SafeError"
+          },
+          "401": {
+            "$ref": "#/components/responses/SafeError"
+          },
+          "403": {
+            "$ref": "#/components/responses/SafeError"
+          },
+          "404": {
+            "$ref": "#/components/responses/SafeError"
+          },
+          "409": {
+            "$ref": "#/components/responses/SafeError"
+          },
+          "412": {
+            "$ref": "#/components/responses/SafeError"
+          },
+          "413": {
+            "$ref": "#/components/responses/SafeError"
+          },
+          "415": {
+            "$ref": "#/components/responses/SafeError"
+          },
+          "422": {
+            "$ref": "#/components/responses/SafeError"
+          },
+          "428": {
+            "$ref": "#/components/responses/SafeError"
+          },
+          "429": {
+            "$ref": "#/components/responses/SafeError"
+          },
+          "503": {
+            "$ref": "#/components/responses/SafeError"
+          }
+        },
+        "security": [
+          {
+            "RetailerSession": []
+          }
+        ],
+        "summary": "Update"
+      }
+    },
+    "/api/retailer/v1/stores/{store_id}/events/{event_id}/result": {
+      "get": {
+        "operationId": "result_api_retailer_v1_stores__store_id__events__event_id__result_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "store_id",
+            "required": true,
+            "schema": {
+              "maxLength": 128,
+              "minLength": 1,
+              "pattern": "^[A-Za-z0-9._:-]+$",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "event_id",
+            "required": true,
+            "schema": {
+              "maxLength": 128,
+              "minLength": 1,
+              "pattern": "^[A-Za-z0-9._:-]+$",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ResultDTO"
+                }
+              }
+            },
+            "description": "Success"
+          },
+          "400": {
+            "$ref": "#/components/responses/SafeError"
+          },
+          "401": {
+            "$ref": "#/components/responses/SafeError"
+          },
+          "403": {
+            "$ref": "#/components/responses/SafeError"
+          },
+          "404": {
+            "$ref": "#/components/responses/SafeError"
+          },
+          "409": {
+            "$ref": "#/components/responses/SafeError"
+          },
+          "412": {
+            "$ref": "#/components/responses/SafeError"
+          },
+          "413": {
+            "$ref": "#/components/responses/SafeError"
+          },
+          "415": {
+            "$ref": "#/components/responses/SafeError"
+          },
+          "422": {
+            "$ref": "#/components/responses/SafeError"
+          },
+          "428": {
+            "$ref": "#/components/responses/SafeError"
+          },
+          "429": {
+            "$ref": "#/components/responses/SafeError"
+          },
+          "503": {
+            "$ref": "#/components/responses/SafeError"
+          }
+        },
+        "security": [
+          {
+            "RetailerSession": []
+          }
+        ],
+        "summary": "Result"
+      },
+      "put": {
+        "operationId": "publish_result_api_retailer_v1_stores__store_id__events__event_id__result_put",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "store_id",
+            "required": true,
+            "schema": {
+              "maxLength": 128,
+              "minLength": 1,
+              "pattern": "^[A-Za-z0-9._:-]+$",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "event_id",
+            "required": true,
+            "schema": {
+              "maxLength": 128,
+              "minLength": 1,
+              "pattern": "^[A-Za-z0-9._:-]+$",
+              "type": "string"
+            }
+          },
+          {
+            "description": "Per-account command key; matching retries require current permission.",
+            "in": "header",
+            "name": "Idempotency-Key",
+            "required": true,
+            "schema": {
+              "maxLength": 128,
+              "minLength": 1,
+              "pattern": "^[A-Za-z0-9._:-]+$",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "If-Match",
+            "required": false,
+            "schema": {
+              "pattern": "^\"r[1-9][0-9]*\"$",
+              "type": "string"
+            }
+          },
+          {
+            "description": "Use * to create; otherwise If-Match is required. Never send both.",
+            "in": "header",
+            "name": "If-None-Match",
+            "required": false,
+            "schema": {
+              "const": "*"
+            }
+          },
+          {
+            "in": "header",
+            "name": "Origin",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "X-CSRF-Token",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ResultBody"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SavedReceipt"
+                }
+              }
+            },
+            "description": "Saved/acknowledged state never asserts public visibility"
+          },
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SavedReceipt"
+                }
+              }
+            },
+            "description": "Saved/acknowledged state never asserts public visibility"
+          },
+          "400": {
+            "$ref": "#/components/responses/SafeError"
+          },
+          "401": {
+            "$ref": "#/components/responses/SafeError"
+          },
+          "403": {
+            "$ref": "#/components/responses/SafeError"
+          },
+          "404": {
+            "$ref": "#/components/responses/SafeError"
+          },
+          "409": {
+            "$ref": "#/components/responses/SafeError"
+          },
+          "412": {
+            "$ref": "#/components/responses/SafeError"
+          },
+          "413": {
+            "$ref": "#/components/responses/SafeError"
+          },
+          "415": {
+            "$ref": "#/components/responses/SafeError"
+          },
+          "422": {
+            "$ref": "#/components/responses/SafeError"
+          },
+          "428": {
+            "$ref": "#/components/responses/SafeError"
+          },
+          "429": {
+            "$ref": "#/components/responses/SafeError"
+          },
+          "503": {
+            "$ref": "#/components/responses/SafeError"
+          }
+        },
+        "security": [
+          {
+            "RetailerSession": []
+          }
+        ],
+        "summary": "Publish Result"
+      }
+    },
+    "/api/retailer/v1/stores/{store_id}/listings": {
+      "get": {
+        "operationId": "listing_api_retailer_v1_stores__store_id__listings_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "store_id",
+            "required": true,
+            "schema": {
+              "maxLength": 128,
+              "minLength": 1,
+              "pattern": "^[A-Za-z0-9._:-]+$",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "limit",
+            "schema": {
+              "default": 50,
+              "maximum": 100,
+              "minimum": 1,
+              "type": "integer"
+            }
+          },
+          {
+            "in": "query",
+            "name": "after_id",
+            "schema": {
+              "maxLength": 128,
+              "minLength": 1,
+              "pattern": "^[A-Za-z0-9._:-]+$",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ListingList"
+                }
+              }
+            },
+            "description": "Success"
+          },
+          "400": {
+            "$ref": "#/components/responses/SafeError"
+          },
+          "401": {
+            "$ref": "#/components/responses/SafeError"
+          },
+          "403": {
+            "$ref": "#/components/responses/SafeError"
+          },
+          "404": {
+            "$ref": "#/components/responses/SafeError"
+          },
+          "409": {
+            "$ref": "#/components/responses/SafeError"
+          },
+          "412": {
+            "$ref": "#/components/responses/SafeError"
+          },
+          "413": {
+            "$ref": "#/components/responses/SafeError"
+          },
+          "415": {
+            "$ref": "#/components/responses/SafeError"
+          },
+          "422": {
+            "$ref": "#/components/responses/SafeError"
+          },
+          "428": {
+            "$ref": "#/components/responses/SafeError"
+          },
+          "429": {
+            "$ref": "#/components/responses/SafeError"
+          },
+          "503": {
+            "$ref": "#/components/responses/SafeError"
+          }
+        },
+        "security": [
+          {
+            "RetailerSession": []
+          }
+        ],
+        "summary": "Listing"
+      },
+      "post": {
+        "operationId": "create_api_retailer_v1_stores__store_id__listings_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "store_id",
+            "required": true,
+            "schema": {
+              "maxLength": 128,
+              "minLength": 1,
+              "pattern": "^[A-Za-z0-9._:-]+$",
+              "type": "string"
+            }
+          },
+          {
+            "description": "Per-account command key; matching retries require current permission.",
+            "in": "header",
+            "name": "Idempotency-Key",
+            "required": true,
+            "schema": {
+              "maxLength": 128,
+              "minLength": 1,
+              "pattern": "^[A-Za-z0-9._:-]+$",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "Origin",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "X-CSRF-Token",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ListingBody"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SavedReceipt"
+                }
+              }
+            },
+            "description": "Saved/acknowledged state never asserts public visibility"
+          },
+          "400": {
+            "$ref": "#/components/responses/SafeError"
+          },
+          "401": {
+            "$ref": "#/components/responses/SafeError"
+          },
+          "403": {
+            "$ref": "#/components/responses/SafeError"
+          },
+          "404": {
+            "$ref": "#/components/responses/SafeError"
+          },
+          "409": {
+            "$ref": "#/components/responses/SafeError"
+          },
+          "412": {
+            "$ref": "#/components/responses/SafeError"
+          },
+          "413": {
+            "$ref": "#/components/responses/SafeError"
+          },
+          "415": {
+            "$ref": "#/components/responses/SafeError"
+          },
+          "422": {
+            "$ref": "#/components/responses/SafeError"
+          },
+          "428": {
+            "$ref": "#/components/responses/SafeError"
+          },
+          "429": {
+            "$ref": "#/components/responses/SafeError"
+          },
+          "503": {
+            "$ref": "#/components/responses/SafeError"
+          }
+        },
+        "security": [
+          {
+            "RetailerSession": []
+          }
+        ],
+        "summary": "Create"
+      }
+    },
+    "/api/retailer/v1/stores/{store_id}/listings/{entity_id}": {
+      "get": {
+        "operationId": "detail_api_retailer_v1_stores__store_id__listings__entity_id__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "store_id",
+            "required": true,
+            "schema": {
+              "maxLength": 128,
+              "minLength": 1,
+              "pattern": "^[A-Za-z0-9._:-]+$",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "entity_id",
+            "required": true,
+            "schema": {
+              "maxLength": 128,
+              "minLength": 1,
+              "pattern": "^[A-Za-z0-9._:-]+$",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ListingDTO"
+                }
+              }
+            },
+            "description": "Success"
+          },
+          "400": {
+            "$ref": "#/components/responses/SafeError"
+          },
+          "401": {
+            "$ref": "#/components/responses/SafeError"
+          },
+          "403": {
+            "$ref": "#/components/responses/SafeError"
+          },
+          "404": {
+            "$ref": "#/components/responses/SafeError"
+          },
+          "409": {
+            "$ref": "#/components/responses/SafeError"
+          },
+          "412": {
+            "$ref": "#/components/responses/SafeError"
+          },
+          "413": {
+            "$ref": "#/components/responses/SafeError"
+          },
+          "415": {
+            "$ref": "#/components/responses/SafeError"
+          },
+          "422": {
+            "$ref": "#/components/responses/SafeError"
+          },
+          "428": {
+            "$ref": "#/components/responses/SafeError"
+          },
+          "429": {
+            "$ref": "#/components/responses/SafeError"
+          },
+          "503": {
+            "$ref": "#/components/responses/SafeError"
+          }
+        },
+        "security": [
+          {
+            "RetailerSession": []
+          }
+        ],
+        "summary": "Detail"
+      },
+      "put": {
+        "operationId": "update_api_retailer_v1_stores__store_id__listings__entity_id__put",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "store_id",
+            "required": true,
+            "schema": {
+              "maxLength": 128,
+              "minLength": 1,
+              "pattern": "^[A-Za-z0-9._:-]+$",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "entity_id",
+            "required": true,
+            "schema": {
+              "maxLength": 128,
+              "minLength": 1,
+              "pattern": "^[A-Za-z0-9._:-]+$",
+              "type": "string"
+            }
+          },
+          {
+            "description": "Per-account command key; matching retries require current permission.",
+            "in": "header",
+            "name": "Idempotency-Key",
+            "required": true,
+            "schema": {
+              "maxLength": 128,
+              "minLength": 1,
+              "pattern": "^[A-Za-z0-9._:-]+$",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "If-Match",
+            "required": true,
+            "schema": {
+              "pattern": "^\"r[1-9][0-9]*\"$",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "Origin",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "X-CSRF-Token",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ListingBody"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SavedReceipt"
+                }
+              }
+            },
+            "description": "Saved/acknowledged state never asserts public visibility"
+          },
+          "400": {
+            "$ref": "#/components/responses/SafeError"
+          },
+          "401": {
+            "$ref": "#/components/responses/SafeError"
+          },
+          "403": {
+            "$ref": "#/components/responses/SafeError"
+          },
+          "404": {
+            "$ref": "#/components/responses/SafeError"
+          },
+          "409": {
+            "$ref": "#/components/responses/SafeError"
+          },
+          "412": {
+            "$ref": "#/components/responses/SafeError"
+          },
+          "413": {
+            "$ref": "#/components/responses/SafeError"
+          },
+          "415": {
+            "$ref": "#/components/responses/SafeError"
+          },
+          "422": {
+            "$ref": "#/components/responses/SafeError"
+          },
+          "428": {
+            "$ref": "#/components/responses/SafeError"
+          },
+          "429": {
+            "$ref": "#/components/responses/SafeError"
+          },
+          "503": {
+            "$ref": "#/components/responses/SafeError"
+          }
+        },
+        "security": [
+          {
+            "RetailerSession": []
+          }
+        ],
+        "summary": "Update"
+      }
+    },
+    "/api/retailer/v1/stores/{store_id}/news": {
+      "get": {
+        "operationId": "listing_api_retailer_v1_stores__store_id__news_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "store_id",
+            "required": true,
+            "schema": {
+              "maxLength": 128,
+              "minLength": 1,
+              "pattern": "^[A-Za-z0-9._:-]+$",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "limit",
+            "schema": {
+              "default": 50,
+              "maximum": 100,
+              "minimum": 1,
+              "type": "integer"
+            }
+          },
+          {
+            "in": "query",
+            "name": "after_id",
+            "schema": {
+              "maxLength": 128,
+              "minLength": 1,
+              "pattern": "^[A-Za-z0-9._:-]+$",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NewsList"
+                }
+              }
+            },
+            "description": "Success"
+          },
+          "400": {
+            "$ref": "#/components/responses/SafeError"
+          },
+          "401": {
+            "$ref": "#/components/responses/SafeError"
+          },
+          "403": {
+            "$ref": "#/components/responses/SafeError"
+          },
+          "404": {
+            "$ref": "#/components/responses/SafeError"
+          },
+          "409": {
+            "$ref": "#/components/responses/SafeError"
+          },
+          "412": {
+            "$ref": "#/components/responses/SafeError"
+          },
+          "413": {
+            "$ref": "#/components/responses/SafeError"
+          },
+          "415": {
+            "$ref": "#/components/responses/SafeError"
+          },
+          "422": {
+            "$ref": "#/components/responses/SafeError"
+          },
+          "428": {
+            "$ref": "#/components/responses/SafeError"
+          },
+          "429": {
+            "$ref": "#/components/responses/SafeError"
+          },
+          "503": {
+            "$ref": "#/components/responses/SafeError"
+          }
+        },
+        "security": [
+          {
+            "RetailerSession": []
+          }
+        ],
+        "summary": "Listing"
+      },
+      "post": {
+        "operationId": "create_api_retailer_v1_stores__store_id__news_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "store_id",
+            "required": true,
+            "schema": {
+              "maxLength": 128,
+              "minLength": 1,
+              "pattern": "^[A-Za-z0-9._:-]+$",
+              "type": "string"
+            }
+          },
+          {
+            "description": "Per-account command key; matching retries require current permission.",
+            "in": "header",
+            "name": "Idempotency-Key",
+            "required": true,
+            "schema": {
+              "maxLength": 128,
+              "minLength": 1,
+              "pattern": "^[A-Za-z0-9._:-]+$",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "Origin",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "X-CSRF-Token",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/NewsBody"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SavedReceipt"
+                }
+              }
+            },
+            "description": "Saved/acknowledged state never asserts public visibility"
+          },
+          "400": {
+            "$ref": "#/components/responses/SafeError"
+          },
+          "401": {
+            "$ref": "#/components/responses/SafeError"
+          },
+          "403": {
+            "$ref": "#/components/responses/SafeError"
+          },
+          "404": {
+            "$ref": "#/components/responses/SafeError"
+          },
+          "409": {
+            "$ref": "#/components/responses/SafeError"
+          },
+          "412": {
+            "$ref": "#/components/responses/SafeError"
+          },
+          "413": {
+            "$ref": "#/components/responses/SafeError"
+          },
+          "415": {
+            "$ref": "#/components/responses/SafeError"
+          },
+          "422": {
+            "$ref": "#/components/responses/SafeError"
+          },
+          "428": {
+            "$ref": "#/components/responses/SafeError"
+          },
+          "429": {
+            "$ref": "#/components/responses/SafeError"
+          },
+          "503": {
+            "$ref": "#/components/responses/SafeError"
+          }
+        },
+        "security": [
+          {
+            "RetailerSession": []
+          }
+        ],
+        "summary": "Create"
+      }
+    },
+    "/api/retailer/v1/stores/{store_id}/news/{entity_id}": {
+      "get": {
+        "operationId": "detail_api_retailer_v1_stores__store_id__news__entity_id__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "store_id",
+            "required": true,
+            "schema": {
+              "maxLength": 128,
+              "minLength": 1,
+              "pattern": "^[A-Za-z0-9._:-]+$",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "entity_id",
+            "required": true,
+            "schema": {
+              "maxLength": 128,
+              "minLength": 1,
+              "pattern": "^[A-Za-z0-9._:-]+$",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NewsDTO"
+                }
+              }
+            },
+            "description": "Success"
+          },
+          "400": {
+            "$ref": "#/components/responses/SafeError"
+          },
+          "401": {
+            "$ref": "#/components/responses/SafeError"
+          },
+          "403": {
+            "$ref": "#/components/responses/SafeError"
+          },
+          "404": {
+            "$ref": "#/components/responses/SafeError"
+          },
+          "409": {
+            "$ref": "#/components/responses/SafeError"
+          },
+          "412": {
+            "$ref": "#/components/responses/SafeError"
+          },
+          "413": {
+            "$ref": "#/components/responses/SafeError"
+          },
+          "415": {
+            "$ref": "#/components/responses/SafeError"
+          },
+          "422": {
+            "$ref": "#/components/responses/SafeError"
+          },
+          "428": {
+            "$ref": "#/components/responses/SafeError"
+          },
+          "429": {
+            "$ref": "#/components/responses/SafeError"
+          },
+          "503": {
+            "$ref": "#/components/responses/SafeError"
+          }
+        },
+        "security": [
+          {
+            "RetailerSession": []
+          }
+        ],
+        "summary": "Detail"
+      },
+      "put": {
+        "operationId": "update_api_retailer_v1_stores__store_id__news__entity_id__put",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "store_id",
+            "required": true,
+            "schema": {
+              "maxLength": 128,
+              "minLength": 1,
+              "pattern": "^[A-Za-z0-9._:-]+$",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "entity_id",
+            "required": true,
+            "schema": {
+              "maxLength": 128,
+              "minLength": 1,
+              "pattern": "^[A-Za-z0-9._:-]+$",
+              "type": "string"
+            }
+          },
+          {
+            "description": "Per-account command key; matching retries require current permission.",
+            "in": "header",
+            "name": "Idempotency-Key",
+            "required": true,
+            "schema": {
+              "maxLength": 128,
+              "minLength": 1,
+              "pattern": "^[A-Za-z0-9._:-]+$",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "If-Match",
+            "required": true,
+            "schema": {
+              "pattern": "^\"r[1-9][0-9]*\"$",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "Origin",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "X-CSRF-Token",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/NewsBody"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SavedReceipt"
+                }
+              }
+            },
+            "description": "Saved/acknowledged state never asserts public visibility"
+          },
+          "400": {
+            "$ref": "#/components/responses/SafeError"
+          },
+          "401": {
+            "$ref": "#/components/responses/SafeError"
+          },
+          "403": {
+            "$ref": "#/components/responses/SafeError"
+          },
+          "404": {
+            "$ref": "#/components/responses/SafeError"
+          },
+          "409": {
+            "$ref": "#/components/responses/SafeError"
+          },
+          "412": {
+            "$ref": "#/components/responses/SafeError"
+          },
+          "413": {
+            "$ref": "#/components/responses/SafeError"
+          },
+          "415": {
+            "$ref": "#/components/responses/SafeError"
+          },
+          "422": {
+            "$ref": "#/components/responses/SafeError"
+          },
+          "428": {
+            "$ref": "#/components/responses/SafeError"
+          },
+          "429": {
+            "$ref": "#/components/responses/SafeError"
+          },
+          "503": {
+            "$ref": "#/components/responses/SafeError"
+          }
+        },
+        "security": [
+          {
+            "RetailerSession": []
+          }
+        ],
+        "summary": "Update"
+      }
+    },
+    "/api/retailer/v1/stores/{store_id}/profile": {
+      "get": {
+        "operationId": "profile_api_retailer_v1_stores__store_id__profile_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "store_id",
+            "required": true,
+            "schema": {
+              "maxLength": 128,
+              "minLength": 1,
+              "pattern": "^[A-Za-z0-9._:-]+$",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProfileDTO"
+                }
+              }
+            },
+            "description": "Success"
+          },
+          "400": {
+            "$ref": "#/components/responses/SafeError"
+          },
+          "401": {
+            "$ref": "#/components/responses/SafeError"
+          },
+          "403": {
+            "$ref": "#/components/responses/SafeError"
+          },
+          "404": {
+            "$ref": "#/components/responses/SafeError"
+          },
+          "409": {
+            "$ref": "#/components/responses/SafeError"
+          },
+          "412": {
+            "$ref": "#/components/responses/SafeError"
+          },
+          "413": {
+            "$ref": "#/components/responses/SafeError"
+          },
+          "415": {
+            "$ref": "#/components/responses/SafeError"
+          },
+          "422": {
+            "$ref": "#/components/responses/SafeError"
+          },
+          "428": {
+            "$ref": "#/components/responses/SafeError"
+          },
+          "429": {
+            "$ref": "#/components/responses/SafeError"
+          },
+          "503": {
+            "$ref": "#/components/responses/SafeError"
+          }
+        },
+        "security": [
+          {
+            "RetailerSession": []
+          }
+        ],
+        "summary": "Profile"
+      },
+      "put": {
+        "operationId": "save_profile_api_retailer_v1_stores__store_id__profile_put",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "store_id",
+            "required": true,
+            "schema": {
+              "maxLength": 128,
+              "minLength": 1,
+              "pattern": "^[A-Za-z0-9._:-]+$",
+              "type": "string"
+            }
+          },
+          {
+            "description": "Per-account command key; matching retries require current permission.",
+            "in": "header",
+            "name": "Idempotency-Key",
+            "required": true,
+            "schema": {
+              "maxLength": 128,
+              "minLength": 1,
+              "pattern": "^[A-Za-z0-9._:-]+$",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "If-Match",
+            "required": false,
+            "schema": {
+              "pattern": "^\"r[1-9][0-9]*\"$",
+              "type": "string"
+            }
+          },
+          {
+            "description": "Use * to create; otherwise If-Match is required. Never send both.",
+            "in": "header",
+            "name": "If-None-Match",
+            "required": false,
+            "schema": {
+              "const": "*"
+            }
+          },
+          {
+            "in": "header",
+            "name": "Origin",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "X-CSRF-Token",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ProfileBody"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SavedReceipt"
+                }
+              }
+            },
+            "description": "Saved/acknowledged state never asserts public visibility"
+          },
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SavedReceipt"
+                }
+              }
+            },
+            "description": "Saved/acknowledged state never asserts public visibility"
+          },
+          "400": {
+            "$ref": "#/components/responses/SafeError"
+          },
+          "401": {
+            "$ref": "#/components/responses/SafeError"
+          },
+          "403": {
+            "$ref": "#/components/responses/SafeError"
+          },
+          "404": {
+            "$ref": "#/components/responses/SafeError"
+          },
+          "409": {
+            "$ref": "#/components/responses/SafeError"
+          },
+          "412": {
+            "$ref": "#/components/responses/SafeError"
+          },
+          "413": {
+            "$ref": "#/components/responses/SafeError"
+          },
+          "415": {
+            "$ref": "#/components/responses/SafeError"
+          },
+          "422": {
+            "$ref": "#/components/responses/SafeError"
+          },
+          "428": {
+            "$ref": "#/components/responses/SafeError"
+          },
+          "429": {
+            "$ref": "#/components/responses/SafeError"
+          },
+          "503": {
+            "$ref": "#/components/responses/SafeError"
+          }
+        },
+        "security": [
+          {
+            "RetailerSession": []
+          }
+        ],
+        "summary": "Save Profile"
+      }
+    },
+    "/api/retailer/v1/stores/{store_id}/publication/{kind}/{entity_id}": {
+      "get": {
+        "operationId": "publication_api_retailer_v1_stores__store_id__publication__kind___entity_id__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "store_id",
+            "required": true,
+            "schema": {
+              "maxLength": 128,
+              "minLength": 1,
+              "pattern": "^[A-Za-z0-9._:-]+$",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "kind",
+            "required": true,
+            "schema": {
+              "enum": [
+                "profile",
+                "news",
+                "listing",
+                "event",
+                "result"
+              ],
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "entity_id",
+            "required": true,
+            "schema": {
+              "maxLength": 128,
+              "minLength": 1,
+              "pattern": "^[A-Za-z0-9._:-]+$",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PublicationDTO"
+                }
+              }
+            },
+            "description": "Success"
+          },
+          "400": {
+            "$ref": "#/components/responses/SafeError"
+          },
+          "401": {
+            "$ref": "#/components/responses/SafeError"
+          },
+          "403": {
+            "$ref": "#/components/responses/SafeError"
+          },
+          "404": {
+            "$ref": "#/components/responses/SafeError"
+          },
+          "409": {
+            "$ref": "#/components/responses/SafeError"
+          },
+          "412": {
+            "$ref": "#/components/responses/SafeError"
+          },
+          "413": {
+            "$ref": "#/components/responses/SafeError"
+          },
+          "415": {
+            "$ref": "#/components/responses/SafeError"
+          },
+          "422": {
+            "$ref": "#/components/responses/SafeError"
+          },
+          "428": {
+            "$ref": "#/components/responses/SafeError"
+          },
+          "429": {
+            "$ref": "#/components/responses/SafeError"
+          },
+          "503": {
+            "$ref": "#/components/responses/SafeError"
+          }
+        },
+        "security": [
+          {
+            "RetailerSession": []
+          }
+        ],
+        "summary": "Publication"
+      }
+    },
+    "/auth/callback": {
+      "get": {
+        "operationId": "callback_auth_callback_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "code",
+            "required": true,
+            "schema": {
+              "maxLength": 2048,
+              "minLength": 1,
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "state",
+            "required": true,
+            "schema": {
+              "maxLength": 2048,
+              "minLength": 1,
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "303": {
+            "description": "Success",
+            "headers": {
+              "Location": {
+                "schema": {
+                  "const": "/retailer",
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/SafeError"
+          },
+          "401": {
+            "$ref": "#/components/responses/SafeError"
+          },
+          "403": {
+            "$ref": "#/components/responses/SafeError"
+          },
+          "404": {
+            "$ref": "#/components/responses/SafeError"
+          },
+          "409": {
+            "$ref": "#/components/responses/SafeError"
+          },
+          "412": {
+            "$ref": "#/components/responses/SafeError"
+          },
+          "413": {
+            "$ref": "#/components/responses/SafeError"
+          },
+          "415": {
+            "$ref": "#/components/responses/SafeError"
+          },
+          "422": {
+            "$ref": "#/components/responses/SafeError"
+          },
+          "428": {
+            "$ref": "#/components/responses/SafeError"
+          },
+          "429": {
+            "$ref": "#/components/responses/SafeError"
+          },
+          "503": {
+            "$ref": "#/components/responses/SafeError"
+          }
+        },
+        "security": [
+          {
+            "RetailerSession": []
+          }
+        ],
+        "summary": "Callback"
+      }
+    },
+    "/auth/login": {
+      "post": {
+        "operationId": "login_auth_login_post",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "Origin",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "X-CSRF-Token",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/EmptyBody"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LoginRedirect"
+                }
+              }
+            },
+            "description": "Success"
+          },
+          "400": {
+            "$ref": "#/components/responses/SafeError"
+          },
+          "401": {
+            "$ref": "#/components/responses/SafeError"
+          },
+          "403": {
+            "$ref": "#/components/responses/SafeError"
+          },
+          "404": {
+            "$ref": "#/components/responses/SafeError"
+          },
+          "409": {
+            "$ref": "#/components/responses/SafeError"
+          },
+          "412": {
+            "$ref": "#/components/responses/SafeError"
+          },
+          "413": {
+            "$ref": "#/components/responses/SafeError"
+          },
+          "415": {
+            "$ref": "#/components/responses/SafeError"
+          },
+          "422": {
+            "$ref": "#/components/responses/SafeError"
+          },
+          "428": {
+            "$ref": "#/components/responses/SafeError"
+          },
+          "429": {
+            "$ref": "#/components/responses/SafeError"
+          },
+          "503": {
+            "$ref": "#/components/responses/SafeError"
+          }
+        },
+        "security": [
+          {
+            "RetailerSession": []
+          }
+        ],
+        "summary": "Login"
+      }
+    },
+    "/auth/logout": {
+      "post": {
+        "operationId": "logout_auth_logout_post",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "Origin",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "X-CSRF-Token",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/EmptyBody"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LoggedOut"
+                }
+              }
+            },
+            "description": "Success"
+          },
+          "400": {
+            "$ref": "#/components/responses/SafeError"
+          },
+          "401": {
+            "$ref": "#/components/responses/SafeError"
+          },
+          "403": {
+            "$ref": "#/components/responses/SafeError"
+          },
+          "404": {
+            "$ref": "#/components/responses/SafeError"
+          },
+          "409": {
+            "$ref": "#/components/responses/SafeError"
+          },
+          "412": {
+            "$ref": "#/components/responses/SafeError"
+          },
+          "413": {
+            "$ref": "#/components/responses/SafeError"
+          },
+          "415": {
+            "$ref": "#/components/responses/SafeError"
+          },
+          "422": {
+            "$ref": "#/components/responses/SafeError"
+          },
+          "428": {
+            "$ref": "#/components/responses/SafeError"
+          },
+          "429": {
+            "$ref": "#/components/responses/SafeError"
+          },
+          "503": {
+            "$ref": "#/components/responses/SafeError"
+          }
+        },
+        "security": [
+          {
+            "RetailerSession": []
+          }
+        ],
+        "summary": "Logout"
+      }
+    },
+    "/auth/session": {
+      "get": {
+        "operationId": "session_auth_session_get",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SessionDTO"
+                }
+              }
+            },
+            "description": "Success"
+          },
+          "400": {
+            "$ref": "#/components/responses/SafeError"
+          },
+          "401": {
+            "$ref": "#/components/responses/SafeError"
+          },
+          "403": {
+            "$ref": "#/components/responses/SafeError"
+          },
+          "404": {
+            "$ref": "#/components/responses/SafeError"
+          },
+          "409": {
+            "$ref": "#/components/responses/SafeError"
+          },
+          "412": {
+            "$ref": "#/components/responses/SafeError"
+          },
+          "413": {
+            "$ref": "#/components/responses/SafeError"
+          },
+          "415": {
+            "$ref": "#/components/responses/SafeError"
+          },
+          "422": {
+            "$ref": "#/components/responses/SafeError"
+          },
+          "428": {
+            "$ref": "#/components/responses/SafeError"
+          },
+          "429": {
+            "$ref": "#/components/responses/SafeError"
+          },
+          "503": {
+            "$ref": "#/components/responses/SafeError"
+          }
+        },
+        "security": [],
+        "summary": "Session"
+      }
+    }
+  }
+}

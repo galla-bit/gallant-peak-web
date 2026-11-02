@@ -19,3 +19,6 @@ it('shows an unknown baseline when receipt succeeds but reread fails',async()=>{
 it('can save after StrictMode effect replay',async()=>{
  const {StrictMode}=await import('react');const {client,fetcher}=testClient((_p,o)=>o?.method==='PUT'?json({schema_version:1,id:record.id,revision:1,publication_status:'queued'}):json(record,200,{ETag:'"r1"'}));render(<StrictMode><ProfileEditor {...props} client={client}/></StrictMode>);await screen.findByDisplayValue('Store A');fireEvent.click(screen.getByRole('button',{name:'Save profile'}));await waitFor(()=>expect(fetcher.mock.calls.some(([,o])=>o?.method==='PUT')).toBe(true));
 });
+it('allows explicit retry when Retry-After is zero rather than locking it indefinitely',async()=>{
+ let writes=0;const {client}=testClient((_p,o)=>o?.method==='PUT'?(writes++===0?json({},429,{'Retry-After':'0'}):json({schema_version:1,id:record.id,revision:1,publication_status:'queued'})):json(record,200,{ETag:'"r1"'}));render(<ProfileEditor {...props} client={client}/>);await screen.findByDisplayValue('Store A');fireEvent.click(screen.getByRole('button',{name:'Save profile'}));const retry=await screen.findByRole('button',{name:'Retry exact save'});expect(retry).toHaveProperty('disabled',false);fireEvent.click(retry);await screen.findByText(/Saved revision 1/);
+});
