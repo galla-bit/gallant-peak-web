@@ -7,6 +7,8 @@ import {RadarViews} from './RadarViews';
 import {EventsView} from './events/EventsView';
 import {useEventsFeed} from './events/useEventsFeed';
 import type {TcgEventsFeedResult} from './events/feed';
+import {VerifiedStores, DemonstrationNotice} from './stores/VerifiedStores';
+import {DEMO_NOW, demonstrationEvents} from './stores/demonstration';
 
 const labels: Record<TcgAvailability,string>={in_stock:'In stock',limited:'Limited',out_of_stock:'Out of stock',unknown:'Unknown'};
 const PUBLIC_DELAY_COPY='The free public feed is delayed by at least 15 minutes.';
@@ -14,6 +16,7 @@ const PUBLIC_DELAY_COPY='The free public feed is delayed by at least 15 minutes.
 export function TcgRadar({feed,eventsFeed,eventsEndpoint=import.meta.env.VITE_TCG_EVENTS_PUBLIC_FEED_URL,now}:
   {feed:TcgFeedResult;eventsFeed?:TcgEventsFeedResult;eventsEndpoint?:string;now?:number}) {
   const eventData=useEventsFeed(eventsEndpoint,eventsFeed,now);
+  const [showDemonstration,setShowDemonstration]=useState(false);
   const [game,setGame]=useState('all');
   const [availability,setAvailability]=useState('all');
   const [displayMode,setDisplayMode]=useState<'cards'|'compact'>('cards');
@@ -43,6 +46,6 @@ export function TcgRadar({feed,eventsFeed,eventsEndpoint=import.meta.env.VITE_TC
     </>;
   }
   return <section className="tcg-radar" aria-label="TCG Radar">
-    <RadarViews products={stockProducts()} events={<EventsView feed={eventData} now={now}/>}/>
+    <RadarViews products={stockProducts()} stores={<VerifiedStores eventsFeed={eventData} now={now}/>} events={<><section aria-label="Public events"><EventsView feed={eventData} now={now}/></section><div className="retailer-preview"><label><input type="checkbox" checked={showDemonstration} onChange={event=>setShowDemonstration(event.target.checked)}/>Show demonstration retailer events</label>{showDemonstration&&<section aria-label="Demonstration events"><DemonstrationNotice/><EventsView feed={demonstrationEvents} now={DEMO_NOW} demonstration/></section>}</div></>}/>
   </section>;
 }

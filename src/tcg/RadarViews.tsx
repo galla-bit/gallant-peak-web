@@ -1,8 +1,9 @@
 import {useState, type ReactNode} from 'react';
+import {VerifiedStores} from './stores/VerifiedStores';
 
-const views = ['Products', 'New & Upcoming', 'Events', 'Stores'] as const;
+const views = ['Products', 'New & Upcoming', 'Events', 'Verified Stores'] as const;
 
-export function RadarViews({products,events}: {products: ReactNode; events?:ReactNode}) {
+export function RadarViews({products,events,stores}: {products: ReactNode; events?:ReactNode; stores?:ReactNode}) {
   const [view, setView] = useState<typeof views[number]>('Products');
   return <>
     <div className="radar-views" role="group" aria-label="Radar views">
@@ -15,7 +16,7 @@ export function RadarViews({products,events}: {products: ReactNode; events?:Reac
         <p className="notice" role="status">GallantDiscoveries public release intelligence is not connected. Coming soon.</p>
         <p className="muted">Planned lifecycle (reference only): Official announcement → Coming soon → NZ listings discovered → Preorders open → Released → In stock → Restock/price changes.</p>
       </>}
-      {view==='Stores' && <p className="notice" role="status">The approved public retailer projection is not connected. Store profiles and monitoring health are not available yet.</p>}
+      {view==='Verified Stores' && (stores??<VerifiedStores/>)}
     </div>
   </>;
 }

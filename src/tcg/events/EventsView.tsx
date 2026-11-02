@@ -26,7 +26,7 @@ function DomainNotice({status,results=false}:{status:string;results?:boolean}) {
       `${subject} unavailable. This does not mean ${results?'nobody won':'no events exist'}.`}</p>;
 }
 
-export function EventsView({feed,now:providedNow}:{feed:TcgEventsFeedResult;now?:number}) {
+export function EventsView({feed,now:providedNow,demonstration=false}:{feed:TcgEventsFeedResult;now?:number;demonstration?:boolean}) {
   const [clock,setClock]=useState(()=>Date.now());
   const [windowDays,setWindowDays]=useState('all');
   const now=providedNow??Math.max(clock,Date.now());
@@ -89,8 +89,8 @@ export function EventsView({feed,now:providedNow}:{feed:TcgEventsFeedResult;now?
               {(item.city||item.region)&&<p>{item.city&&<span>{item.city}</span>}{item.city&&item.region?' · ':''}{item.region&&<span>{item.region}</span>}</p>}
               {item.format&&<p>{item.format}</p>}{item.entry_fee&&<p>{item.entry_fee}</p>}
               {item.registration_status&&<p>{item.registration_status}</p>}
-              <a href={item.event_url} target="_blank" rel="noreferrer">View / Register at {item.organiser}</a>
-              <Provenance item={item} generatedAt={events.generatedAt}/>
+              {!demonstration&&<a href={item.event_url} target="_blank" rel="noreferrer">View / Register at {item.organiser}</a>}
+              {!demonstration&&<Provenance item={item} generatedAt={events.generatedAt}/>}
             </article>
           </li>)}</ul>}
       </>}
@@ -107,7 +107,7 @@ export function EventsView({feed,now:providedNow}:{feed:TcgEventsFeedResult;now?
               <p><strong>{item.winner}</strong></p><p>{item.organiser}</p>
               <p>Event {timestamp(item.event_at,item.timezone)}</p>
               {item.deck_archetype&&<p>Deck: {item.deck_archetype}</p>}
-              <Provenance item={item} generatedAt={winners.generatedAt}/>
+              {!demonstration&&<Provenance item={item} generatedAt={winners.generatedAt}/>}
             </article>
           </li>)}</ul>}
       </>}

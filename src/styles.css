@@ -65,3 +65,15 @@
   .tcg-event-list,.tcg-winner-list,.tcg-event-filters{grid-template-columns:minmax(0,1fr)}
   .tcg-event-card,.tcg-winner-card{padding:20px}
 }
+/* Retailer spaces reuse Radar cards and the canonical Events view. */
+.tcg-radar section[aria-label="Public events"],
+.tcg-radar section[aria-label="Demonstration events"],
+.tcg-radar .retailer-space>section,
+.tcg-radar .retailer-preview{padding:24px 0;border-bottom:1px solid #333;min-width:0}
+.retailer-preview{margin-top:32px;border-top:1px solid #555}
+.retailer-preview h3,.retailer-space>section>h3{font-size:clamp(28px,4vw,42px);line-height:1.1}
+.retailer-preview p,.retailer-space p,.verified-stores>p{line-height:1.7}
+.retailer-space .section-head{margin-top:28px}
+.retailer-preview label{display:flex;gap:12px;align-items:center;line-height:1.7;margin:12px 0}
+.retailer-preview input[type=checkbox]{width:20px;height:20px;margin:0;flex:none;accent-color:#eee}
+.retailer-space h2{scroll-margin-top:110px}
