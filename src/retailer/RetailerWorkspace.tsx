@@ -1,3 +1,4 @@
+import {ProfileEditor} from './ProfileEditor';
 import {useEffect,useRef,useState} from 'react';
 import {createRetailerClient,type RetailerClient} from './api';
 import {useRetailerSession} from './session';
@@ -15,6 +16,6 @@ export function RetailerWorkspace({client=defaultClient}:{client?:RetailerClient
  {session.status==='error'&&<p role="alert">The retailer session is unavailable.</p>}
  {session.status!=='loading'&&session.status!=='ready'&&<button type="button" onClick={()=>void session.recheck()}>Recheck session</button>}
  {session.status==='ready'&&<><button type="button" onClick={()=>void session.logout()}>Log out</button>{session.stores.length===0?<p role="status">No authorised retailer spaces are assigned to this account.</p>:<label>Retailer space<select value={session.selectedStoreId??''} onChange={event=>session.selectStore(event.target.value)}><option value="" disabled>Select a retailer</option>{session.stores.map(row=><option key={row.id} value={row.id}>{row.name}</option>)}</select></label>}
- {store&&<section key={session.generation} aria-label="Private retailer content"><h2>{store.name}</h2><div role="group" aria-label="Retailer editor sections">{sections.map(name=><button type="button" key={name} aria-pressed={section===name} onClick={()=>setSection(name)}>{name}</button>)}</div><h3>{section}</h3><p>Private retailer content is separate from public feed publication.</p></section>}</>}
+ {store&&<section key={session.generation} aria-label="Private retailer content"><h2>{store.name}</h2><div role="group" aria-label="Retailer editor sections">{sections.map(name=><button type="button" key={name} aria-pressed={section===name} onClick={()=>setSection(name)}>{name}</button>)}</div><h3>{section}</h3><p>Private retailer content is separate from public feed publication.</p>{section==='Overview'&&<ProfileEditor client={client} storeId={store.id} generation={session.generation} csrf={session.csrf!} signal={session.signalForGeneration()} onDenied={session.onDenied}/>}</section>}</>}
  </main>;
 }
