@@ -7,3 +7,5 @@ interface ImportMetaEnv {
 interface ImportMeta {
   readonly env: ImportMetaEnv;
 }
+
+interface ImportMetaEnv { readonly VITE_RETAILER_EDITOR_PREVIEW?: string; }
