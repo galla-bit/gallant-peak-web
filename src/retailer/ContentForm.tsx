@@ -1,3 +1,4 @@
+import {PublicationStatus} from './PublicationStatus';
 import {useCallback,useEffect,useRef,useState} from 'react';
 import {RetailerApiError,type RetailerClient} from './api';
 import {validateBody,type ContentKind,type ContentDTO,type MutationInput,type SavedReceipt,type Versioned} from './contracts';
@@ -39,5 +40,5 @@ export function ContentForm(props:FormProps){
  {uncertain&&<button type="button" disabled={busy||clock<retryAt} onClick={()=>void save(true)}>Retry exact save</button>}
  {(error||receipt&&baseline===undefined)&&!uncertain&&<button type="button" onClick={()=>void reload()}>Reload current content to compare</button>}
  {compare&&<section aria-label="Current server content"><h4>Current server content · revision {compare.record.revision}</h4>{Object.entries(compare.record.fields).map(([name,value])=><p key={name}>{name}: {String(value)}</p>)}<button type="button" onClick={()=>{fill(compare.record);setBaseline(compare);setCompare(undefined);setError('');workflow.current.discard();}}>Use current server content</button></section>}
- </section>;
+ {(baseline||receipt)&&<PublicationStatus key={baseline?.record.revision??receipt?.revision} client={client} storeId={props.storeId} kind={props.kind} id={baseline?.record.id??receipt!.id} generation={generation} signal={signal} onDenied={onDenied}/>} </section>;
 }
