@@ -1,7 +1,7 @@
 /** Test artifact export only. Does not install dependencies, fetch source or deploy. */
 import {mkdtemp,lstat,realpath,mkdir,readdir,readFile,writeFile,rename,rm} from 'node:fs/promises';
-import {resolve,relative,dirname,join,sep,isAbsolute} from 'node:path';
-import {readdirSync} from 'node:fs';
+import {resolve,relative,dirname,join,sep,isAbsolute,delimiter} from 'node:path';
+import {readdirSync,existsSync} from 'node:fs';
 import {execFileSync} from 'node:child_process';
 import {createHash} from 'node:crypto';
 import {fileURLToPath} from 'node:url';
@@ -18,6 +18,16 @@ function verify(checkout,expected){
  if(!['https://github.com/galla-bit/gallant-peak-web.git','https://github.com/galla-bit/gallant-peak-web','git@github.com:galla-bit/gallant-peak-web.git'].includes(origin))fail('repository_mismatch');
  if(git(checkout,['status','--porcelain=v1','--untracked-files=normal']))fail('dirty_source');
 }
+function buildCommand(){
+ if(process.platform!=='win32')return ['npm',[]];
+ for(const directory of (process.env.PATH??'').split(delimiter)){
+  if(!existsSync(join(directory,'npm.cmd')))continue;
+  for(const cli of [join(directory,'npm-cli.js'),join(directory,'node_modules','npm','bin','npm-cli.js')]){
+   if(existsSync(cli))return [process.execPath,[cli]];
+  }
+ }
+ fail('build_failed');
+}
 export async function exportFrontend({checkoutPath,expectedCommit,outputPath,preview}={}){
  if(typeof checkoutPath!=='string'||typeof outputPath!=='string'||! /^[a-f0-9]{40}$/.test(expectedCommit??'')||typeof preview!=='boolean')fail('invalid_input');
  if(['GIT_DIR','GIT_WORK_TREE','GIT_INDEX_FILE','GIT_COMMON_DIR'].some(k=>process.env[k]))fail('git_override');
@@ -29,7 +39,7 @@ export async function exportFrontend({checkoutPath,expectedCommit,outputPath,pre
  const stage=await mkdtemp(join(dirname(output),'.gp-retailer-export-'));let reserved=false;
  try{
   const dist=join(stage,'dist');
-  try{execFileSync(process.platform==='win32'?'npm.cmd':'npm',['run','build','--','--outDir',dist],{cwd:checkout,env:{...process.env,VITE_RETAILER_EDITOR_PREVIEW:preview?'true':'false'},stdio:['ignore','pipe','pipe'],timeout:180000})}catch{fail('build_failed')}
+  try{const [command,prefix]=buildCommand();execFileSync(command,[...prefix,'run','build','--','--outDir',dist],{cwd:checkout,env:{...process.env,VITE_RETAILER_EDITOR_PREVIEW:preview?'true':'false'},stdio:['ignore','pipe','pipe'],timeout:180000})}catch{fail('build_failed')}
   const files=[];let bundle='';
   async function walk(dir){
    for(const name of (await readdir(dir)).sort()){
@@ -45,7 +55,7 @@ export async function exportFrontend({checkoutPath,expectedCommit,outputPath,pre
   }
   await walk(dist);files.sort((a,b)=>a.path<b.path?-1:a.path>b.path?1:0);
   if(!files.some(f=>f.path==='dist/index.html')||!files.some(f=>f.path.endsWith('.js')))fail('invalid_build');
-  if(bundle.includes('PRIVATE RETAILER EDITOR PREVIEW')!==preview||bundle.includes('1931ec083379f5e2fdd294a2be7f6667b4ab65c7d5ebb60c0fcffaf70da2c4ef'))fail('build_role_mismatch');
+  if(bundle.includes('PRIVATE RETAILER EDITOR PREVIEW')!==preview||bundle.includes('Contextual store editor')!==preview||bundle.includes('1931ec083379f5e2fdd294a2be7f6667b4ab65c7d5ebb60c0fcffaf70da2c4ef'))fail('build_role_mismatch');
   verify(checkout,expectedCommit);
   const manifest={schema_version:1,repository:'galla-bit/gallant-peak-web',source_commit:expectedCommit,package_lock_sha256:sha(await readFile(join(checkout,'package-lock.json'))),preview_enabled:preview,files};
   const raw=JSON.stringify(manifest,null,2)+'\n';await writeFile(join(stage,'frontend-provenance.json'),raw,{flag:'wx'});

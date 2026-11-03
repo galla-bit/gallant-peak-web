@@ -12,8 +12,8 @@ type Logout={result:Promise<'anonymous'|'logout-unconfirmed'>;pending:boolean};
 const logouts=new WeakMap<RetailerClient,Logout>();
 
 /** Ephemeral presentation state. Protected operations reauthorise on the server. */
-export function useRetailerAccess(client:RetailerClient=retailerClient,scope='entry'){
- const [state,setState]=useState<State>(()=>empty('loading',scope));
+export function useRetailerAccess(client:RetailerClient=retailerClient,scope='entry',enabled=true){
+ const [state,setState]=useState<State>(()=>empty(enabled?'loading':'anonymous',scope));
  const current=useRef<AbortController|null>(null);
  const begin=useCallback(()=>{
   current.current?.abort();
@@ -21,6 +21,7 @@ export function useRetailerAccess(client:RetailerClient=retailerClient,scope='en
   setState(empty('loading',scope));return controller;
  },[scope]);
  const refresh=useCallback(async()=>{
+  if(!enabled){setState(empty('anonymous',scope));return;}
   const controller=begin();
   try{
    const logout=logouts.get(client);
@@ -32,9 +33,10 @@ export function useRetailerAccess(client:RetailerClient=retailerClient,scope='en
    if(expires!==undefined&&expires<=Date.now()){setState(empty('anonymous',scope));return;}
    setState({status:session.authenticated?'ready':'anonymous',stores,csrf:session.csrf_token,expires,scope});
   }catch(error){if(!controller.signal.aborted)setState(empty(sessionEnded(error)?'anonymous':'unavailable',scope));}
- },[client,scope,begin]);
+ },[client,scope,begin,enabled]);
  useEffect(()=>{
   void refresh();
+  if(!enabled)return;
   const onFocus=()=>{if(document.visibilityState!=='hidden')void refresh();};
   const onVisibility=()=>{
    if(document.visibilityState==='hidden'){current.current?.abort();setState(empty('loading',scope));}
@@ -42,7 +44,7 @@ export function useRetailerAccess(client:RetailerClient=retailerClient,scope='en
   };
   window.addEventListener('focus',onFocus);document.addEventListener('visibilitychange',onVisibility);
   return()=>{current.current?.abort();window.removeEventListener('focus',onFocus);document.removeEventListener('visibilitychange',onVisibility);};
- },[refresh,scope]);
+ },[refresh,scope,enabled]);
  useEffect(()=>{
   if(state.expires===undefined)return;
   const timer=window.setTimeout(()=>{current.current?.abort();setState(empty('anonymous',scope));},Math.min(2147483647,Math.max(0,state.expires-Date.now())));

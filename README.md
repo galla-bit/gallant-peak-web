@@ -34,6 +34,12 @@ This repository owns web presentation only. Shared stock intelligence remains in
 
 ## Retailer session and contextual Edit Store
 
+Contextual editing is restricted to the explicit synthetic preview build with
+`VITE_RETAILER_EDITOR_PREVIEW=true`. The default artifact keeps public store
+pages read-only without private-session bootstrap. The `/retailer` session
+resolver and callback bridge remain available; this does not enable production
+retailer editing or a real identity provider.
+
 `#/retailer` resolves the opaque backend session: signed-out login action, no
 current access, a direct one-store destination, or an explicit multi-store chooser.
 `#/tcg-hunt/verified-stores/:storeId` reuses the existing public store profile.

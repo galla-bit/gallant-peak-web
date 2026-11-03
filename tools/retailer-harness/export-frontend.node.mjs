@@ -7,11 +7,11 @@ import {execFileSync} from 'node:child_process';
 import {createHash} from 'node:crypto';
 import {exportFrontend} from './export-frontend.mjs';
 
-async function fixture({fail=false,link=false}={}){
+async function fixture({fail=false,link=false,leakContextual=false}={}){
  const root=await mkdtemp(join(tmpdir(),'gp-export-'));const checkout=join(root,'checkout');await mkdir(checkout);
  const git=(...args)=>execFileSync('git',['-C',checkout,...args],{encoding:'utf8',stdio:['ignore','pipe','pipe']}).trim();
  await writeFile(join(checkout,'package.json'),JSON.stringify({scripts:{build:'node build.mjs'}}));await writeFile(join(checkout,'package-lock.json'),'{}\n');
- await writeFile(join(checkout,'build.mjs'),`import{mkdirSync,writeFileSync,symlinkSync}from'node:fs';import{join}from'node:path';const out=process.argv[process.argv.indexOf('--outDir')+1];if(${fail})process.exit(2);mkdirSync(join(out,'assets'),{recursive:true});writeFileSync(join(out,'index.html'),'<div id="root"></div>');writeFileSync(join(out,'assets','Z.js'),'ASSET');writeFileSync(join(out,'assets','app.js'),process.env.VITE_RETAILER_EDITOR_PREVIEW==='true'?'PRIVATE RETAILER EDITOR PREVIEW':'PUBLIC');${link?"symlinkSync('/etc/passwd',join(out,'assets','bad'))":''}`);
+ await writeFile(join(checkout,'build.mjs'),`import{mkdirSync,writeFileSync,symlinkSync}from'node:fs';import{join}from'node:path';const out=process.argv[process.argv.indexOf('--outDir')+1];if(${fail})process.exit(2);mkdirSync(join(out,'assets'),{recursive:true});writeFileSync(join(out,'index.html'),'<div id="root"></div>');writeFileSync(join(out,'assets','Z.js'),'ASSET');writeFileSync(join(out,'assets','app.js'),process.env.VITE_RETAILER_EDITOR_PREVIEW==='true'?'PRIVATE RETAILER EDITOR PREVIEW Contextual store editor':(${leakContextual}?'PUBLIC Contextual store editor':'PUBLIC'));${link?"symlinkSync(out,join(out,'assets','bad'),process.platform==='win32'?'junction':'dir')":''}`);
  git('init','-b','fixture');git('remote','add','origin','https://github.com/galla-bit/gallant-peak-web.git');git('add','.');git('-c','user.name=Fixture','-c','user.email=fixture@example.test','commit','-qm','fixture');
  return{root,checkout,git,head:git('rev-parse','HEAD'),out:join(root,'output'),close:()=>rm(root,{recursive:true,force:true})};
 }
@@ -36,3 +36,5 @@ test('ignored environment files cannot alter a supposedly clean artifact build',
  await rejected(exportFrontend({checkoutPath:f.checkout,expectedCommit:head,outputPath:f.out,preview:true}),'build_environment');
 }finally{await f.close()}});
 test('unreviewed inherited Vite configuration is refused',async()=>{const f=await fixture();const before=process.env.VITE_UNREVIEWED;try{process.env.VITE_UNREVIEWED='test';await rejected(exportFrontend({checkoutPath:f.checkout,expectedCommit:f.head,outputPath:f.out,preview:true}),'build_environment');}finally{if(before===undefined)delete process.env.VITE_UNREVIEWED;else process.env.VITE_UNREVIEWED=before;await f.close()}});
+
+test('rejects default bundle leaking the PR C contextual editor',async()=>{const f=await fixture({leakContextual:true});try{await rejected(exportFrontend({checkoutPath:f.checkout,expectedCommit:f.head,outputPath:f.out,preview:false}),'build_role_mismatch');}finally{await f.close()}});

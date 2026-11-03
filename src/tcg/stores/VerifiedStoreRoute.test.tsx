@@ -1,13 +1,14 @@
 // @vitest-environment jsdom
 import {cleanup,fireEvent,render,screen,waitFor} from '@testing-library/react';
-import {afterEach,expect,it} from 'vitest';
+import {afterEach,beforeEach,expect,it,vi} from 'vitest';
 import {MemoryRouter,Route,Routes} from 'react-router-dom';
 import {VerifiedStoreRoute} from './VerifiedStoreRoute';
 import {testClient,json,session,stores,management,deferred} from '../../retailer/__tests__/http';
 import type {RetailerSpace} from './model';
 import {NOW,readyFeed,snapshot,event,winner} from '../events/test-fixtures';
 import {mythicDeckPreview} from './demonstration';
-afterEach(cleanup);
+beforeEach(()=>vi.stubEnv('VITE_RETAILER_EDITOR_PREVIEW','true'));
+afterEach(()=>{cleanup();vi.unstubAllEnvs();});
 const publicStore:RetailerSpace={id:'store-a',name:'Public A',description:'Public community',organiserId:'org-a',relationship:{kind:'authorised',reference:'trusted-projection'},products:[],updates:[]};
 function setup({id='store-a',rows=stores.stores,authenticated=true,status=200,projection=[publicStore]}:{id?:string;rows?:typeof stores.stores;authenticated?:boolean;status?:number;projection?:RetailerSpace[]}={}){
  const {client,fetcher}=testClient(p=>p==='/auth/session'?json({...session,authenticated}):p==='/auth/logout'?json({authenticated:false}):json({schema_version:1,stores:rows},status));

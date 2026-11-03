@@ -1,6 +1,6 @@
 // @vitest-environment jsdom
 import {act,cleanup,fireEvent,render,screen,waitFor,within} from '@testing-library/react';
-import {afterEach,expect,it,vi} from 'vitest';
+import {afterEach,beforeEach,expect,it,vi} from 'vitest';
 import {MemoryRouter} from 'react-router-dom';
 import {VerifiedStoreRoute} from '../tcg/stores/VerifiedStoreRoute';
 import {json,session,stores,management,testClient} from './__tests__/http';
@@ -9,7 +9,8 @@ import type {RetailerSpace} from '../tcg/stores/model';
 import {mythicDeckPreview} from '../tcg/stores/demonstration';
 import {TcgRadar} from '../tcg/TcgRadar';
 import {inactiveEventsFeed} from '../tcg/events/feed';
-afterEach(()=>{cleanup();vi.restoreAllMocks();});
+beforeEach(()=>vi.stubEnv('VITE_RETAILER_EDITOR_PREVIEW','true'));
+afterEach(()=>{cleanup();vi.restoreAllMocks();vi.unstubAllEnvs();});
 export const profile={schema_version:1,id:'profile-a',retailer_id:'store-a',kind:'profile',revision:1,state:'DRAFT',fields:{name:'Canonical A',description:'Text',source_url:'https://a.test/about'},updated_at:'2026-11-02T00:00:00Z'};
 const publicStore:RetailerSpace={id:'store-a',name:'Public A',description:'Public',organiserId:'org-a',relationship:{kind:'authorised',reference:'reviewed'},products:[],updates:[]};
 export const onlyProfile:Management={profile_write:true,news_write:false,products_write:false,events_write:false,events_publish:false,results_write:false};
