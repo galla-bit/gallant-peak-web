@@ -17,6 +17,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
       - name: Setup Node
         uses: actions/setup-node@v7
         with:
@@ -31,3 +33,9 @@ jobs:
       - name: Build
         run: npm run build
 
+      - name: Validate separate complete-checkout artifact roles
+        env:
+          EXPECTED_SOURCE_SHA: ${{ github.event.pull_request.head.sha }}
+        run: |
+          node tools/retailer-harness/export-frontend.mjs --checkout "$GITHUB_WORKSPACE" --expected-commit "$EXPECTED_SOURCE_SHA" --output "$RUNNER_TEMP/retailer-default" --preview false
+          node tools/retailer-harness/export-frontend.mjs --checkout "$GITHUB_WORKSPACE" --expected-commit "$EXPECTED_SOURCE_SHA" --output "$RUNNER_TEMP/retailer-preview" --preview true
