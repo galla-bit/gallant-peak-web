@@ -79,5 +79,6 @@ export function useRetailerAccess(client:RetailerClient=retailerClient,scope='en
    if(!controller.signal.aborted)navigate(url);
   }catch(error){if(!controller.signal.aborted)setState(empty(sessionEnded(error)?'anonymous':'unavailable',scope));}
  };
- return {...(state.scope===scope?state:empty('loading',scope)),refresh:recheck,logout,login};
+ const invalidate=useCallback((category:string)=>{current.current?.abort();setState(empty(category==='session-ended'?'anonymous':'unavailable',scope));},[scope]);
+ return {...(state.scope===scope?state:empty('loading',scope)),refresh:recheck,logout,login,invalidate};
 }
