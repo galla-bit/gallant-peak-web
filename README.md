@@ -32,20 +32,28 @@ The fixture under `src/tcg/fixtures` contains fictional example data for tests a
 
 This repository owns web presentation only. Shared stock intelligence remains in `gallant-peak-tcg-hunt`; web, future mobile clients and Discord consume TCG Hunt-owned conclusions rather than maintaining independent stock authority. The web client never receives private/near-live streams, pending public states, credentials, trusted bridge state or internal publication timing metadata.
 
-## Retailer session and store route shell (PR B)
+## Retailer session and contextual Edit Store
 
 `#/retailer` resolves the opaque backend session: signed-out login action, no
 current access, a direct one-store destination, or an explicit multi-store chooser.
 `#/tcg-hunt/verified-stores/:storeId` reuses the existing public store profile.
 Current `/me/stores` membership and its closed management booleans affect only
-presentation. Edit Store is disabled; this route mounts no content editors and
-makes no content writes. Foreign stores and all demonstrations remain read-only.
+presentation. Edit Store opens the capability-filtered profile, news, local
+listing and canonical event/result forms inside this store page. Foreign stores,
+demonstrations and all-false capabilities remain read-only. A 403 immediately
+drops editing; a 401 freezes visible drafts in memory and offers sign-in.
+Revalidation disables writes temporarily and a changed session cannot reuse
+old CSRF. Unsaved changes are guarded on editor/record/section exit, route
+navigation, browser history, logout and page unload. Drafts are never stored.
 Logout clears presentation immediately and continues across route navigation;
 failed logout is reported without claiming the server session ended.
 
 The earlier editor contract preview is still default-off and is now isolated at
 `#/retailer-preview` behind the exact `VITE_RETAILER_EDITOR_PREVIEW=true` flag.
-It is not linked from the resolver or Edit Store. No new write forms are added.
+It is not linked from the resolver or Edit Store; contextual editing reuses the
+same closed client and forms. ETag/precondition/CSRF/idempotency semantics remain
+server-enforced. An ambiguous retry keeps its original command/key; choosing to
+edit a new command requires a fresh key.
 
 The public store projection is not connected in this build. A currently
 accessible private store without that projection resolves to its named route
@@ -66,4 +74,10 @@ hash by `/#/retailer`, using same-origin history replacement. It does not forwar
 query parameters or change existing hash routes. Preserve backend
 Origin/CSRF/host-only Secure HttpOnly cookie protections;
 do not solve this with credentialed cross-origin requests. No deployment or
-hosting change is part of PR B.
+hosting change is part of PR C.
+
+Projection status is separate from a successful save: Awaiting projection,
+Projection processed, No public projection required or Publication status
+unavailable. Processing acknowledgement never claims public visibility.
+Retailer-local listings do not enter Radar, global Products, New & Upcoming
+or Releases without separately controlled Gallant Peak promotion.
