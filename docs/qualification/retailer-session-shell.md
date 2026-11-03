@@ -39,3 +39,19 @@ No real OIDC/cookie/browser integration, deployment, retailer/provider activatio
 or production write form is qualified by these synthetic frontend tests.
 
 Stop at dedicated frontend PR review/merge approval. No PR C work.
+
+## Callback pathname review correction
+
+Owner review found the actual backend callback destination `/retailer` (without
+a hash) booted Home through HashRouter. A regression imports the real `main.tsx`
+entry point at that browser location and first reproduced the failure. A fixed,
+same-origin history replacement now normalizes only that exact no-hash pathname
+to `/#/retailer` before mounting HashRouter. No arbitrary return URL is consumed;
+query parameters are discarded and existing hash routes are untouched. Guard
+tests cover ordinary paths, preview/subpaths, existing hash routes and repeat
+invocation. Same-origin serving and asset qualification remain prerequisites.
+
+Correction verification: 12 focused tests in 3 suites passed; all 283 frontend
+tests in 42 files passed; TypeScript/Vite production build and git diff --check
+passed. Independent review of the correction found no issues and independently
+passed the 12 focused tests.

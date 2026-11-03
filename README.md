@@ -60,7 +60,10 @@ they do not qualify production OIDC/cookies or activate a real provider/account.
 **Deployment prerequisite:** static GitHub Pages alone cannot serve this private
 API/auth flow. A future HTTPS same-origin application/reverse proxy must serve
 `/auth/*`, `/api/retailer/v1/*`, and the fixed callback destination `/retailer`.
-It must load the hash-router application at that path and reconcile the asset
-base. Preserve backend Origin/CSRF/host-only Secure HttpOnly cookie protections;
+It must serve the application at that path and reconcile the asset base. Before
+HashRouter mounts, the frontend replaces the exact `/retailer` pathname with no
+hash by `/#/retailer`, using same-origin history replacement. It does not forward
+query parameters or change existing hash routes. Preserve backend
+Origin/CSRF/host-only Secure HttpOnly cookie protections;
 do not solve this with credentialed cross-origin requests. No deployment or
 hosting change is part of PR B.
