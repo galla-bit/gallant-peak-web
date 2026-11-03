@@ -22,7 +22,7 @@ export function ContentForm(props:FormProps){
  useEffect(()=>{if(!retryAt||retryAt<=Date.now())return;const timeout=setTimeout(()=>setClock(Date.now()),Math.min(retryAt-Date.now(),2147483647));return()=>clearTimeout(timeout);},[retryAt,clock]);
  const uncertain=!!workflow.current.intent&&['unavailable','limited','contract'].includes(error);
  async function save(retry=false){if(busy||signal.aborted||Date.now()<retryAt)return;try{
-  if(!retry){const body:Record<string,unknown>={...values};for(const field of props.fields)if(field.optional&&!body[field.key])delete body[field.key];if(props.kind==='result'&&baseline){if(!confirmed)throw new RetailerApiError('invalid');body.supersedes_revision=baseline.record.revision;}validateBody(props.kind,body);workflow.current.prepare(props.makeInput(body,baseline??null));}
+  if(!retry){const body:Record<string,unknown>={...values};for(const field of props.fields)if(field.optional&&!body[field.key])delete body[field.key];if(props.kind==='result'&&baseline){if(!confirmed)throw new RetailerApiError('invalid');body.supersedes_revision=baseline.record.revision;}try{validateBody(props.kind,body);}catch{throw new RetailerApiError('invalid');}workflow.current.prepare(props.makeInput(body,baseline??null));}
   setBusy(true);setError('');const saved=await workflow.current.submit(props.csrf,signal);if(!alive.current||signal.aborted)return;setReceipt(saved);workflow.current.discard();setBaseline(undefined);if(props.onSaved){props.onSaved(saved);return;}
   try{const latest=await load();if(!alive.current||signal.aborted)return;setBaseline(latest);fill(latest.record);setConfirmed(false);}catch(reason){fail(reason);}
  }catch(reason){fail(reason);}finally{if(alive.current&&!signal.aborted)setBusy(false);}}

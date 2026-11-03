@@ -13,9 +13,12 @@ const sections=['Overview','News & Updates','Products','Events & Competitions'] 
 function StoreContent(props:EditorProps&{name:string}){
  const [section,setSection]=useState<typeof sections[number]>('Overview');
  const [resultEvent,setResultEvent]=useState<string|null>(null);
- return <section aria-label="Private retailer content"><h2>{props.name}</h2>
+ const storeHeading=useRef<HTMLHeadingElement>(null),sectionHeading=useRef<HTMLHeadingElement>(null),previousSection=useRef(section);
+ useEffect(()=>{storeHeading.current?.focus();},[]);
+ useEffect(()=>{if(previousSection.current!==section)sectionHeading.current?.focus();previousSection.current=section;},[section]);
+ return <section aria-label="Private retailer content"><h2 ref={storeHeading} tabIndex={-1}>{props.name}</h2>
  <div role="group" aria-label="Retailer editor sections">{sections.map(name=><button type="button" key={name} aria-pressed={section===name} onClick={()=>{setSection(name);setResultEvent(null);}}>{name}</button>)}</div>
- <h3>{section}</h3><p>Private retailer content is separate from public feed publication.</p>
+ <h3 ref={sectionHeading} tabIndex={-1}>{section}</h3><p>Private retailer content is separate from public feed publication.</p>
  {section==='Overview'&&<ProfileEditor {...props}/>}
  {section==='News & Updates'&&<NewsEditor {...props}/>}
  {section==='Products'&&<ListingEditor {...props}/>}
@@ -24,7 +27,7 @@ function StoreContent(props:EditorProps&{name:string}){
 }
 export function RetailerWorkspace({client=defaultClient}:{client?:RetailerClient}){
  const session=useRetailerSession(client);const heading=useRef<HTMLHeadingElement>(null);
- useEffect(()=>{heading.current?.focus();},[session.generation]);
+ useEffect(()=>{if(!session.selectedStoreId)heading.current?.focus();},[session.generation,session.selectedStoreId]);
  const store=session.stores.find(row=>row.id===session.selectedStoreId);
  return <main id="main-content" tabIndex={-1} className="page retailer-editor"><p className="eyebrow">PRIVATE RETAILER EDITOR PREVIEW</p><h1 ref={heading} tabIndex={-1}>Retailer workspace</h1><p className="notice">Contract preview only. Real sign-in and retailer onboarding are not connected.</p>
  {session.status==='loading'&&<p role="status">Checking retailer session…</p>}
