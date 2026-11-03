@@ -4,7 +4,7 @@ import manifest from './fixtures/contract-source.json';
 import news from './fixtures/news-response.json';
 import {decodeContent,decodePublication,instant} from './contracts';
 it('pins the canonical upstream contract content and reviewed source',async()=>{
- expect(manifest.source_sha).toBe('83b44e98464daa3fe447428e7ee24ba811d0f47c');const digest=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(JSON.stringify(contract)));expect(Array.from(new Uint8Array(digest),b=>b.toString(16).padStart(2,'0')).join('')).toBe(manifest.canonical_sha256);
+ expect(manifest.source_sha).toBe('d450aea2186b5556fd6fe1dda10e19fa31ca20c2');const digest=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(JSON.stringify(contract)));expect(Array.from(new Uint8Array(digest),b=>b.toString(16).padStart(2,'0')).join('')).toBe(manifest.canonical_sha256);
 });
 it('aligns used routes and closed request/response properties without a custom schema engine',()=>{
  const paths=contract.paths as Record<string,Record<string,unknown>>;expect(paths['/auth/session'].get).toBeTruthy();expect(paths['/auth/logout'].post).toBeTruthy();expect(paths['/api/retailer/v1/me/stores'].get).toBeTruthy();

@@ -31,3 +31,36 @@ The fixture under `src/tcg/fixtures` contains fictional example data for tests a
 ## Architecture
 
 This repository owns web presentation only. Shared stock intelligence remains in `gallant-peak-tcg-hunt`; web, future mobile clients and Discord consume TCG Hunt-owned conclusions rather than maintaining independent stock authority. The web client never receives private/near-live streams, pending public states, credentials, trusted bridge state or internal publication timing metadata.
+
+## Retailer session and store route shell (PR B)
+
+`#/retailer` resolves the opaque backend session: signed-out login action, no
+current access, a direct one-store destination, or an explicit multi-store chooser.
+`#/tcg-hunt/verified-stores/:storeId` reuses the existing public store profile.
+Current `/me/stores` membership and its closed management booleans affect only
+presentation. Edit Store is disabled; this route mounts no content editors and
+makes no content writes. Foreign stores and all demonstrations remain read-only.
+Logout clears presentation immediately and continues across route navigation;
+failed logout is reported without claiming the server session ended.
+
+The earlier editor contract preview is still default-off and is now isolated at
+`#/retailer-preview` behind the exact `VITE_RETAILER_EDITOR_PREVIEW=true` flag.
+It is not linked from the resolver or Edit Store. No new write forms are added.
+
+The public store projection is not connected in this build. A currently
+accessible private store without that projection resolves to its named route
+shell with “Public store content is not connected.” Private membership never
+manufactures a public Verified badge, products, news, events or winners.
+
+Private requests use fixed origin-root relative URLs, same-origin cookies,
+no-store responses and backend CSRF. No API origin configuration, bearer fallback
+or browser token storage is provided. Synthetic tests qualify client behaviour;
+they do not qualify production OIDC/cookies or activate a real provider/account.
+
+**Deployment prerequisite:** static GitHub Pages alone cannot serve this private
+API/auth flow. A future HTTPS same-origin application/reverse proxy must serve
+`/auth/*`, `/api/retailer/v1/*`, and the fixed callback destination `/retailer`.
+It must load the hash-router application at that path and reconcile the asset
+base. Preserve backend Origin/CSRF/host-only Secure HttpOnly cookie protections;
+do not solve this with credentialed cross-origin requests. No deployment or
+hosting change is part of PR B.
