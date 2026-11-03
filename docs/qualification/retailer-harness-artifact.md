@@ -72,3 +72,19 @@ has no Docker engine/runtime; OS package/browser-tree lock fields and real
 sandboxed verified-HTTPS preflight remain unresolved. Browser campaign remains
 BLOCKED / UNQUALIFIED. No deployment, trust/hosts change, provider/retailer
 activation, public projection, or production enablement occurred.
+
+## Foundation security follow-up (4 November 2026)
+
+Preserves the continuation above, including contextual editor gating and Windows
+npm CLI launch. Adds the earlier independent foundation review fixes: refuse
+ignored build inputs outside installed node_modules, reject inherited Git source
+and config overrides, and validate the physical output parent before staging.
+Ignored public files/links, aliased outputs and Git override regressions were
+observed failing before remediation. Eleven exporter tests and319 UI tests pass
+locally after reconciling both histories. Supported Node22 CI follows.
+
+Normal merge-ref UI/build validation remains enabled. A separate job checks out
+the exact PR head and exports both roles from its own clean checkout, avoiding
+dist files from an earlier build contaminating source admission. These new
+changes require fresh manifest digests; historical hashes are not current handoff
+values. Browser campaign remains BLOCKED / UNQUALIFIED.

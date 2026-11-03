@@ -10,13 +10,15 @@ const fail=code=>{throw new FrontendExportError(code)};
 const sha=data=>createHash('sha256').update(data).digest('hex');
 const inside=(parent,path)=>{const r=relative(parent,path);return r===''||!isAbsolute(r)&&r!=='..'&&!r.startsWith('..'+sep)};
 async function exists(path){try{await lstat(path);return true}catch(e){if(e.code==='ENOENT')return false;throw e}}
-function git(checkout,args){try{return execFileSync('git',['-C',checkout,...args],{encoding:'utf8',stdio:['ignore','pipe','pipe']}).trim()}catch{fail('git_unavailable')}}
+function git(checkout,args,raw=false){try{const value=execFileSync('git',['--no-pager','-C',checkout,...args],{encoding:'utf8',stdio:['ignore','pipe','pipe']});return raw?value:value.trim()}catch{fail('git_unavailable')}}
 function verify(checkout,expected){
  if(readdirSync(checkout).some(n=>n==='.env'||n.startsWith('.env.'))||Object.keys(process.env).some(k=>k.startsWith('VITE_')&&k!=='VITE_RETAILER_EDITOR_PREVIEW'))fail('build_environment');
  if(git(checkout,['rev-parse','HEAD'])!==expected)fail('source_mismatch');
  const origin=git(checkout,['remote','get-url','origin']);
  if(!['https://github.com/galla-bit/gallant-peak-web.git','https://github.com/galla-bit/gallant-peak-web','git@github.com:galla-bit/gallant-peak-web.git'].includes(origin))fail('repository_mismatch');
  if(git(checkout,['status','--porcelain=v1','--untracked-files=normal']))fail('dirty_source');
+ const ignored=git(checkout,['ls-files','--others','--ignored','--exclude-standard','--directory','-z'],true).split('\0').filter(Boolean);
+ if(ignored.some(path=>path!=='node_modules/'&&!path.startsWith('node_modules/')))fail('build_environment');
 }
 function buildCommand(){
  if(process.platform!=='win32')return ['npm',[]];
@@ -30,10 +32,12 @@ function buildCommand(){
 }
 export async function exportFrontend({checkoutPath,expectedCommit,outputPath,preview}={}){
  if(typeof checkoutPath!=='string'||typeof outputPath!=='string'||! /^[a-f0-9]{40}$/.test(expectedCommit??'')||typeof preview!=='boolean')fail('invalid_input');
- if(['GIT_DIR','GIT_WORK_TREE','GIT_INDEX_FILE','GIT_COMMON_DIR'].some(k=>process.env[k]))fail('git_override');
+ if(Object.keys(process.env).some(k=>k.startsWith('GIT_')&&k!=='GIT_PAGER'))fail('git_override');
  const checkout=resolve(checkoutPath),output=resolve(outputPath);
  if((await lstat(checkout)).isSymbolicLink()||await realpath(checkout)!==checkout)fail('unsafe_checkout');
- if(inside(checkout,output))fail('unsafe_output');
+ const parent=dirname(output);
+ const physicalParent=await realpath(parent);
+ if(physicalParent!==parent||inside(checkout,output))fail('unsafe_output');
  verify(checkout,expectedCommit);
  if(await exists(output))fail('output_exists');
  const stage=await mkdtemp(join(dirname(output),'.gp-retailer-export-'));let reserved=false;

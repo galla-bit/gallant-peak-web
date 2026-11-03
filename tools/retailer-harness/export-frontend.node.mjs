@@ -36,5 +36,19 @@ test('ignored environment files cannot alter a supposedly clean artifact build',
  await rejected(exportFrontend({checkoutPath:f.checkout,expectedCommit:head,outputPath:f.out,preview:true}),'build_environment');
 }finally{await f.close()}});
 test('unreviewed inherited Vite configuration is refused',async()=>{const f=await fixture();const before=process.env.VITE_UNREVIEWED;try{process.env.VITE_UNREVIEWED='test';await rejected(exportFrontend({checkoutPath:f.checkout,expectedCommit:f.head,outputPath:f.out,preview:true}),'build_environment');}finally{if(before===undefined)delete process.env.VITE_UNREVIEWED;else process.env.VITE_UNREVIEWED=before;await f.close()}});
+test('ignored public files and external symlinks cannot gain provenance',async()=>{const f=await fixture();try{
+ await writeFile(join(f.checkout,'.gitignore'),'public/\n');f.git('add','.gitignore');f.git('-c','user.name=Fixture','-c','user.email=fixture@example.test','commit','-qm','ignore public');const head=f.git('rev-parse','HEAD');await mkdir(join(f.checkout,'public'));await writeFile(join(f.checkout,'public','untracked.log'),'unreviewed');assert.equal(f.git('status','--porcelain'),'');
+ await rejected(exportFrontend({checkoutPath:f.checkout,expectedCommit:head,outputPath:f.out,preview:true}),'build_environment');
+ await rm(join(f.checkout,'public','untracked.log'));await writeFile(join(f.root,'canary'),'external');await symlink(join(f.root,'canary'),join(f.checkout,'public','canary'));
+ await rejected(exportFrontend({checkoutPath:f.checkout,expectedCommit:head,outputPath:f.out,preview:true}),'build_environment');
+}finally{await f.close()}});
+test('output parent alias into checkout is refused before staging',async()=>{const f=await fixture();try{
+ await writeFile(join(f.checkout,'.gitignore'),'node_modules/\n');f.git('add','.gitignore');f.git('-c','user.name=Fixture','-c','user.email=fixture@example.test','commit','-qm','ignore dependencies');const head=f.git('rev-parse','HEAD');await mkdir(join(f.checkout,'node_modules'));await symlink(join(f.checkout,'node_modules'),join(f.root,'alias'));
+ await rejected(exportFrontend({checkoutPath:f.checkout,expectedCommit:head,outputPath:join(f.root,'alias','output'),preview:true}),'unsafe_output');
+ assert.deepEqual(await (await import('node:fs/promises')).readdir(join(f.checkout,'node_modules')),[]);
+}finally{await f.close()}});
+test('Git config environment cannot redirect source discovery',async()=>{const f=await fixture();const previous=process.env.GIT_CONFIG_COUNT;try{
+ process.env.GIT_CONFIG_COUNT='invalid';await rejected(exportFrontend({checkoutPath:f.checkout,expectedCommit:f.head,outputPath:f.out,preview:true}),'git_override');
+}finally{if(previous===undefined)delete process.env.GIT_CONFIG_COUNT;else process.env.GIT_CONFIG_COUNT=previous;await f.close()}});
 
 test('rejects default bundle leaking the PR C contextual editor',async()=>{const f=await fixture({leakContextual:true});try{await rejected(exportFrontend({checkoutPath:f.checkout,expectedCommit:f.head,outputPath:f.out,preview:false}),'build_role_mismatch');}finally{await f.close()}});
