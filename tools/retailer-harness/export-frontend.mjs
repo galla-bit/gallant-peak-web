@@ -40,6 +40,13 @@ export async function exportFrontend({checkoutPath,expectedCommit,outputPath,pre
  if(physicalParent!==parent||inside(checkout,output))fail('unsafe_output');
  verify(checkout,expectedCommit);
  if(await exists(output))fail('output_exists');
+ const buildInfo=join(checkout,'tsconfig.app.tsbuildinfo');
+ const ownsBuildInfo=!await exists(buildInfo);
+ async function removeGeneratedBuildInfo(){
+  if(!ownsBuildInfo||!await exists(buildInfo))return;
+  const info=await lstat(buildInfo);if(!info.isFile()||info.isSymbolicLink())fail('unsafe_build_output');
+  await rm(buildInfo);
+ }
  const stage=await mkdtemp(join(dirname(output),'.gp-retailer-export-'));let reserved=false;
  try{
   const dist=join(stage,'dist');
@@ -60,6 +67,7 @@ export async function exportFrontend({checkoutPath,expectedCommit,outputPath,pre
   await walk(dist);files.sort((a,b)=>a.path<b.path?-1:a.path>b.path?1:0);
   if(!files.some(f=>f.path==='dist/index.html')||!files.some(f=>f.path.endsWith('.js')))fail('invalid_build');
   if(bundle.includes('PRIVATE RETAILER EDITOR PREVIEW')!==preview||bundle.includes('Contextual store editor')!==preview||bundle.includes('1931ec083379f5e2fdd294a2be7f6667b4ab65c7d5ebb60c0fcffaf70da2c4ef'))fail('build_role_mismatch');
+  await removeGeneratedBuildInfo();
   verify(checkout,expectedCommit);
   const manifest={schema_version:1,repository:'galla-bit/gallant-peak-web',source_commit:expectedCommit,package_lock_sha256:sha(await readFile(join(checkout,'package-lock.json'))),preview_enabled:preview,files};
   const raw=JSON.stringify(manifest,null,2)+'\n';await writeFile(join(stage,'frontend-provenance.json'),raw,{flag:'wx'});
@@ -67,7 +75,7 @@ export async function exportFrontend({checkoutPath,expectedCommit,outputPath,pre
   await rename(dist,join(output,'dist'));await rename(join(stage,'frontend-provenance.json'),join(output,'frontend-provenance.json'));
   return{manifest,manifestSha256:sha(raw)};
  }catch(error){if(reserved)await rm(output,{recursive:true,force:true});if(error instanceof FrontendExportError)throw error;fail('export_failed')}
- finally{await rm(stage,{recursive:true,force:true})}
+ finally{try{await removeGeneratedBuildInfo()}finally{await rm(stage,{recursive:true,force:true})}}
 }
 if(process.argv[1]&&resolve(process.argv[1])===fileURLToPath(import.meta.url)){
  const options={};let valid=true;const names={'--checkout':'checkoutPath','--expected-commit':'expectedCommit','--output':'outputPath','--preview':'preview'};

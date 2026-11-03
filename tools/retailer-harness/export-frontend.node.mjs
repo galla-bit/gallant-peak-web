@@ -7,11 +7,12 @@ import {execFileSync} from 'node:child_process';
 import {createHash} from 'node:crypto';
 import {exportFrontend} from './export-frontend.mjs';
 
-async function fixture({fail=false,link=false,leakContextual=false}={}){
+async function fixture({fail=false,link=false,leakContextual=false,cache=false}={}){
  const root=await mkdtemp(join(tmpdir(),'gp-export-'));const checkout=join(root,'checkout');await mkdir(checkout);
  const git=(...args)=>execFileSync('git',['-C',checkout,...args],{encoding:'utf8',stdio:['ignore','pipe','pipe']}).trim();
  await writeFile(join(checkout,'package.json'),JSON.stringify({scripts:{build:'node build.mjs'}}));await writeFile(join(checkout,'package-lock.json'),'{}\n');
- await writeFile(join(checkout,'build.mjs'),`import{mkdirSync,writeFileSync,symlinkSync}from'node:fs';import{join}from'node:path';const out=process.argv[process.argv.indexOf('--outDir')+1];if(${fail})process.exit(2);mkdirSync(join(out,'assets'),{recursive:true});writeFileSync(join(out,'index.html'),'<div id="root"></div>');writeFileSync(join(out,'assets','Z.js'),'ASSET');writeFileSync(join(out,'assets','app.js'),process.env.VITE_RETAILER_EDITOR_PREVIEW==='true'?'PRIVATE RETAILER EDITOR PREVIEW Contextual store editor':(${leakContextual}?'PUBLIC Contextual store editor':'PUBLIC'));${link?"symlinkSync(out,join(out,'assets','bad'),process.platform==='win32'?'junction':'dir')":''}`);
+ await writeFile(join(checkout,'build.mjs'),`import{mkdirSync,writeFileSync,symlinkSync}from'node:fs';import{join}from'node:path';const out=process.argv[process.argv.indexOf('--outDir')+1];if(${fail})process.exit(2);if(${cache})writeFileSync('tsconfig.app.tsbuildinfo','GENERATED CACHE');mkdirSync(join(out,'assets'),{recursive:true});writeFileSync(join(out,'index.html'),'<div id="root"></div>');writeFileSync(join(out,'assets','Z.js'),'ASSET');writeFileSync(join(out,'assets','app.js'),process.env.VITE_RETAILER_EDITOR_PREVIEW==='true'?'PRIVATE RETAILER EDITOR PREVIEW Contextual store editor':(${leakContextual}?'PUBLIC Contextual store editor':'PUBLIC'));${link?"symlinkSync(out,join(out,'assets','bad'),process.platform==='win32'?'junction':'dir')":''}`);
+ if(cache)await writeFile(join(checkout,'.gitignore'),'*.tsbuildinfo\n');
  git('init','-b','fixture');git('remote','add','origin','https://github.com/galla-bit/gallant-peak-web.git');git('add','.');git('-c','user.name=Fixture','-c','user.email=fixture@example.test','commit','-qm','fixture');
  return{root,checkout,git,head:git('rev-parse','HEAD'),out:join(root,'output'),close:()=>rm(root,{recursive:true,force:true})};
 }
@@ -52,3 +53,10 @@ test('Git config environment cannot redirect source discovery',async()=>{const f
 }finally{if(previous===undefined)delete process.env.GIT_CONFIG_COUNT;else process.env.GIT_CONFIG_COUNT=previous;await f.close()}});
 
 test('rejects default bundle leaking the PR C contextual editor',async()=>{const f=await fixture({leakContextual:true});try{await rejected(exportFrontend({checkoutPath:f.checkout,expectedCommit:f.head,outputPath:f.out,preview:false}),'build_role_mismatch');}finally{await f.close()}});
+
+test('removes only newly generated TypeScript build info before clean-source recheck',async()=>{const f=await fixture({cache:true});try{
+ await exportFrontend({checkoutPath:f.checkout,expectedCommit:f.head,outputPath:f.out,preview:true});await assert.rejects(readFile(join(f.checkout,'tsconfig.app.tsbuildinfo')));assert.equal(f.git('status','--porcelain'),'');
+}finally{await f.close()}});
+test('pre-existing ignored TypeScript build info is refused and preserved',async()=>{const f=await fixture({cache:true});try{
+ const p=join(f.checkout,'tsconfig.app.tsbuildinfo');await writeFile(p,'PRE-EXISTING');await rejected(exportFrontend({checkoutPath:f.checkout,expectedCommit:f.head,outputPath:f.out,preview:true}),'build_environment');assert.equal(await readFile(p,'utf8'),'PRE-EXISTING');
+}finally{await f.close()}});
