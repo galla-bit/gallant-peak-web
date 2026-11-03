@@ -43,7 +43,7 @@ export async function exportFrontend({checkoutPath,expectedCommit,outputPath,pre
     }else fail('unsafe_asset');
    }
   }
-  await walk(dist);files.sort((a,b)=>a.path.localeCompare(b.path,'en'));
+  await walk(dist);files.sort((a,b)=>a.path<b.path?-1:a.path>b.path?1:0);
   if(!files.some(f=>f.path==='dist/index.html')||!files.some(f=>f.path.endsWith('.js')))fail('invalid_build');
   if(bundle.includes('PRIVATE RETAILER EDITOR PREVIEW')!==preview||bundle.includes('1931ec083379f5e2fdd294a2be7f6667b4ab65c7d5ebb60c0fcffaf70da2c4ef'))fail('build_role_mismatch');
   verify(checkout,expectedCommit);
