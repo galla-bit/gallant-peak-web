@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "id": "news-existing",
+  "retailer_id": "store-a",
+  "kind": "news",
+  "revision": 1,
+  "state": "PUBLISHED",
+  "fields": {
+    "title": "Community update",
+    "body": "Plain local news",
+    "source_url": "https://store.example.test/news"
+  },
+  "updated_at": "2026-11-02T00:00:00.000+00:00"
+}

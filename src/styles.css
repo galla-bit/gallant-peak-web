@@ -77,3 +77,5 @@
 .retailer-preview label{display:flex;gap:12px;align-items:center;line-height:1.7;margin:12px 0}
 .retailer-preview input[type=checkbox]{width:20px;height:20px;margin:0;flex:none;accent-color:#eee}
 .retailer-space h2{scroll-margin-top:110px}
+
+.retailer-editor label{display:block;margin:1rem 0}.retailer-editor input,.retailer-editor select,.retailer-editor textarea{display:block;max-width:100%;padding:.65rem;font:inherit}.retailer-editor textarea{width:40rem;min-height:8rem}.retailer-editor button{margin:.35rem;padding:.65rem}.retailer-editor [role=alert]{border-left:3px solid currentColor;padding:1rem}
