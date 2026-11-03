@@ -1,3 +1,4 @@
+import {management} from './__tests__/http';
 import {describe,it,expect} from 'vitest';
 import {decodeContent,decodeSession,decodeStores,decodeReceipt,decodePublication,validateBody,identifier} from './contracts';
 import news from './fixtures/news-response.json';
@@ -19,11 +20,11 @@ describe('private contracts',()=>{
  });
  it('checks closed session/store/receipt/publication shapes',()=>{
   expect(decodeSession({authenticated:true,csrf_token:'x'.repeat(43),expires_at:'2026-11-03T01:00:00Z'}).authenticated).toBe(true);
-  expect(decodeStores({schema_version:1,stores:[{id:'a',name:'A',organiser_id:'org-a'}]}).stores).toHaveLength(1);
+  expect(decodeStores({schema_version:1,stores:[{id:'a',name:'A',organiser_id:'org-a',management}]}).stores).toHaveLength(1);
   expect(decodeReceipt({schema_version:1,id:'a',revision:1,publication_status:'queued'}).revision).toBe(1);
   expect(decodePublication({schema_version:1,id:'a',revision:1,domains:[{domain:'events',state:'acknowledged'}]}).domains).toHaveLength(1);
   expect(()=>decodeSession({authenticated:true,csrf_token:'short',expires_at:null})).toThrow();
-  expect(()=>decodeStores({schema_version:1,stores:[{id:'a',name:'A',organiser_id:'org-a',role:'admin'}]})).toThrow();
+  expect(()=>decodeStores({schema_version:1,stores:[{id:'a',name:'A',organiser_id:'org-a',management,role:'admin'}]})).toThrow();
   expect(()=>decodeReceipt({schema_version:1,id:'a',revision:1,publication_status:'visible'})).toThrow();
  });
 });

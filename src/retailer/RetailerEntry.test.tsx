@@ -1,0 +1,14 @@
+// @vitest-environment jsdom
+import {cleanup,fireEvent,render,screen,waitFor} from '@testing-library/react';
+import {afterEach,expect,it,vi} from 'vitest';
+import {MemoryRouter,Route,Routes} from 'react-router-dom';
+import {RetailerEntry} from './RetailerEntry';
+import {testClient,json,session,stores,csrf} from './__tests__/http';
+afterEach(cleanup);
+function setup(rows=stores.stores,authenticated=true){const navigate=vi.fn();const {client,fetcher}=testClient((p)=>p==='/auth/session'?json({...session,authenticated}):p==='/auth/login'?json({authorization_url:'https://issuer.example/auth'}):p==='/auth/logout'?json({authenticated:false}):json({schema_version:1,stores:rows}));render(<MemoryRouter initialEntries={['/retailer']}><Routes><Route path='/retailer' element={<RetailerEntry client={client} navigateToProvider={navigate}/>}/><Route path='/tcg-hunt/verified-stores/:storeId' element={<p>Store destination</p>}/></Routes></MemoryRouter>);return {fetcher,navigate};}
+it('anonymous entry offers explicit login using prelogin CSRF',async()=>{const {navigate,fetcher}=setup([],false);fireEvent.click(await screen.findByRole('button',{name:'Retailer login'}));await waitFor(()=>expect(navigate).toHaveBeenCalledWith('https://issuer.example/auth'));expect(fetcher.mock.calls.find(([p])=>p==='/auth/login')?.[1]?.headers).toMatchObject({'X-CSRF-Token':csrf});});
+it('zero stores has no guessed access',async()=>{setup([]);expect(await screen.findByText('No current retailer access')).toBeTruthy();expect(screen.queryByText('Store destination')).toBeNull();});
+it('one store navigates directly',async()=>{setup(stores.stores.slice(0,1));expect(await screen.findByText('Store destination')).toBeTruthy();});
+it('multiple stores never silently selects the first and requires a click',async()=>{setup();expect(await screen.findByText('Choose a store to manage')).toBeTruthy();expect(screen.queryByText('Store destination')).toBeNull();fireEvent.click(screen.getByRole('link',{name:'Synthetic B'}));expect(await screen.findByText('Store destination')).toBeTruthy();});
+it('logout uses current session CSRF and returns to login',async()=>{const {fetcher}=setup([]);fireEvent.click(await screen.findByRole('button',{name:'Log out'}));expect(await screen.findByRole('button',{name:'Retailer login'})).toBeTruthy();expect(fetcher.mock.calls.find(([p])=>p==='/auth/logout')?.[1]).toMatchObject({method:'POST',body:'{}',headers:expect.objectContaining({'X-CSRF-Token':csrf})});});
+it.each([401,403,503])('safely resolves backend error %s',async status=>{const {client}=testClient(p=>p==='/auth/session'?json(session):json({},status));render(<MemoryRouter><RetailerEntry client={client}/></MemoryRouter>);expect(await screen.findByText(status===401?'Retailer login':'Retailer management temporarily unavailable.')).toBeTruthy();expect(screen.queryByRole('link',{name:'Synthetic A'})).toBeNull();});

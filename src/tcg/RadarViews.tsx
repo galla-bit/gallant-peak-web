@@ -3,8 +3,8 @@ import {VerifiedStores} from './stores/VerifiedStores';
 
 const views = ['Products', 'New & Upcoming', 'Events', 'Verified Stores'] as const;
 
-export function RadarViews({products,events,stores}: {products: ReactNode; events?:ReactNode; stores?:ReactNode}) {
-  const [view, setView] = useState<typeof views[number]>('Products');
+export function RadarViews({products,events,stores,startStores}: {products: ReactNode; events?:ReactNode; stores?:ReactNode;startStores?:boolean}) {
+  const [view, setView] = useState<typeof views[number]>(startStores?'Verified Stores':'Products');
   return <>
     <div className="radar-views" role="group" aria-label="Radar views">
       {views.map(name=><button key={name} type="button" aria-pressed={view===name} onClick={()=>setView(name)}>{name}</button>)}

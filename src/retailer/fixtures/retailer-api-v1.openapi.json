@@ -30,6 +30,9 @@
                   "pattern": "^[A-Za-z0-9._:-]+$",
                   "type": "string"
                 },
+                "management": {
+                  "$ref": "#/components/schemas/ManagementDTO"
+                },
                 "name": {
                   "maxLength": 200,
                   "minLength": 1,
@@ -45,7 +48,8 @@
               "required": [
                 "id",
                 "name",
-                "organiser_id"
+                "organiser_id",
+                "management"
               ],
               "type": "object"
             },
@@ -688,6 +692,46 @@
         "required": [
           "authorization_url"
         ],
+        "type": "object"
+      },
+      "ManagementDTO": {
+        "additionalProperties": false,
+        "description": "Current presentation hints, never a grant or substitute for authorization.",
+        "properties": {
+          "events_publish": {
+            "title": "Events Publish",
+            "type": "boolean"
+          },
+          "events_write": {
+            "title": "Events Write",
+            "type": "boolean"
+          },
+          "news_write": {
+            "title": "News Write",
+            "type": "boolean"
+          },
+          "products_write": {
+            "title": "Products Write",
+            "type": "boolean"
+          },
+          "profile_write": {
+            "title": "Profile Write",
+            "type": "boolean"
+          },
+          "results_write": {
+            "title": "Results Write",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "profile_write",
+          "news_write",
+          "products_write",
+          "events_write",
+          "events_publish",
+          "results_write"
+        ],
+        "title": "ManagementDTO",
         "type": "object"
       },
       "NewsBody": {
