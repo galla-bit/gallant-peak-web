@@ -14,7 +14,7 @@ import {useEventsFeed} from '../events/useEventsFeed';
 const noStores:readonly RetailerSpace[]=[];
 export function VerifiedStoreRoute({client,stores=noStores,storeId,now,eventsFeed}:{client?:RetailerClient;stores?:readonly RetailerSpace[];storeId?:string;now?:number;eventsFeed?:TcgEventsFeedResult}){
  const params=useParams();const id=storeId??params.storeId??'';
- const navigate=useNavigate();const access=useRetailerAccess(client,id);
+ const navigate=useNavigate();const access=useRetailerAccess(client,id,import.meta.env.VITE_RETAILER_EDITOR_PREVIEW==='true');
  const [editing,setEditing]=useState<{id:string;member:AccessibleStores['stores'][number];csrf:string;controller:AbortController}|null>(null);
  const [expired,setExpired]=useState(false);const guard=useUnsavedStoreChanges();
  useEffect(()=>()=>editing?.controller.abort(),[editing]);
@@ -25,7 +25,7 @@ export function VerifiedStoreRoute({client,stores=noStores,storeId,now,eventsFee
  const demo=id===mythicDeckPreview.id;
  const store=demo?mythicDeckPreview:authorisedStores(stores).find(row=>row.id===id);
  const member=access.status==='ready'&&!demo?access.stores.find(row=>row.id===id):undefined;
- const canEdit=member&&Object.values(member.management).some(Boolean);
+ const canEdit=import.meta.env.VITE_RETAILER_EDITOR_PREVIEW==='true'&&member&&Object.values(member.management).some(Boolean);
  const active=editing?.id===id&&!demo?editing:null;
  const sessionChanged=!!active&&access.status==='ready'&&access.csrf!==active.csrf;
  const edit=canEdit&&!active?<button type="button" onClick={()=>{if(member&&access.csrf){setExpired(false);setEditing({id,member,csrf:access.csrf,controller:new AbortController()});}}}>Edit Store</button>:undefined;
@@ -40,7 +40,7 @@ export function VerifiedStoreRoute({client,stores=noStores,storeId,now,eventsFee
  <Link to="/tcg-hunt" state={{verifiedStores:true,returnStoreId:id}}>Back to Verified Stores</Link>
  {member?<><p className="eyebrow">RETAILER STORE</p><div className="section-head"><h1>{member.name}</h1>{edit}</div><p role="status">Public store content is not connected.</p></>:<><h1>Verified Store</h1><p role="status">Store content unavailable.</p></>}
  </>}
- {active&&(access.status!=='ready'||member)&&<EditingProvider disabled={expired||sessionChanged||access.status!=='ready'} markDirty={guard.markDirty} leave={guard.leave}>
+ {import.meta.env.VITE_RETAILER_EDITOR_PREVIEW==='true'&&active&&(access.status!=='ready'||member)&&<EditingProvider disabled={expired||sessionChanged||access.status!=='ready'} markDirty={guard.markDirty} leave={guard.leave}>
  {(expired||sessionChanged||access.status==='anonymous')&&<p role="alert">Your session ended or changed. Draft values are retained in memory; writes are stopped. <Link to="/retailer">Sign in to resume editing</Link></p>}
  <ContextualEditor client={client??retailerClient} storeId={id} generation={1} csrf={active.csrf} signal={active.controller.signal} onDenied={onDenied} management={member?.management??active.member.management} onExit={close}/>
  </EditingProvider>}
