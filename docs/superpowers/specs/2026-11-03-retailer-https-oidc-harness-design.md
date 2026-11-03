@@ -1,7 +1,7 @@
 # Retailer HTTPS/OIDC browser qualification harness
 
 Date: 3 November 2026, Pacific/Auckland.
-Status: proposed design for owner approval. No harness implementation, dependency installation, certificate trust change, provider registration or deployment is authorised by this document alone.
+Status: owner approved this design in chat on 3 November 2026 at PR #17 head `1893d2e0101fb3e9567004b2db09f4bc60b65524`. The detailed implementation plan is the next review gate; no implementation, dependency installation, trust change or deployment follows from design approval alone.
 
 ## Intent and inspected baseline
 
@@ -51,7 +51,7 @@ Reuse the API's pinned optional dependencies. Propose only test-scoped browser/s
 
 Proposed first qualification target: a disposable isolated Linux test environment with Chromium, not the user's existing Chrome/Edge profile. A later Windows/Chrome run can be added as separately recorded platform evidence; this design does not claim it has occurred.
 
-Use two exact loopback origins, provisionally `https://127.0.0.1` for the application and `https://127.0.0.2` for the issuer, on port 443. Their distinct hosts also allow genuine cross-site callback/negative-request tests. Validate OS/browser loopback reachability and cross-site classification during preflight rather than assuming it. If the environment cannot bind both origins or supply proper trust, stop BLOCKED. Do not relax `ApiConfig`, map traffic through a fake application transport, alter the user's hosts file, or use an unapproved remote address to make the run pass.
+Use two exact HTTPS origins on port443: `https://app.gp-retailer.test` for the application and `https://id.gp-issuer.test` for the issuer, mapped only inside the disposable environment to127.0.0.1 and127.0.0.2. These replace the provisional numeric origins after planning inspection found that trusted `AuthAdministration.bind_identity` rejects numeric IP issuers through existing `public_url` validation. Reserved test names preserve that validation and keep the distinct registrable domains required for genuine cross-site callback/negative-request tests. No user-machine DNS/hosts setting is changed. Validate OS/browser loopback reachability and cross-site classification during preflight rather than assuming it. If the environment cannot bind both origins or supply proper trust, stop BLOCKED. Do not relax `ApiConfig`, map traffic through a fake application transport, alter the user's hosts file, or use an unapproved remote address to make the run pass.
 
 Generate a fresh test CA and exact-host leaf certificates per campaign. Trust this CA only inside the disposable test environment and browser execution context, and explicitly in the API client's test-owned verified TLS transport. The underlying API provider stays the actual concrete `OIDCProvider`; its transport must perform real network HTTPS with verification, not MockTransport/ASGITransport. Retain the provider's exact endpoint pinning, timeout, redirect and response bounds. Close the owned TLS transport during teardown.
 
@@ -116,7 +116,7 @@ Close browser contexts, listeners, owned provider transport and DB, then erase e
 
 Gates:
 
-1. Owner approves this design, including the disposable runtime, unchanged production auth, test-only route adapter and synthetic-only evidence boundary.
+1. Completed: owner approved the design, including disposable runtime, unchanged production auth, test-only route adapter and synthetic-only evidence boundary, on3 November2026. The reserved-hostname resolution is documented above and in the plan.
 2. Write the detailed cross-repository implementation plan, exact files/dependencies, artifact handoff and environment preflight; stop for plan approval before code/dependency installation.
 3. Implement test-first in isolated branches, run complete suites/builds, independent review and exact-head CI; no merge/deploy implied.
 4. Execute the opt-in real-browser synthetic campaign in the qualified disposable environment and report limitations honestly.
