@@ -25,7 +25,21 @@ Store/session changes abort prior scope and discard forms/ETags/drafts/keys; lat
 - Default production browser QA: Home -> TCG Hunt -> Verified Stores preserves fail-closed disconnected stock and demonstration-only admission; direct private hash route gives Page Not Found. Screenshot/DOM inspection found no rendering problem. No authenticated browser editor/cookie/OIDC qualification was performed.
 - Default bundle excludes the private workspace text, synthetic account identity, pinned contract digest and canonical news test example. Test-only mock/contract files are not imported by shipped components. No package/lock/dependency changes.
 
-Independent whole-branch review/re-review, final suite/build, exact-head CI and PR gate remain pending. No production qualification is implied by synthetic test success.
+## Independent review and remediation
+
+Independent full-branch review at11e82bb reproduced three material findings. Permanent regressions were observed failing before separate fixes:
+
+- `7a27192`: unvalidated/malformed successful mutation responses now retain the original immutable intent and allow only exact retry, avoiding a duplicate create with a fresh key.
+- `09589ec`: adopting compared current content resets explicit result-correction consent for the new revision.
+- `540644d`: store content and canonical selections live in a generation-keyed component, destroyed before any new-store rendering/request.
+
+Further qualification work e48ee99 adds structural assertions for all used closed request/detail/list DTOs and route response/body references, deliberate upstream-drift failures, a single profile/news/local-listing/published-event/result/access-loss scenario, and selected-retailer/section/validation-error focus assertions. A failing local-validation guidance regression also corrected its safe error category.
+
+Independent re-review at `e48ee996be1dbdce59574e35fae169d70d41924a` passed17 tests across6 targeted files, confirmed all material findings resolved, and found no new material issues. These checks do not claim comprehensive browser/keyboard accessibility or real cookie/Origin/OIDC interoperability.
+
+Accepted minor deferrals: a collection list may retain a previous title/state after editing until the section is reopened; canonical detail rereads use the current revision. Compressed source formatting could be improved in a later scoped maintenance task. Neither authorises unrelated cleanup now.
+
+The first final-suite attempt passed230 real tests but also collected an ignored review-evidence .test.tsx copy with stale relative imports. The evidence was preserved as .txt; no permanent regression or test filter was removed. Final rerun passed **230 tests across35 files**, the production build and worktree/full-branch whitespace checks. The corrected preview-enabled build also passed; default bundle marker exclusion was rechecked. Exact-head CI remains the implementation PR gate. No production qualification is implied by synthetic test success.
 
 ## Decisions and deferred work
 
