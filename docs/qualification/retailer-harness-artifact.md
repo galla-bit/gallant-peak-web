@@ -88,3 +88,17 @@ the exact PR head and exports both roles from its own clean checkout, avoiding
 dist files from an earlier build contaminating source admission. These new
 changes require fresh manifest digests; historical hashes are not current handoff
 values. Browser campaign remains BLOCKED / UNQUALIFIED.
+
+## P1 isolated hardening continuation — 10 November 2026
+
+Review branch based on draft PR19 (not merged or deployed):
+- Manifest file entries are ordered by UTF-8 byte comparison; backend
+  provenance admission must use the same ordering.
+- Explicit known synthetic issuer, fixture agreement and fixture digest
+  markers are forbidden in emitted JavaScript/HTML for either artifact role.
+- Default versus preview editor role gates remain unchanged.
+- Exact-head default and preview manifests must be regenerated and independently
+  admitted after this branch is accepted; previous digests are stale.
+
+Browser qualification, real provider activation and production publication
+remain blocked and unqualified.

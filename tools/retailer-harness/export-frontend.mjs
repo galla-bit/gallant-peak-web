@@ -7,6 +7,8 @@ import {createHash} from 'node:crypto';
 import {fileURLToPath} from 'node:url';
 export class FrontendExportError extends Error{constructor(code){super(code);this.code=code;}}
 const fail=code=>{throw new FrontendExportError(code)};
+const utf8Compare=(a,b)=>Buffer.compare(Buffer.from(a,'utf8'),Buffer.from(b,'utf8'));
+const forbiddenFixtureMarkers=['1931ec083379f5e2fdd294a2be7f6667b4ab65c7d5ebb60c0fcffaf70da2c4ef','https://id.gp-issuer.test','synthetic-private-agreement'];
 const sha=data=>createHash('sha256').update(data).digest('hex');
 const inside=(parent,path)=>{const r=relative(parent,path);return r===''||!isAbsolute(r)&&r!=='..'&&!r.startsWith('..'+sep)};
 async function exists(path){try{await lstat(path);return true}catch(e){if(e.code==='ENOENT')return false;throw e}}
@@ -64,9 +66,9 @@ export async function exportFrontend({checkoutPath,expectedCommit,outputPath,pre
     }else fail('unsafe_asset');
    }
   }
-  await walk(dist);files.sort((a,b)=>a.path<b.path?-1:a.path>b.path?1:0);
+  await walk(dist);files.sort((a,b)=>utf8Compare(a.path,b.path));
   if(!files.some(f=>f.path==='dist/index.html')||!files.some(f=>f.path.endsWith('.js')))fail('invalid_build');
-  if(bundle.includes('PRIVATE RETAILER EDITOR PREVIEW')!==preview||bundle.includes('Contextual store editor')!==preview||bundle.includes('1931ec083379f5e2fdd294a2be7f6667b4ab65c7d5ebb60c0fcffaf70da2c4ef'))fail('build_role_mismatch');
+  if(bundle.includes('PRIVATE RETAILER EDITOR PREVIEW')!==preview||bundle.includes('Contextual store editor')!==preview||forbiddenFixtureMarkers.some(marker=>bundle.includes(marker)))fail('build_role_mismatch');
   await removeGeneratedBuildInfo();
   verify(checkout,expectedCommit);
   const manifest={schema_version:1,repository:'galla-bit/gallant-peak-web',source_commit:expectedCommit,package_lock_sha256:sha(await readFile(join(checkout,'package-lock.json'))),preview_enabled:preview,files};
