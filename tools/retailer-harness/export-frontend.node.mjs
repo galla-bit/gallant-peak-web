@@ -69,7 +69,7 @@ test('rejects known synthetic fixture markers in either artifact role',async()=>
  }
 });
 test('UTF-8 byte ordering is deterministic for macrons and supplementary Unicode',async()=>{
- const names=['dist/assets/\\uE000.js','dist/assets/\\u{10000}.js','dist/assets/ā.js','dist/assets/A.js'];
+ const names=['dist/assets/\uE000.js','dist/assets/𐀀.js','dist/assets/ā.js','dist/assets/A.js'];
  const ordered=[...names].sort((a,b)=>Buffer.compare(Buffer.from(a,'utf8'),Buffer.from(b,'utf8')));
- assert.deepEqual(ordered,['dist/assets/A.js','dist/assets/ā.js','dist/assets/\\uE000.js','dist/assets/\\u{10000}.js']);
+ assert.deepEqual(ordered,['dist/assets/A.js','dist/assets/ā.js','dist/assets/\uE000.js','dist/assets/𐀀.js']);
 });
