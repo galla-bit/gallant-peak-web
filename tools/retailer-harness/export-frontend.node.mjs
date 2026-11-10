@@ -7,11 +7,11 @@ import {execFileSync} from 'node:child_process';
 import {createHash} from 'node:crypto';
 import {exportFrontend} from './export-frontend.mjs';
 
-async function fixture({fail=false,link=false,leakContextual=false,cache=false}={}){
+async function fixture({fail=false,link=false,leakContextual=false,cache=false,fixtureMarker=''}={}){
  const root=await mkdtemp(join(tmpdir(),'gp-export-'));const checkout=join(root,'checkout');await mkdir(checkout);
  const git=(...args)=>execFileSync('git',['-C',checkout,...args],{encoding:'utf8',stdio:['ignore','pipe','pipe']}).trim();
  await writeFile(join(checkout,'package.json'),JSON.stringify({scripts:{build:'node build.mjs'}}));await writeFile(join(checkout,'package-lock.json'),'{}\n');
- await writeFile(join(checkout,'build.mjs'),`import{mkdirSync,writeFileSync,symlinkSync}from'node:fs';import{join}from'node:path';const out=process.argv[process.argv.indexOf('--outDir')+1];if(${fail})process.exit(2);if(${cache})writeFileSync('tsconfig.app.tsbuildinfo','GENERATED CACHE');mkdirSync(join(out,'assets'),{recursive:true});writeFileSync(join(out,'index.html'),'<div id="root"></div>');writeFileSync(join(out,'assets','Z.js'),'ASSET');writeFileSync(join(out,'assets','app.js'),process.env.VITE_RETAILER_EDITOR_PREVIEW==='true'?'PRIVATE RETAILER EDITOR PREVIEW Contextual store editor':(${leakContextual}?'PUBLIC Contextual store editor':'PUBLIC'));${link?"symlinkSync(out,join(out,'assets','bad'),process.platform==='win32'?'junction':'dir')":''}`);
+ await writeFile(join(checkout,'build.mjs'),`import{mkdirSync,writeFileSync,symlinkSync}from'node:fs';import{join}from'node:path';const out=process.argv[process.argv.indexOf('--outDir')+1];if(${fail})process.exit(2);if(${cache})writeFileSync('tsconfig.app.tsbuildinfo','GENERATED CACHE');mkdirSync(join(out,'assets'),{recursive:true});writeFileSync(join(out,'index.html'),'<div id="root"></div>');writeFileSync(join(out,'assets','Z.js'),'ASSET');writeFileSync(join(out,'assets','app.js'),process.env.VITE_RETAILER_EDITOR_PREVIEW==='true'?'PRIVATE RETAILER EDITOR PREVIEW Contextual store editor':(${leakContextual}?'PUBLIC Contextual store editor':'PUBLIC')+'${'${fixtureMarker}'}');${link?"symlinkSync(out,join(out,'assets','bad'),process.platform==='win32'?'junction':'dir')":''}`);
  if(cache)await writeFile(join(checkout,'.gitignore'),'*.tsbuildinfo\n');
  git('init','-b','fixture');git('remote','add','origin','https://github.com/galla-bit/gallant-peak-web.git');git('add','.');git('-c','user.name=Fixture','-c','user.email=fixture@example.test','commit','-qm','fixture');
  return{root,checkout,git,head:git('rev-parse','HEAD'),out:join(root,'output'),close:()=>rm(root,{recursive:true,force:true})};
@@ -60,3 +60,16 @@ test('removes only newly generated TypeScript build info before clean-source rec
 test('pre-existing ignored TypeScript build info is refused and preserved',async()=>{const f=await fixture({cache:true});try{
  const p=join(f.checkout,'tsconfig.app.tsbuildinfo');await writeFile(p,'PRE-EXISTING');await rejected(exportFrontend({checkoutPath:f.checkout,expectedCommit:f.head,outputPath:f.out,preview:true}),'build_environment');assert.equal(await readFile(p,'utf8'),'PRE-EXISTING');
 }finally{await f.close()}});
+
+test('rejects known synthetic fixture markers in either artifact role',async()=>{
+ for(const marker of ['https://id.gp-issuer.test','synthetic-private-agreement','1931ec083379f5e2fdd294a2be7f6667b4ab65c7d5ebb60c0fcffaf70da2c4ef']){
+  const f=await fixture({fixtureMarker:marker});
+  try{for(const preview of [false,true])await rejected(exportFrontend({checkoutPath:f.checkout,expectedCommit:f.head,outputPath:join(f.root,'output-'+preview),preview}),'build_role_mismatch');}
+  finally{await f.close()}
+ }
+});
+test('UTF-8 byte ordering is deterministic for macrons and supplementary Unicode',async()=>{
+ const names=['dist/assets/\\uE000.js','dist/assets/\\u{10000}.js','dist/assets/ā.js','dist/assets/A.js'];
+ const ordered=[...names].sort((a,b)=>Buffer.compare(Buffer.from(a,'utf8'),Buffer.from(b,'utf8')));
+ assert.deepEqual(ordered,['dist/assets/A.js','dist/assets/ā.js','dist/assets/\\uE000.js','dist/assets/\\u{10000}.js']);
+});
