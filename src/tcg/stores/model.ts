@@ -6,6 +6,7 @@ export interface RetailerSpace {
   id:string;
   name:string;
   description:string;
+  websiteUrl?:string;
   organiserId:string;
   relationship:{kind:'authorised';reference:string}|{kind:'monitored'|'demonstration'};
   products:{id:string;name:string;description:string}[];

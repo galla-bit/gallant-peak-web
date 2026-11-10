@@ -7,13 +7,14 @@ import {RadarViews} from './RadarViews';
 import {EventsView} from './events/EventsView';
 import {useEventsFeed} from './events/useEventsFeed';
 import type {TcgEventsFeedResult} from './events/feed';
-import {VerifiedStores, DemonstrationNotice} from './stores/VerifiedStores';
+import {DemonstrationNotice} from './stores/VerifiedStores';
+import {VerifiedStoreDirectory} from './stores/VerifiedStoreDirectory';
 import {DEMO_NOW, demonstrationEvents} from './stores/demonstration';
 
 const labels: Record<TcgAvailability,string>={in_stock:'In stock',limited:'Limited',out_of_stock:'Out of stock',unknown:'Unknown'};
 const PUBLIC_DELAY_COPY='The free public feed is delayed by at least 15 minutes.';
 
-export function TcgRadar({feed,eventsFeed,eventsEndpoint=import.meta.env.VITE_TCG_EVENTS_PUBLIC_FEED_URL,now,onOpenStore,startStores,returnStoreId}:
+export function TcgRadar({feed,eventsFeed,eventsEndpoint=import.meta.env.VITE_TCG_EVENTS_PUBLIC_FEED_URL,now,startStores}:
   {feed:TcgFeedResult;eventsFeed?:TcgEventsFeedResult;eventsEndpoint?:string;now?:number;onOpenStore?:(id:string)=>void;startStores?:boolean;returnStoreId?:string}) {
   const eventData=useEventsFeed(eventsEndpoint,eventsFeed,now);
   const [showDemonstration,setShowDemonstration]=useState(false);
@@ -46,6 +47,6 @@ export function TcgRadar({feed,eventsFeed,eventsEndpoint=import.meta.env.VITE_TC
     </>;
   }
   return <section className="tcg-radar" aria-label="TCG Radar">
-    <RadarViews startStores={startStores} products={stockProducts()} stores={<VerifiedStores eventsFeed={eventData} now={now} onOpen={onOpenStore} returnStoreId={returnStoreId}/>} events={<><section aria-label="Public events"><EventsView feed={eventData} now={now}/></section><div className="retailer-preview"><label><input type="checkbox" checked={showDemonstration} onChange={event=>setShowDemonstration(event.target.checked)}/>Show demonstration retailer events</label>{showDemonstration&&<section aria-label="Demonstration events"><DemonstrationNotice/><EventsView feed={demonstrationEvents} now={DEMO_NOW} demonstration/></section>}</div></>}/>
+    <RadarViews startStores={startStores} products={stockProducts()} stores={<VerifiedStoreDirectory/>} events={<><section aria-label="Public events"><EventsView feed={eventData} now={now}/></section><div className="retailer-preview"><label><input type="checkbox" checked={showDemonstration} onChange={event=>setShowDemonstration(event.target.checked)}/>Show demonstration retailer events</label>{showDemonstration&&<section aria-label="Demonstration events"><DemonstrationNotice/><EventsView feed={demonstrationEvents} now={DEMO_NOW} demonstration/></section>}</div></>}/>
   </section>;
 }
