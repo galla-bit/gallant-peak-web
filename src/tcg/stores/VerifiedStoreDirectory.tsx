@@ -14,7 +14,7 @@ export function validStoreWebsite(value:unknown):value is string {
 
 export function VerifiedStoreDirectory({stores=[]}:{stores?:readonly RetailerSpace[]}) {
   const authorised=authorisedStores(stores).filter(store=>validStoreWebsite(store.websiteUrl));
-  return <section className="verified-stores" aria-label="Verified Stores">
+  return <section className="verified-stores">
     <div className="section-head"><div><p className="eyebrow">RETAILER DIRECTORY</p><h2>Verified Stores</h2></div>
       <p>Authorised retailer cards link directly to their official websites. Approved TCG offers appear separately in Radar.</p></div>
     {authorised.length===0?<p className="notice" role="status">No verified store cards have been published yet.</p>:
