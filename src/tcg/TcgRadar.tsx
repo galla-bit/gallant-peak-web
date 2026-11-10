@@ -14,7 +14,7 @@ import {DEMO_NOW, demonstrationEvents} from './stores/demonstration';
 const labels: Record<TcgAvailability,string>={in_stock:'In stock',limited:'Limited',out_of_stock:'Out of stock',unknown:'Unknown'};
 const PUBLIC_DELAY_COPY='The free public feed is delayed by at least 15 minutes.';
 
-export function TcgRadar({feed,eventsFeed,eventsEndpoint=import.meta.env.VITE_TCG_EVENTS_PUBLIC_FEED_URL,now,onOpenStore,startStores,returnStoreId}:
+export function TcgRadar({feed,eventsFeed,eventsEndpoint=import.meta.env.VITE_TCG_EVENTS_PUBLIC_FEED_URL,now,startStores}:
   {feed:TcgFeedResult;eventsFeed?:TcgEventsFeedResult;eventsEndpoint?:string;now?:number;onOpenStore?:(id:string)=>void;startStores?:boolean;returnStoreId?:string}) {
   const eventData=useEventsFeed(eventsEndpoint,eventsFeed,now);
   const [showDemonstration,setShowDemonstration]=useState(false);
