@@ -2,7 +2,7 @@ name: Validate pull requests
 
 on:
   pull_request:
-    branches: [main]
+    branches: [main, test/retailer-harness-artifact]
 
 permissions:
   contents: read
