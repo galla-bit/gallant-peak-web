@@ -48,9 +48,10 @@ describe('ProductCard', () => {
     expect(control.getAttribute('aria-expanded')).toBe('true');
     const rows = screen.getAllByRole('listitem');
     expect(rows).toHaveLength(3);
-    const states = ['In stock', 'Unknown', 'Out of stock'];
+    const states = ['In stock', 'Out of stock', 'Unknown'];
+    const orderedOffers = [offers[0], offers[2], offers[1]];
     rows.forEach((row, index) => {
-      const item = offers[index];
+      const item = orderedOffers[index];
       expect(within(row).getByText(item.retailer)).toBeTruthy();
       expect(within(row).getByText(states[index])).toBeTruthy();
       expect(within(row).getByText(item.price_nzd ? `NZ$${item.price_nzd}` : 'Price not supplied')).toBeTruthy();
@@ -58,11 +59,31 @@ describe('ProductCard', () => {
       const link = within(row).getByRole('link', {name:`View at ${item.retailer}`});
       expect(link.getAttribute('href')).toBe(item.retailer_url);
       expect(link.getAttribute('target')).toBe('_blank');
-      expect(link.getAttribute('rel')).toBe('noreferrer');
+      expect(link.getAttribute('rel')).toContain('noreferrer');
+      expect(link.getAttribute('rel')).toContain('noopener');
     });
     expect(screen.getAllByRole('link', {name:'View at Retailer A'})).toHaveLength(2);
     fireEvent.click(control);
     expect(control.getAttribute('aria-expanded')).toBe('false');
     expect(screen.queryByRole('link')).toBeNull();
+  });
+});
+
+describe('Retailer comparison price safety', () => {
+  it('prioritises available priced offers, then available unpriced, then unavailable offers', () => {
+    const sample: TcgPublicItem[]=[
+      {...offers[0],id:'unavailable',retailer:'Unavailable',price_nzd:'1.00',availability:'out_of_stock'},
+      {...offers[0],id:'unknown',retailer:'Unknown',price_nzd:'2.00',availability:'unknown'},
+      {...offers[0],id:'unpriced',retailer:'Unpriced',price_nzd:undefined,availability:'limited'},
+      {...offers[0],id:'available',retailer:'Available',price_nzd:'25.00',availability:'in_stock'},
+    ];
+    render(<ProductCard group={groupTcgItems(sample)[0]}/>);
+    expect(screen.getByText('From NZ$25.00')).toBeTruthy();
+    fireEvent.click(screen.getByRole('button',{name:/compare retailers/i}));
+    const rows=within(screen.getByRole('list',{name:/Retailer offers/i})).getAllByRole('listitem');
+    expect(rows.map(row=>within(row).getByRole('link').textContent)).toEqual([
+      'View at Available','View at Unpriced','View at Unavailable','View at Unknown',
+    ]);
+    expect(screen.getByText(/Historical retailer observations/)).toBeTruthy();
   });
 });
