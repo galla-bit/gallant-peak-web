@@ -18,6 +18,9 @@
 .tcg-product-summary h3{font-size:clamp(28px,3vw,40px);line-height:1.05}
 .tcg-product-summary p{margin:0;line-height:1.6}
 .tcg-product-summary button{margin-top:10px;text-align:left}
+.tcg-product-summary .tcg-product-price{grid-column:1/-1;font-size:clamp(22px,2.5vw,30px);font-weight:800;letter-spacing:-.025em;line-height:1.2;color:#f1f0eb}
+.tcg-product-summary .tcg-status{justify-self:start}
+.tcg-retailer-row:focus-within{background:#1b1b1b}
 .tcg-product-summary .muted{font-size:12px}
 .tcg-retailer-list{list-style:none;padding:0;margin:0;border-top:1px solid #3b3b3b}
 .tcg-retailer-row{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;padding:22px 26px;background:#111}

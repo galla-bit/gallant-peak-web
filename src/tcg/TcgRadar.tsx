@@ -21,19 +21,26 @@ export function TcgRadar({feed,eventsFeed,eventsEndpoint=import.meta.env.VITE_TC
   const [game,setGame]=useState('all');
   const [availability,setAvailability]=useState('all');
   const [displayMode,setDisplayMode]=useState<'cards'|'compact'>('cards');
+  const [sortBy,setSortBy]=useState<'recent'|'price'|'retailers'>('recent');
   const groups=useMemo(()=>feed.status==='ready' ? groupTcgItems(feed.snapshot.items) : [],[feed]);
   const games=useMemo(()=>[...new Set(groups.map(group=>group.game))].sort(),[groups]);
   function stockProducts() {
     if(feed.status==='loading') return <div className="notice" role="status"><strong>RADAR STATUS · LOADING</strong><br/>{PUBLIC_DELAY_COPY} Requesting validated public TCG Hunt data. No stock is shown until validation completes.</div>;
     if(feed.status==='unconfigured') return <div className="notice" role="status"><strong>RADAR STATUS · NOT CONNECTED</strong><br/>{PUBLIC_DELAY_COPY} The public TCG Hunt feed is not connected in this build. No stock is being simulated.</div>;
     if(feed.status==='unavailable') return <div className="notice" role="status"><strong>RADAR STATUS · UNAVAILABLE</strong><br/>{PUBLIC_DELAY_COPY} Validated public stock data is currently unavailable. No cached demo stock is shown.</div>;
-    const products=filterProductGroups(groups,{game,availability});
+    const products=[...filterProductGroups(groups,{game,availability})].sort((a,b)=>{
+      if(sortBy==='price') return (a.lowestAvailablePriceNzd??Infinity)-(b.lowestAvailablePriceNzd??Infinity) || a.product.localeCompare(b.product);
+      if(sortBy==='retailers') return b.retailerCount-a.retailerCount || a.product.localeCompare(b.product);
+      return Date.parse(b.latestObservedAt)-Date.parse(a.latestObservedAt) || a.product.localeCompare(b.product);
+    });
     return <>
       <div className="section-head"><div><p className="eyebrow">DELAYED PUBLIC STOCK INTELLIGENCE</p><h2 id="tcg-radar-title">NZ RETAIL RADAR</h2></div><p>{PUBLIC_DELAY_COPY} Confirm availability and checkout with the retailer.</p></div>
       <div className="tcg-filters">
         <label>Game<select value={game} onChange={event=>setGame(event.target.value)}><option value="all">All games</option>{games.map(value=><option key={value}>{value}</option>)}</select></label>
         <label>Availability<select value={availability} onChange={event=>setAvailability(event.target.value)}><option value="all">All states</option>{Object.entries(labels).map(([value,label])=><option key={value} value={value}>{label}</option>)}</select></label>
+        <label>Sort products<select aria-label="Sort products" value={sortBy} onChange={event=>setSortBy(event.target.value as typeof sortBy)}><option value="recent">Recently observed</option><option value="price">Lowest available price</option><option value="retailers">Most retailers</option></select></label>
       </div>
+      <p className="muted" role="status">{products.length} {products.length===1?'product':'products'} match your filters · {groups.length} total validated products</p>
       {feed.rejectedItems>0 && <p className="muted" role="status">{feed.rejectedItems} invalid record{feed.rejectedItems===1?'':'s'} withheld.</p>}
       <p className="muted">Filters select products with at least one matching offer. Compare retailers to see every observation.</p>
       <div className="tcg-display-toggle" role="group" aria-label="Product display">
