@@ -150,3 +150,21 @@ describe('TcgRadar', () => {
     expect(screen.getAllByRole('link').map(link=>link.getAttribute('href'))).toEqual(offerLinks);
   });
 });
+
+describe('Radar product sorting', () => {
+  it('sorts by available price without treating unknown prices as zero', () => {
+    render(<TcgRadar feed={ready}/>);
+    expect(screen.getByText('2 products match your filters · 2 total validated products')).toBeTruthy();
+    fireEvent.change(screen.getByLabelText('Sort products'),{target:{value:'price'}});
+    const names=within(screen.getByRole('list',{name:'Products'})).getAllByRole('heading',{level:3}).map(node=>node.textContent);
+    expect(names).toEqual(['Booster Box','Display']);
+    fireEvent.change(screen.getByLabelText(/game/i),{target:{value:'One Piece'}});
+    expect(screen.getByText('1 product match your filters · 2 total validated products')).toBeTruthy();
+  });
+  it('sorts by retailer count while retaining both product groups', () => {
+    render(<TcgRadar feed={ready}/>);
+    fireEvent.change(screen.getByLabelText('Sort products'),{target:{value:'retailers'}});
+    const names=within(screen.getByRole('list',{name:'Products'})).getAllByRole('heading',{level:3}).map(node=>node.textContent);
+    expect(names).toEqual(['Booster Box','Display']);
+  });
+});
