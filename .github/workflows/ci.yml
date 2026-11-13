@@ -2,7 +2,6 @@ name: Validate pull requests
 
 on:
   pull_request:
-    branches: [main]
 
 permissions:
   contents: read
