@@ -14,6 +14,8 @@ afterEach(() => {
   vi.restoreAllMocks();
   vi.unstubAllGlobals();
   vi.unstubAllEnvs();
+  window.localStorage.removeItem('gd_customer_tier');
+  window.localStorage.removeItem('gd_customer_session');
 });
 
 function sessionResponse(body: unknown, status = 200) {
@@ -86,5 +88,28 @@ describe('TCG Hunt page', () => {
     sessionResponse({authenticated: false});
     renderPage();
     await waitFor(() => expect(document.querySelector('meta[name="description"]')?.getAttribute('content')).toMatch(/register or sign in/i));
+  });
+
+  it.each([
+    {body: {authenticated: false}, status: 200, expected: /Register or sign in/},
+    {body: {authenticated: true, tier: 'free'}, status: 200, expected: /Free membership recognised/},
+    {body: {authenticated: true, tier: 'premium'}, status: 503, expected: /Register or sign in/},
+  ])('ignores browser Premium overrides with session HTTP $status / $body.authenticated', async ({body, status, expected}) => {
+    window.localStorage.setItem('gd_customer_tier', 'premium');
+    window.localStorage.setItem('gd_customer_session', JSON.stringify({authenticated: true, tier: 'premium'}));
+    const fetcher = vi.fn(async (path: RequestInfo | URL) => new Response(JSON.stringify(
+      String(path) === '/api/customer/v1/session' ? body : {
+        schema_version: 2, items: [{product: 'Protected synthetic product', retailers: [{
+          name: 'Protected synthetic retailer', url: 'https://private.example.invalid/item',
+        }]}],
+      }), {status: String(path) === '/api/customer/v1/session' ? status : 200,
+        headers: {'Content-Type': 'application/json'}}));
+    vi.stubGlobal('fetch', fetcher);
+    render(<MemoryRouter initialEntries={['/tcg-hunt?tier=premium&member=true&account_id=other']}><App/></MemoryRouter>);
+    expect(await screen.findByText(expected)).toBeTruthy();
+    expect(screen.queryByText(/Protected synthetic/)).toBeNull();
+    expect(screen.queryByRole('list', {name: 'Products'})).toBeNull();
+    expect(fetcher).toHaveBeenCalledTimes(1);
+    expect(fetcher.mock.calls[0][0]).toBe('/api/customer/v1/session');
   });
 });
