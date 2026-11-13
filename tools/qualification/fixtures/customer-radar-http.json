@@ -1,0 +1,959 @@
+{
+  "cases": {
+    "anonymous": {
+      "free": {
+        "body": {
+          "detail": "customer login required"
+        },
+        "cache_control": "private, no-store",
+        "status": 401,
+        "vary": "Cookie"
+      },
+      "member": {
+        "body": {
+          "detail": "customer login required"
+        },
+        "cache_control": "private, no-store",
+        "status": 401,
+        "vary": "Cookie"
+      },
+      "session": {
+        "body": {
+          "detail": "customer login required"
+        },
+        "cache_control": "private, no-store",
+        "status": 401,
+        "vary": "Cookie"
+      }
+    },
+    "disabled_account": {
+      "free": {
+        "body": {
+          "detail": "active verified account required"
+        },
+        "cache_control": "private, no-store",
+        "status": 403,
+        "vary": "Cookie"
+      },
+      "member": {
+        "body": {
+          "detail": "active verified account required"
+        },
+        "cache_control": "private, no-store",
+        "status": 403,
+        "vary": "Cookie"
+      },
+      "session": {
+        "body": {
+          "detail": "active verified account required"
+        },
+        "cache_control": "private, no-store",
+        "status": 403,
+        "vary": "Cookie"
+      }
+    },
+    "expired_entitlement": {
+      "free": {
+        "body": {
+          "items": [
+            {
+              "game": "Pokemon",
+              "in_stock_retailer_count": 1,
+              "product": "Synthetic boundary"
+            },
+            {
+              "game": "Pokemon",
+              "in_stock_retailer_count": 2,
+              "product": "Synthetic collision"
+            },
+            {
+              "game": "Pokemon",
+              "in_stock_retailer_count": 10,
+              "product": "Synthetic p0"
+            },
+            {
+              "game": "Pokemon",
+              "in_stock_retailer_count": 10,
+              "product": "Synthetic p1"
+            },
+            {
+              "game": "Pokemon",
+              "in_stock_retailer_count": 4,
+              "product": "Synthetic p10"
+            },
+            {
+              "game": "Pokemon",
+              "in_stock_retailer_count": 1,
+              "product": "Synthetic p11"
+            },
+            {
+              "game": "Pokemon",
+              "in_stock_retailer_count": 10,
+              "product": "Synthetic p2"
+            },
+            {
+              "game": "Pokemon",
+              "in_stock_retailer_count": 2,
+              "product": "Synthetic p3"
+            },
+            {
+              "game": "Pokemon",
+              "in_stock_retailer_count": 2,
+              "product": "Synthetic p4"
+            },
+            {
+              "game": "Pokemon",
+              "in_stock_retailer_count": 4,
+              "product": "Synthetic p5"
+            },
+            {
+              "game": "Pokemon",
+              "in_stock_retailer_count": 3,
+              "product": "Synthetic p6"
+            },
+            {
+              "game": "Pokemon",
+              "in_stock_retailer_count": 4,
+              "product": "Synthetic p7"
+            },
+            {
+              "game": "Pokemon",
+              "in_stock_retailer_count": 1,
+              "product": "Synthetic p8"
+            },
+            {
+              "game": "Pokemon",
+              "in_stock_retailer_count": 1,
+              "product": "Synthetic p9"
+            }
+          ],
+          "schema_version": 2
+        },
+        "cache_control": "private, no-store",
+        "status": 200,
+        "vary": "Cookie"
+      },
+      "member": {
+        "body": {
+          "detail": "active membership required"
+        },
+        "cache_control": "private, no-store",
+        "status": 403,
+        "vary": "Cookie"
+      },
+      "session": {
+        "body": {
+          "authenticated": true,
+          "tier": "free"
+        },
+        "cache_control": "private, no-store",
+        "status": 200,
+        "vary": "Cookie"
+      }
+    },
+    "free": {
+      "free": {
+        "body": {
+          "items": [
+            {
+              "game": "Pokemon",
+              "in_stock_retailer_count": 1,
+              "product": "Synthetic boundary"
+            },
+            {
+              "game": "Pokemon",
+              "in_stock_retailer_count": 2,
+              "product": "Synthetic collision"
+            },
+            {
+              "game": "Pokemon",
+              "in_stock_retailer_count": 10,
+              "product": "Synthetic p0"
+            },
+            {
+              "game": "Pokemon",
+              "in_stock_retailer_count": 10,
+              "product": "Synthetic p1"
+            },
+            {
+              "game": "Pokemon",
+              "in_stock_retailer_count": 4,
+              "product": "Synthetic p10"
+            },
+            {
+              "game": "Pokemon",
+              "in_stock_retailer_count": 1,
+              "product": "Synthetic p11"
+            },
+            {
+              "game": "Pokemon",
+              "in_stock_retailer_count": 10,
+              "product": "Synthetic p2"
+            },
+            {
+              "game": "Pokemon",
+              "in_stock_retailer_count": 2,
+              "product": "Synthetic p3"
+            },
+            {
+              "game": "Pokemon",
+              "in_stock_retailer_count": 2,
+              "product": "Synthetic p4"
+            },
+            {
+              "game": "Pokemon",
+              "in_stock_retailer_count": 4,
+              "product": "Synthetic p5"
+            },
+            {
+              "game": "Pokemon",
+              "in_stock_retailer_count": 3,
+              "product": "Synthetic p6"
+            },
+            {
+              "game": "Pokemon",
+              "in_stock_retailer_count": 4,
+              "product": "Synthetic p7"
+            },
+            {
+              "game": "Pokemon",
+              "in_stock_retailer_count": 1,
+              "product": "Synthetic p8"
+            },
+            {
+              "game": "Pokemon",
+              "in_stock_retailer_count": 1,
+              "product": "Synthetic p9"
+            }
+          ],
+          "schema_version": 2
+        },
+        "cache_control": "private, no-store",
+        "status": 200,
+        "vary": "Cookie"
+      },
+      "member": {
+        "body": {
+          "detail": "active membership required"
+        },
+        "cache_control": "private, no-store",
+        "status": 403,
+        "vary": "Cookie"
+      },
+      "session": {
+        "body": {
+          "authenticated": true,
+          "tier": "free"
+        },
+        "cache_control": "private, no-store",
+        "status": 200,
+        "vary": "Cookie"
+      }
+    },
+    "premium": {
+      "free": {
+        "body": {
+          "items": [
+            {
+              "game": "Pokemon",
+              "in_stock_retailer_count": 1,
+              "product": "Synthetic boundary"
+            },
+            {
+              "game": "Pokemon",
+              "in_stock_retailer_count": 2,
+              "product": "Synthetic collision"
+            },
+            {
+              "game": "Pokemon",
+              "in_stock_retailer_count": 10,
+              "product": "Synthetic p0"
+            },
+            {
+              "game": "Pokemon",
+              "in_stock_retailer_count": 10,
+              "product": "Synthetic p1"
+            },
+            {
+              "game": "Pokemon",
+              "in_stock_retailer_count": 4,
+              "product": "Synthetic p10"
+            },
+            {
+              "game": "Pokemon",
+              "in_stock_retailer_count": 1,
+              "product": "Synthetic p11"
+            },
+            {
+              "game": "Pokemon",
+              "in_stock_retailer_count": 10,
+              "product": "Synthetic p2"
+            },
+            {
+              "game": "Pokemon",
+              "in_stock_retailer_count": 2,
+              "product": "Synthetic p3"
+            },
+            {
+              "game": "Pokemon",
+              "in_stock_retailer_count": 2,
+              "product": "Synthetic p4"
+            },
+            {
+              "game": "Pokemon",
+              "in_stock_retailer_count": 4,
+              "product": "Synthetic p5"
+            },
+            {
+              "game": "Pokemon",
+              "in_stock_retailer_count": 3,
+              "product": "Synthetic p6"
+            },
+            {
+              "game": "Pokemon",
+              "in_stock_retailer_count": 4,
+              "product": "Synthetic p7"
+            },
+            {
+              "game": "Pokemon",
+              "in_stock_retailer_count": 1,
+              "product": "Synthetic p8"
+            },
+            {
+              "game": "Pokemon",
+              "in_stock_retailer_count": 1,
+              "product": "Synthetic p9"
+            }
+          ],
+          "schema_version": 2
+        },
+        "cache_control": "private, no-store",
+        "status": 200,
+        "vary": "Cookie"
+      },
+      "member": {
+        "body": {
+          "items": [
+            {
+              "game": "Pokemon",
+              "in_stock_retailer_count": 0,
+              "product": "Synthetic boundary",
+              "retailers": []
+            },
+            {
+              "game": "Pokemon",
+              "in_stock_retailer_count": 2,
+              "product": "Synthetic collision",
+              "retailers": [
+                {
+                  "availability": "in_stock",
+                  "name": "Shared display name",
+                  "observed_at": "2026-11-12T23:43:00+00:00",
+                  "url": "https://example.invalid/r0/collision"
+                },
+                {
+                  "availability": "in_stock",
+                  "name": "Shared display name",
+                  "observed_at": "2026-11-12T23:43:00+00:00",
+                  "url": "https://example.invalid/r1/collision"
+                }
+              ]
+            },
+            {
+              "game": "Pokemon",
+              "in_stock_retailer_count": 10,
+              "product": "Synthetic p0",
+              "retailers": [
+                {
+                  "availability": "in_stock",
+                  "name": "Renamed retailer",
+                  "observed_at": "2026-11-12T23:14:59.750000+00:00",
+                  "url": "https://example.invalid/r0/p0"
+                },
+                {
+                  "availability": "in_stock",
+                  "name": "Shared display name",
+                  "observed_at": "2026-11-12T23:14:59.750000+00:00",
+                  "url": "https://example.invalid/r10/p0"
+                },
+                {
+                  "availability": "in_stock",
+                  "name": "Shared display name",
+                  "observed_at": "2026-11-12T23:14:59.750000+00:00",
+                  "url": "https://example.invalid/r11/p0"
+                },
+                {
+                  "availability": "in_stock",
+                  "name": "Shared display name",
+                  "observed_at": "2026-11-12T23:14:59.750000+00:00",
+                  "url": "https://example.invalid/r2/p0"
+                },
+                {
+                  "availability": "in_stock",
+                  "name": "Shared display name",
+                  "observed_at": "2026-11-12T23:14:59.750000+00:00",
+                  "url": "https://example.invalid/r3/p0"
+                },
+                {
+                  "availability": "in_stock",
+                  "name": "Shared display name",
+                  "observed_at": "2026-11-12T23:14:59.750000+00:00",
+                  "url": "https://example.invalid/r4/p0"
+                },
+                {
+                  "availability": "in_stock",
+                  "name": "Shared display name",
+                  "observed_at": "2026-11-12T23:14:59.750000+00:00",
+                  "url": "https://example.invalid/r5/p0"
+                },
+                {
+                  "availability": "in_stock",
+                  "name": "Shared display name",
+                  "observed_at": "2026-11-12T23:14:59.750000+00:00",
+                  "url": "https://example.invalid/r6/p0"
+                },
+                {
+                  "availability": "in_stock",
+                  "name": "Shared display name",
+                  "observed_at": "2026-11-12T23:14:59.750000+00:00",
+                  "url": "https://example.invalid/r8/p0"
+                },
+                {
+                  "availability": "in_stock",
+                  "name": "Shared display name",
+                  "observed_at": "2026-11-12T23:14:59.750000+00:00",
+                  "url": "https://example.invalid/r9/p0"
+                }
+              ]
+            },
+            {
+              "game": "Pokemon",
+              "in_stock_retailer_count": 10,
+              "product": "Synthetic p1",
+              "retailers": [
+                {
+                  "availability": "in_stock",
+                  "name": "Renamed retailer",
+                  "observed_at": "2026-11-12T23:14:59.750000+00:00",
+                  "url": "https://example.invalid/r0/p1"
+                },
+                {
+                  "availability": "in_stock",
+                  "name": "Shared display name",
+                  "observed_at": "2026-11-12T23:14:59.750000+00:00",
+                  "url": "https://example.invalid/r1/p1"
+                },
+                {
+                  "availability": "in_stock",
+                  "name": "Shared display name",
+                  "observed_at": "2026-11-12T23:14:59.750000+00:00",
+                  "url": "https://example.invalid/r10/p1"
+                },
+                {
+                  "availability": "in_stock",
+                  "name": "Shared display name",
+                  "observed_at": "2026-11-12T23:14:59.750000+00:00",
+                  "url": "https://example.invalid/r11/p1"
+                },
+                {
+                  "availability": "in_stock",
+                  "name": "Shared display name",
+                  "observed_at": "2026-11-12T23:14:59.750000+00:00",
+                  "url": "https://example.invalid/r2/p1"
+                },
+                {
+                  "availability": "in_stock",
+                  "name": "Shared display name",
+                  "observed_at": "2026-11-12T23:14:59.750000+00:00",
+                  "url": "https://example.invalid/r3/p1"
+                },
+                {
+                  "availability": "in_stock",
+                  "name": "Shared display name",
+                  "observed_at": "2026-11-12T23:14:59.750000+00:00",
+                  "url": "https://example.invalid/r5/p1"
+                },
+                {
+                  "availability": "in_stock",
+                  "name": "Shared display name",
+                  "observed_at": "2026-11-12T23:14:59.750000+00:00",
+                  "url": "https://example.invalid/r6/p1"
+                },
+                {
+                  "availability": "in_stock",
+                  "name": "Shared display name",
+                  "observed_at": "2026-11-12T23:14:59.750000+00:00",
+                  "url": "https://example.invalid/r7/p1"
+                },
+                {
+                  "availability": "in_stock",
+                  "name": "Shared display name",
+                  "observed_at": "2026-11-12T23:14:59.750000+00:00",
+                  "url": "https://example.invalid/r8/p1"
+                }
+              ]
+            },
+            {
+              "game": "Pokemon",
+              "in_stock_retailer_count": 4,
+              "product": "Synthetic p10",
+              "retailers": [
+                {
+                  "availability": "in_stock",
+                  "name": "Shared display name",
+                  "observed_at": "2026-11-12T22:59:59.750000+00:00",
+                  "url": "https://example.invalid/r0/p10"
+                },
+                {
+                  "availability": "in_stock",
+                  "name": "Shared display name",
+                  "observed_at": "2026-11-12T22:59:59.750000+00:00",
+                  "url": "https://example.invalid/r11/p10"
+                },
+                {
+                  "availability": "in_stock",
+                  "name": "Shared display name",
+                  "observed_at": "2026-11-12T22:59:59.750000+00:00",
+                  "url": "https://example.invalid/r4/p10"
+                },
+                {
+                  "availability": "in_stock",
+                  "name": "Shared display name",
+                  "observed_at": "2026-11-12T22:59:59.750000+00:00",
+                  "url": "https://example.invalid/r6/p10"
+                }
+              ]
+            },
+            {
+              "game": "Pokemon",
+              "in_stock_retailer_count": 1,
+              "product": "Synthetic p11",
+              "retailers": [
+                {
+                  "availability": "in_stock",
+                  "name": "Shared display name",
+                  "observed_at": "2026-11-12T22:59:59.750000+00:00",
+                  "url": "https://example.invalid/r6/p11"
+                }
+              ]
+            },
+            {
+              "game": "Pokemon",
+              "in_stock_retailer_count": 10,
+              "product": "Synthetic p2",
+              "retailers": [
+                {
+                  "availability": "in_stock",
+                  "name": "Renamed retailer",
+                  "observed_at": "2026-11-12T23:14:59.750000+00:00",
+                  "url": "https://example.invalid/r0/p2"
+                },
+                {
+                  "availability": "in_stock",
+                  "name": "Shared display name",
+                  "observed_at": "2026-11-12T23:14:59.750000+00:00",
+                  "url": "https://example.invalid/r1/p2"
+                },
+                {
+                  "availability": "in_stock",
+                  "name": "Shared display name",
+                  "observed_at": "2026-11-12T23:14:59.750000+00:00",
+                  "url": "https://example.invalid/r10/p2"
+                },
+                {
+                  "availability": "in_stock",
+                  "name": "Shared display name",
+                  "observed_at": "2026-11-12T23:14:59.750000+00:00",
+                  "url": "https://example.invalid/r11/p2"
+                },
+                {
+                  "availability": "in_stock",
+                  "name": "Shared display name",
+                  "observed_at": "2026-11-12T23:14:59.750000+00:00",
+                  "url": "https://example.invalid/r3/p2"
+                },
+                {
+                  "availability": "in_stock",
+                  "name": "Shared display name",
+                  "observed_at": "2026-11-12T22:59:59.750000+00:00",
+                  "url": "https://example.invalid/r4/p2"
+                },
+                {
+                  "availability": "in_stock",
+                  "name": "Shared display name",
+                  "observed_at": "2026-11-12T23:14:59.750000+00:00",
+                  "url": "https://example.invalid/r5/p2"
+                },
+                {
+                  "availability": "in_stock",
+                  "name": "Shared display name",
+                  "observed_at": "2026-11-12T23:14:59.750000+00:00",
+                  "url": "https://example.invalid/r6/p2"
+                },
+                {
+                  "availability": "in_stock",
+                  "name": "Shared display name",
+                  "observed_at": "2026-11-12T23:14:59.750000+00:00",
+                  "url": "https://example.invalid/r7/p2"
+                },
+                {
+                  "availability": "in_stock",
+                  "name": "Shared display name",
+                  "observed_at": "2026-11-12T23:14:59.750000+00:00",
+                  "url": "https://example.invalid/r9/p2"
+                }
+              ]
+            },
+            {
+              "game": "Pokemon",
+              "in_stock_retailer_count": 2,
+              "product": "Synthetic p3",
+              "retailers": [
+                {
+                  "availability": "in_stock",
+                  "name": "Shared display name",
+                  "observed_at": "2026-11-12T23:14:59.750000+00:00",
+                  "url": "https://example.invalid/r1/p3"
+                },
+                {
+                  "availability": "in_stock",
+                  "name": "Shared display name",
+                  "observed_at": "2026-11-12T23:14:59.750000+00:00",
+                  "url": "https://example.invalid/r6/p3"
+                }
+              ]
+            },
+            {
+              "game": "Pokemon",
+              "in_stock_retailer_count": 2,
+              "product": "Synthetic p4",
+              "retailers": [
+                {
+                  "availability": "in_stock",
+                  "name": "Renamed retailer",
+                  "observed_at": "2026-11-12T23:14:59.750000+00:00",
+                  "url": "https://example.invalid/r0/p4"
+                },
+                {
+                  "availability": "in_stock",
+                  "name": "Shared display name",
+                  "observed_at": "2026-11-12T22:59:59.750000+00:00",
+                  "url": "https://example.invalid/r4/p4"
+                }
+              ]
+            },
+            {
+              "game": "Pokemon",
+              "in_stock_retailer_count": 4,
+              "product": "Synthetic p5",
+              "retailers": [
+                {
+                  "availability": "in_stock",
+                  "name": "Shared display name",
+                  "observed_at": "2026-11-12T23:14:59.750000+00:00",
+                  "url": "https://example.invalid/r3/p5"
+                },
+                {
+                  "availability": "in_stock",
+                  "name": "Shared display name",
+                  "observed_at": "2026-11-12T23:14:59.750000+00:00",
+                  "url": "https://example.invalid/r4/p5"
+                },
+                {
+                  "availability": "in_stock",
+                  "name": "Shared display name",
+                  "observed_at": "2026-11-12T22:59:59.750000+00:00",
+                  "url": "https://example.invalid/r5/p5"
+                },
+                {
+                  "availability": "in_stock",
+                  "name": "Shared display name",
+                  "observed_at": "2026-11-12T23:14:59.750000+00:00",
+                  "url": "https://example.invalid/r8/p5"
+                }
+              ]
+            },
+            {
+              "game": "Pokemon",
+              "in_stock_retailer_count": 3,
+              "product": "Synthetic p6",
+              "retailers": [
+                {
+                  "availability": "in_stock",
+                  "name": "Shared display name",
+                  "observed_at": "2026-11-12T22:59:59.750000+00:00",
+                  "url": "https://example.invalid/r11/p6"
+                },
+                {
+                  "availability": "in_stock",
+                  "name": "Shared display name",
+                  "observed_at": "2026-11-12T22:59:59.750000+00:00",
+                  "url": "https://example.invalid/r2/p6"
+                },
+                {
+                  "availability": "in_stock",
+                  "name": "Shared display name",
+                  "observed_at": "2026-11-12T23:14:59.750000+00:00",
+                  "url": "https://example.invalid/r3/p6"
+                }
+              ]
+            },
+            {
+              "game": "Pokemon",
+              "in_stock_retailer_count": 4,
+              "product": "Synthetic p7",
+              "retailers": [
+                {
+                  "availability": "in_stock",
+                  "name": "Renamed retailer",
+                  "observed_at": "2026-11-12T23:14:59.750000+00:00",
+                  "url": "https://example.invalid/r0/p7"
+                },
+                {
+                  "availability": "in_stock",
+                  "name": "Shared display name",
+                  "observed_at": "2026-11-12T23:14:59.750000+00:00",
+                  "url": "https://example.invalid/r10/p7"
+                },
+                {
+                  "availability": "in_stock",
+                  "name": "Shared display name",
+                  "observed_at": "2026-11-12T23:14:59.750000+00:00",
+                  "url": "https://example.invalid/r11/p7"
+                },
+                {
+                  "availability": "in_stock",
+                  "name": "Shared display name",
+                  "observed_at": "2026-11-12T22:59:59.750000+00:00",
+                  "url": "https://example.invalid/r9/p7"
+                }
+              ]
+            },
+            {
+              "game": "Pokemon",
+              "in_stock_retailer_count": 1,
+              "product": "Synthetic p8",
+              "retailers": [
+                {
+                  "availability": "in_stock",
+                  "name": "Shared display name",
+                  "observed_at": "2026-11-12T23:14:59.750000+00:00",
+                  "url": "https://example.invalid/r3/p8"
+                }
+              ]
+            },
+            {
+              "game": "Pokemon",
+              "in_stock_retailer_count": 1,
+              "product": "Synthetic p9",
+              "retailers": [
+                {
+                  "availability": "in_stock",
+                  "name": "Shared display name",
+                  "observed_at": "2026-11-12T22:59:59.750000+00:00",
+                  "url": "https://example.invalid/r10/p9"
+                }
+              ]
+            }
+          ],
+          "schema_version": 2
+        },
+        "cache_control": "private, no-store",
+        "status": 200,
+        "vary": "Cookie"
+      },
+      "session": {
+        "body": {
+          "authenticated": true,
+          "tier": "premium"
+        },
+        "cache_control": "private, no-store",
+        "status": 200,
+        "vary": "Cookie"
+      }
+    },
+    "revoked_canonical": {
+      "free": {
+        "body": {
+          "items": [],
+          "schema_version": 2
+        },
+        "cache_control": "private, no-store",
+        "status": 200,
+        "vary": "Cookie"
+      },
+      "member": {
+        "body": {
+          "items": [],
+          "schema_version": 2
+        },
+        "cache_control": "private, no-store",
+        "status": 200,
+        "vary": "Cookie"
+      },
+      "session": {
+        "body": {
+          "authenticated": true,
+          "tier": "premium"
+        },
+        "cache_control": "private, no-store",
+        "status": 200,
+        "vary": "Cookie"
+      }
+    },
+    "revoked_entitlement": {
+      "free": {
+        "body": {
+          "items": [
+            {
+              "game": "Pokemon",
+              "in_stock_retailer_count": 1,
+              "product": "Synthetic boundary"
+            },
+            {
+              "game": "Pokemon",
+              "in_stock_retailer_count": 2,
+              "product": "Synthetic collision"
+            },
+            {
+              "game": "Pokemon",
+              "in_stock_retailer_count": 10,
+              "product": "Synthetic p0"
+            },
+            {
+              "game": "Pokemon",
+              "in_stock_retailer_count": 10,
+              "product": "Synthetic p1"
+            },
+            {
+              "game": "Pokemon",
+              "in_stock_retailer_count": 4,
+              "product": "Synthetic p10"
+            },
+            {
+              "game": "Pokemon",
+              "in_stock_retailer_count": 1,
+              "product": "Synthetic p11"
+            },
+            {
+              "game": "Pokemon",
+              "in_stock_retailer_count": 10,
+              "product": "Synthetic p2"
+            },
+            {
+              "game": "Pokemon",
+              "in_stock_retailer_count": 2,
+              "product": "Synthetic p3"
+            },
+            {
+              "game": "Pokemon",
+              "in_stock_retailer_count": 2,
+              "product": "Synthetic p4"
+            },
+            {
+              "game": "Pokemon",
+              "in_stock_retailer_count": 4,
+              "product": "Synthetic p5"
+            },
+            {
+              "game": "Pokemon",
+              "in_stock_retailer_count": 3,
+              "product": "Synthetic p6"
+            },
+            {
+              "game": "Pokemon",
+              "in_stock_retailer_count": 4,
+              "product": "Synthetic p7"
+            },
+            {
+              "game": "Pokemon",
+              "in_stock_retailer_count": 1,
+              "product": "Synthetic p8"
+            },
+            {
+              "game": "Pokemon",
+              "in_stock_retailer_count": 1,
+              "product": "Synthetic p9"
+            }
+          ],
+          "schema_version": 2
+        },
+        "cache_control": "private, no-store",
+        "status": 200,
+        "vary": "Cookie"
+      },
+      "member": {
+        "body": {
+          "detail": "active membership required"
+        },
+        "cache_control": "private, no-store",
+        "status": 403,
+        "vary": "Cookie"
+      },
+      "session": {
+        "body": {
+          "authenticated": true,
+          "tier": "free"
+        },
+        "cache_control": "private, no-store",
+        "status": 200,
+        "vary": "Cookie"
+      }
+    },
+    "revoked_session": {
+      "free": {
+        "body": {
+          "detail": "customer login required"
+        },
+        "cache_control": "private, no-store",
+        "status": 401,
+        "vary": "Cookie"
+      },
+      "member": {
+        "body": {
+          "detail": "customer login required"
+        },
+        "cache_control": "private, no-store",
+        "status": 401,
+        "vary": "Cookie"
+      },
+      "session": {
+        "body": {
+          "detail": "customer login required"
+        },
+        "cache_control": "private, no-store",
+        "status": 401,
+        "vary": "Cookie"
+      }
+    },
+    "unverified_identity": {
+      "free": {
+        "body": {
+          "detail": "customer login required"
+        },
+        "cache_control": "private, no-store",
+        "status": 401,
+        "vary": "Cookie"
+      },
+      "member": {
+        "body": {
+          "detail": "customer login required"
+        },
+        "cache_control": "private, no-store",
+        "status": 401,
+        "vary": "Cookie"
+      },
+      "session": {
+        "body": {
+          "detail": "customer login required"
+        },
+        "cache_control": "private, no-store",
+        "status": 401,
+        "vary": "Cookie"
+      }
+    }
+  },
+  "contract_version": 1,
+  "kind": "synthetic mock HTTP responses; no live identity or browser qualification",
+  "seed": 20261114
+}
