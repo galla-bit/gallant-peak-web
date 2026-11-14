@@ -21,6 +21,24 @@ jobs:
         with:
           node-version: 22
           cache: npm
+      - name: Set up contract checker
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+      - name: Read paired backend contract only
+        uses: actions/checkout@v7
+        with:
+          repository: galla-bit/GallantDiscoveries
+          ref: feat/customer-radar-tier-projections
+          path: .contract-peer
+          persist-credentials: false
+          sparse-checkout-cone-mode: false
+          sparse-checkout: tests/customer_runtime/fixtures/customer-runtime-http.json
+      - name: Verify paired contract and rejection tests
+        run: |
+          git -C .contract-peer rev-parse HEAD
+          python -m unittest discover -s tools/qualification -p test_contract_gate.py
+          python tools/qualification/check_customer_contract.py tools/qualification/fixtures/customer-runtime-http.json .contract-peer/tests/customer_runtime/fixtures/customer-runtime-http.json
       - name: Install dependencies
         run: npm ci
       - name: Test

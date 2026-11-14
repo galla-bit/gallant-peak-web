@@ -1,0 +1,143 @@
+{
+  "cases": {
+    "anonymous": {
+      "free": {
+        "body": {
+          "detail": "customer login required"
+        },
+        "cache_control": "private, no-store",
+        "status": 401,
+        "vary": "Cookie"
+      },
+      "member": {
+        "body": {
+          "detail": "customer login required"
+        },
+        "cache_control": "private, no-store",
+        "status": 401,
+        "vary": "Cookie"
+      },
+      "session": {
+        "body": {
+          "detail": "customer login required"
+        },
+        "cache_control": "private, no-store",
+        "status": 401,
+        "vary": "Cookie"
+      }
+    },
+    "canonical_revoked": {
+      "free": {
+        "body": {
+          "items": [],
+          "schema_version": 2
+        },
+        "cache_control": "private, no-store",
+        "status": 200,
+        "vary": "Cookie"
+      },
+      "member": {
+        "body": {
+          "items": [],
+          "schema_version": 2
+        },
+        "cache_control": "private, no-store",
+        "status": 200,
+        "vary": "Cookie"
+      },
+      "session": {
+        "body": {
+          "authenticated": true,
+          "tier": "premium"
+        },
+        "cache_control": "private, no-store",
+        "status": 200,
+        "vary": "Cookie"
+      }
+    },
+    "free": {
+      "free": {
+        "body": {
+          "items": [
+            {
+              "game": "Pokemon",
+              "in_stock_retailer_count": 1,
+              "product": "Offline booster"
+            }
+          ],
+          "schema_version": 2
+        },
+        "cache_control": "private, no-store",
+        "status": 200,
+        "vary": "Cookie"
+      },
+      "member": {
+        "body": {
+          "detail": "active membership required"
+        },
+        "cache_control": "private, no-store",
+        "status": 403,
+        "vary": "Cookie"
+      },
+      "session": {
+        "body": {
+          "authenticated": true,
+          "tier": "free"
+        },
+        "cache_control": "private, no-store",
+        "status": 200,
+        "vary": "Cookie"
+      }
+    },
+    "premium": {
+      "free": {
+        "body": {
+          "items": [
+            {
+              "game": "Pokemon",
+              "in_stock_retailer_count": 1,
+              "product": "Offline booster"
+            }
+          ],
+          "schema_version": 2
+        },
+        "cache_control": "private, no-store",
+        "status": 200,
+        "vary": "Cookie"
+      },
+      "member": {
+        "body": {
+          "items": [
+            {
+              "game": "Pokemon",
+              "in_stock_retailer_count": 1,
+              "product": "Offline booster",
+              "retailers": [
+                {
+                  "availability": "in_stock",
+                  "name": "Synthetic Shop",
+                  "observed_at": "2026-11-14T00:00:00+00:00",
+                  "url": "https://retailer.invalid/product"
+                }
+              ]
+            }
+          ],
+          "schema_version": 2
+        },
+        "cache_control": "private, no-store",
+        "status": 200,
+        "vary": "Cookie"
+      },
+      "session": {
+        "body": {
+          "authenticated": true,
+          "tier": "premium"
+        },
+        "cache_control": "private, no-store",
+        "status": 200,
+        "vary": "Cookie"
+      }
+    }
+  },
+  "contract_version": 1
+}
