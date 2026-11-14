@@ -5,7 +5,7 @@ import type {PublicDomain, TcgEventsFeedResult} from '../events/feed';
 export interface RetailerSpace {
   id:string;
   name:string;
-  description:string;
+  description?:string;
   websiteUrl?:string;
   organiserId:string;
   relationship:{kind:'authorised';reference:string}|{kind:'monitored'|'demonstration'};

@@ -2,7 +2,6 @@ name: Validate pull requests
 
 on:
   pull_request:
-    branches: [main]
 
 permissions:
   contents: read
@@ -22,6 +21,16 @@ jobs:
         with:
           node-version: 22
           cache: npm
+      - name: Set up contract checker
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+      # The private backend compares its live fixture to this public frontend in backend CI.
+      # Contract changes require paired backend qualification before updating this reference.
+      - name: Verify qualified backend contract reference and rejection tests
+        run: |
+          python -m unittest discover -s tools/qualification -p test_contract_gate.py
+          python tools/qualification/verify_pinned_contract.py tools/qualification/fixtures/customer-runtime-http.json tools/qualification/fixtures/customer-runtime-backend-reference.json
       - name: Install dependencies
         run: npm ci
       - name: Test
