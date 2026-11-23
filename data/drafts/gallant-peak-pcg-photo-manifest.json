@@ -1,0 +1,81 @@
+{
+  "schema_version": 1,
+  "approval": "owner approved crop-only display images; originals retained unchanged",
+  "publication_status": "draft",
+  "assets_uploaded": false,
+  "base_path": "/images/gallant-peak/pcg-slabs/",
+  "items": [
+    {
+      "id": "gp-pcg-jolteon",
+      "front": "jolteon-front-display.png",
+      "back": "jolteon-back-display.png",
+      "original_front": "jolteon-front-original.jpeg",
+      "original_back": "jolteon-back-original.jpeg",
+      "uploaded": false
+    },
+    {
+      "id": "gp-pcg-blastoise",
+      "front": "blastoise-front-display.png",
+      "back": "blastoise-back-display.png",
+      "original_front": "blastoise-front-original.jpeg",
+      "original_back": "blastoise-back-original.jpeg",
+      "uploaded": false
+    },
+    {
+      "id": "gp-pcg-legacy-energy",
+      "front": "legacy-energy-front-display.png",
+      "back": "legacy-energy-back-display.png",
+      "original_front": "legacy-energy-front-original.jpeg",
+      "original_back": "legacy-energy-back-original.jpeg",
+      "uploaded": false
+    },
+    {
+      "id": "gp-pcg-ionos-kilowattrel",
+      "front": "ionos-kilowattrel-front-display.png",
+      "back": "ionos-kilowattrel-back-display.png",
+      "original_front": "ionos-kilowattrel-front-original.jpeg",
+      "original_back": "ionos-kilowattrel-back-original.jpeg",
+      "uploaded": false
+    },
+    {
+      "id": "gp-pcg-swinub",
+      "front": "swinub-front-display.png",
+      "back": "swinub-back-display.png",
+      "original_front": "swinub-front-original.jpeg",
+      "original_back": "swinub-back-original.jpeg",
+      "uploaded": false
+    },
+    {
+      "id": "gp-pcg-gyarados-vmax",
+      "front": "gyarados-vmax-front-display.png",
+      "back": "gyarados-vmax-back-display.png",
+      "original_front": "gyarados-vmax-front-original.jpeg",
+      "original_back": "gyarados-vmax-back-original.jpeg",
+      "uploaded": false
+    },
+    {
+      "id": "gp-pcg-kangaskhan",
+      "front": "kangaskhan-front-display.png",
+      "back": "kangaskhan-back-display.png",
+      "original_front": "kangaskhan-front-original.jpeg",
+      "original_back": "kangaskhan-back-original.jpeg",
+      "uploaded": false
+    },
+    {
+      "id": "gp-pcg-flareon",
+      "front": "flareon-front-display.png",
+      "back": "flareon-back-display.png",
+      "original_front": "flareon-front-original.jpeg",
+      "original_back": "flareon-back-original.jpeg",
+      "uploaded": false
+    },
+    {
+      "id": "gp-pcg-vaporeon",
+      "front": "vaporeon-front-display.png",
+      "back": "vaporeon-back-display.png",
+      "original_front": "vaporeon-front-original.jpeg",
+      "original_back": "vaporeon-back-original.jpeg",
+      "uploaded": false
+    }
+  ]
+}
