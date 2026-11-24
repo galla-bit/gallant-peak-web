@@ -18,14 +18,14 @@
       "grader": "PCG",
       "grade": 9,
       "certificate_number": "000176300",
-      "certificate_verified": false,
+      "certificate_verified": true,
       "price_nzd": 25,
       "price_approved": true,
       "quantity": 1,
       "availability": "available",
       "publication_status": "draft",
       "image_asset": null,
-      "verification_url": null
+      "verification_url": "https://pcgpopreport.com/report/000176300"
     },
     {
       "id": "gp-pcg-blastoise",
@@ -35,14 +35,14 @@
       "grader": "PCG",
       "grade": 9.5,
       "certificate_number": "000176292",
-      "certificate_verified": false,
+      "certificate_verified": true,
       "price_nzd": 25,
       "price_approved": true,
       "quantity": 1,
       "availability": "available",
       "publication_status": "draft",
       "image_asset": null,
-      "verification_url": null
+      "verification_url": "https://pcgpopreport.com/report/000176292"
     },
     {
       "id": "gp-pcg-legacy-energy",
@@ -52,14 +52,14 @@
       "grader": "PCG",
       "grade": 9,
       "certificate_number": "000176304",
-      "certificate_verified": false,
+      "certificate_verified": true,
       "price_nzd": 20,
       "price_approved": true,
       "quantity": 1,
       "availability": "available",
       "publication_status": "draft",
       "image_asset": null,
-      "verification_url": null
+      "verification_url": "https://pcgpopreport.com/report/000176304"
     },
     {
       "id": "gp-pcg-ionos-kilowattrel",
@@ -69,14 +69,14 @@
       "grader": "PCG",
       "grade": 9.5,
       "certificate_number": "000176301",
-      "certificate_verified": false,
+      "certificate_verified": true,
       "price_nzd": 35,
       "price_approved": true,
       "quantity": 1,
       "availability": "available",
       "publication_status": "draft",
       "image_asset": null,
-      "verification_url": null
+      "verification_url": "https://pcgpopreport.com/report/000176301"
     },
     {
       "id": "gp-pcg-swinub",
@@ -86,14 +86,14 @@
       "grader": "PCG",
       "grade": 7,
       "certificate_number": "000176305",
-      "certificate_verified": false,
+      "certificate_verified": true,
       "price_nzd": 15,
       "price_approved": true,
       "quantity": 1,
       "availability": "available",
       "publication_status": "draft",
       "image_asset": null,
-      "verification_url": null
+      "verification_url": "https://pcgpopreport.com/report/000176305"
     },
     {
       "id": "gp-pcg-gyarados-vmax",
@@ -103,14 +103,14 @@
       "grader": "PCG",
       "grade": 9.5,
       "certificate_number": "000176293",
-      "certificate_verified": false,
+      "certificate_verified": true,
       "price_nzd": 40,
       "price_approved": true,
       "quantity": 1,
       "availability": "available",
       "publication_status": "draft",
       "image_asset": null,
-      "verification_url": null
+      "verification_url": "https://pcgpopreport.com/report/000176293"
     },
     {
       "id": "gp-pcg-kangaskhan",
@@ -120,14 +120,14 @@
       "grader": "PCG",
       "grade": 8,
       "certificate_number": "000176303",
-      "certificate_verified": false,
+      "certificate_verified": true,
       "price_nzd": 25,
       "price_approved": true,
       "quantity": 1,
       "availability": "available",
       "publication_status": "draft",
       "image_asset": null,
-      "verification_url": null
+      "verification_url": "https://pcgpopreport.com/report/000176303"
     },
     {
       "id": "gp-pcg-flareon",

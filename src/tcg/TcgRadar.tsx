@@ -47,7 +47,6 @@ export function TcgRadar({feed,eventsFeed,eventsEndpoint=import.meta.env.VITE_TC
     </>;
   }
   return <section className="tcg-radar" aria-label="TCG Radar">
-    {import.meta.env.VITE_GP_SLAB_PREVIEW==='true' && <GallantPeakSlabPreview/>}
-    <RadarViews startStores={startStores} products={stockProducts()} stores={<VerifiedStores eventsFeed={eventData} now={now} onOpen={onOpenStore} returnStoreId={returnStoreId}/>} events={<><section aria-label="Public events"><EventsView feed={eventData} now={now}/></section><div className="retailer-preview"><label><input type="checkbox" checked={showDemonstration} onChange={event=>setShowDemonstration(event.target.checked)}/>Show demonstration retailer events</label>{showDemonstration&&<section aria-label="Demonstration events"><DemonstrationNotice/><EventsView feed={demonstrationEvents} now={DEMO_NOW} demonstration/></section>}</div></>}/>
+    <RadarViews startStores={startStores} products={<>{stockProducts()}{import.meta.env.VITE_GP_SLAB_PREVIEW==='true' && <GallantPeakSlabPreview/>}</>} stores={<VerifiedStores eventsFeed={eventData} now={now} onOpen={onOpenStore} returnStoreId={returnStoreId}/>} events={<><section aria-label="Public events"><EventsView feed={eventData} now={now}/></section><div className="retailer-preview"><label><input type="checkbox" checked={showDemonstration} onChange={event=>setShowDemonstration(event.target.checked)}/>Show demonstration retailer events</label>{showDemonstration&&<section aria-label="Demonstration events"><DemonstrationNotice/><EventsView feed={demonstrationEvents} now={DEMO_NOW} demonstration/></section>}</div></>}/>
   </section>;
 }

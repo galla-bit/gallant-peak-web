@@ -5,7 +5,7 @@ import {TcgRadar} from './TcgRadar';
 import type {TcgFeedResult} from './feed';
 import {event, NOW, readyFeed, snapshot, winner} from './events/test-fixtures';
 
-afterEach(()=>{cleanup();vi.unstubAllGlobals();vi.useRealTimers();});
+afterEach(()=>{cleanup();vi.unstubAllGlobals();vi.unstubAllEnvs();vi.useRealTimers();});
 
 const ready: TcgFeedResult = {status:'ready',rejectedItems:1,snapshot:{schema_version:1,generated_at:'2026-10-22T01:50:00Z',delayed:true,minimum_delay_seconds:900,items:[
   {id:'p',game:'Pokemon',product:'Booster Box',retailer:'Retailer A',price_nzd:'189.99',availability:'in_stock',observed_at:'2026-10-22T01:35:00Z',retailer_url:'https://example.com/p'},
@@ -14,6 +14,14 @@ const ready: TcgFeedResult = {status:'ready',rejectedItems:1,snapshot:{schema_ve
 ]}};
 
 describe('TcgRadar', () => {
+  it('shows the flagged slab preview only inside Products, including without a public feed', () => {
+    vi.stubEnv('VITE_GP_SLAB_PREVIEW','true');
+    render(<TcgRadar feed={{status:'unconfigured'}}/>);
+    const products=screen.getByRole('region',{name:'Products'});
+    expect(within(products).getByRole('heading',{name:'Jolteon'})).toBeTruthy();
+    fireEvent.click(screen.getByRole('button',{name:'Verified Stores'}));
+    expect(screen.queryByRole('heading',{name:'Jolteon'})).toBeNull();
+  });
   it('keeps healthy Products usable while Events is unavailable', () => {
     render(<TcgRadar feed={ready} now={NOW} eventsFeed={readyFeed(snapshot({events:null,winners:null}))}/>);
     expect(screen.getByRole('heading',{name:'Booster Box'})).toBeTruthy();
