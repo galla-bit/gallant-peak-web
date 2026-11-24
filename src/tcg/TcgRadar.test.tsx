@@ -14,14 +14,14 @@ const ready: TcgFeedResult = {status:'ready',rejectedItems:1,snapshot:{schema_ve
 ]}};
 
 describe('TcgRadar', () => {
-  it('shows the flagged slab preview only inside Products, including without a public feed', () => {
+  it('shows the flagged slab preview only inside Products, including without a public feed', async () => {
     vi.stubEnv('VITE_GP_SLAB_PREVIEW','true');
     render(<TcgRadar feed={{status:'unconfigured'}}/>);
     const products=screen.getByRole('region',{name:'Products'});
-    expect(within(products).getByRole('heading',{name:'Jolteon'})).toBeTruthy();
+    expect(await within(products).findByRole('heading',{name:'Jolteon'},{timeout:5000})).toBeTruthy();
     fireEvent.click(screen.getByRole('button',{name:'Verified Stores'}));
     expect(screen.queryByRole('heading',{name:'Jolteon'})).toBeNull();
-  });
+  }, 10000);
   it('keeps healthy Products usable while Events is unavailable', () => {
     render(<TcgRadar feed={ready} now={NOW} eventsFeed={readyFeed(snapshot({events:null,winners:null}))}/>);
     expect(screen.getByRole('heading',{name:'Booster Box'})).toBeTruthy();

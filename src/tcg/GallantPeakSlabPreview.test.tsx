@@ -12,16 +12,26 @@ describe('Gallant Peak draft slab inventory',()=>{
     expect(inventory.items).toHaveLength(9);
     expect(new Set(inventory.items.map(item=>item.certificate_number)).size).toBe(9);
     expect(inventory.items.reduce((sum,item)=>sum+item.price_nzd,0)).toBe(255);
-    expect(inventory.items.every(item=>item.quantity===1&&item.price_approved&&item.image_asset===null)).toBe(true);
+    expect(inventory.items.every(item=>item.quantity===1&&item.price_approved)).toBe(true);
     expect(inventory.items.find(item=>item.name==='Gyarados VMAX')?.certificate_number).toBe('000176293');
     expect(inventory.items.find(item=>item.name==='Kangaskhan')?.certificate_number).toBe('000176303');
+  });
+  it('renders the front and back of each individual slab',()=>{
+    render(<GallantPeakSlabPreview/>);
+    expect(screen.getAllByRole('img')).toHaveLength(18);
+    for (const item of inventory.items) {
+      const article=screen.getByRole('heading',{name:item.name}).closest('article')!;
+      for (const side of ['front','back']) {
+        const photo=within(article).getByRole('img',{name:`${item.name} slab ${side}`});
+        expect(photo.getAttribute('src')).toMatch(`${item.id.slice('gp-pcg-'.length)}-${side}-display.jpg`);
+      }
+    }
   });
   it('renders separate draft cards and never fabricates certificate report URLs or checkout',()=>{
     render(<GallantPeakSlabPreview/>);
     expect(screen.getAllByRole('article')).toHaveLength(9);
     expect(screen.getByRole('heading',{name:'Gyarados VMAX'})).toBeTruthy();
     expect(screen.getByRole('heading',{name:'Kangaskhan'})).toBeTruthy();
-    expect(screen.getAllByRole('link')).toHaveLength(9);
     expect(screen.getAllByRole('link',{name:/view pcg grading report/i})).toHaveLength(9);
     for (const item of inventory.items.filter(item=>item.certificate_verified)) {
       const link=screen.getByRole('link',{name:`View PCG Grading Report for ${item.name}`});
@@ -30,7 +40,7 @@ describe('Gallant Peak draft slab inventory',()=>{
     for (const [name, certificate] of [['Flareon','000176298'],['Vaporeon','000176299']]) {
       const article=screen.getByRole('heading',{name}).closest('article')!;
       expect(within(article).getByText(certificate)).toBeTruthy();
-      expect(within(article).getByRole('link').getAttribute('href')).toBe(`https://pcgpopreport.com/report/${certificate}`);
+      expect(within(article).getByRole('link',{name:/view pcg grading report/i}).getAttribute('href')).toBe(`https://pcgpopreport.com/report/${certificate}`);
     }
     expect(screen.queryByRole('button',{name:/buy|checkout|purchase/i})).toBeNull();
     fireEvent.change(screen.getByLabelText('PCG grade'),{target:{value:'9.5'}});
