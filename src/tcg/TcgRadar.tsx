@@ -1,4 +1,4 @@
-import {useMemo, useState} from 'react';
+import {lazy, Suspense, useMemo, useState} from 'react';
 import type {TcgFeedResult} from './feed';
 import type {TcgAvailability} from './types';
 import {filterProductGroups, groupTcgItems} from './presentation';
@@ -9,6 +9,11 @@ import {useEventsFeed} from './events/useEventsFeed';
 import type {TcgEventsFeedResult} from './events/feed';
 import {VerifiedStores, DemonstrationNotice} from './stores/VerifiedStores';
 import {DEMO_NOW, demonstrationEvents} from './stores/demonstration';
+
+const GallantPeakSlabPreview = /* @__PURE__ */ lazy(async () => {
+  const preview = await import('./GallantPeakSlabPreview');
+  return {default: preview.GallantPeakSlabPreview};
+});
 
 const labels: Record<TcgAvailability,string>={in_stock:'In stock',limited:'Limited',out_of_stock:'Out of stock',unknown:'Unknown'};
 const PUBLIC_DELAY_COPY='The free public feed is delayed by at least 15 minutes.';
@@ -46,6 +51,6 @@ export function TcgRadar({feed,eventsFeed,eventsEndpoint=import.meta.env.VITE_TC
     </>;
   }
   return <section className="tcg-radar" aria-label="TCG Radar">
-    <RadarViews startStores={startStores} products={stockProducts()} stores={<VerifiedStores eventsFeed={eventData} now={now} onOpen={onOpenStore} returnStoreId={returnStoreId}/>} events={<><section aria-label="Public events"><EventsView feed={eventData} now={now}/></section><div className="retailer-preview"><label><input type="checkbox" checked={showDemonstration} onChange={event=>setShowDemonstration(event.target.checked)}/>Show demonstration retailer events</label>{showDemonstration&&<section aria-label="Demonstration events"><DemonstrationNotice/><EventsView feed={demonstrationEvents} now={DEMO_NOW} demonstration/></section>}</div></>}/>
+    <RadarViews startStores={startStores} products={<>{stockProducts()}{import.meta.env.VITE_GP_SLAB_PREVIEW==='true' && <Suspense fallback={<p role="status">Loading the Gallant Peak draft preview…</p>}><GallantPeakSlabPreview/></Suspense>}</>} stores={<VerifiedStores eventsFeed={eventData} now={now} onOpen={onOpenStore} returnStoreId={returnStoreId}/>} events={<><section aria-label="Public events"><EventsView feed={eventData} now={now}/></section><div className="retailer-preview"><label><input type="checkbox" checked={showDemonstration} onChange={event=>setShowDemonstration(event.target.checked)}/>Show demonstration retailer events</label>{showDemonstration&&<section aria-label="Demonstration events"><DemonstrationNotice/><EventsView feed={demonstrationEvents} now={DEMO_NOW} demonstration/></section>}</div></>}/>
   </section>;
 }

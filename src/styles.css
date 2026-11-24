@@ -79,3 +79,8 @@
 .retailer-space h2{scroll-margin-top:110px}
 
 .retailer-editor label{display:block;margin:1rem 0}.retailer-editor input,.retailer-editor select,.retailer-editor textarea{display:block;max-width:100%;padding:.65rem;font:inherit}.retailer-editor textarea{width:40rem;min-height:8rem}.retailer-editor button{margin:.35rem;padding:.65rem}.retailer-editor [role=alert]{border-left:3px solid currentColor;padding:1rem}
+
+.tcg-slab-photos{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin:16px 0}
+.tcg-slab-photos figure{margin:0}
+.tcg-slab-photos img{display:block;width:100%;aspect-ratio:2/3;object-fit:contain}
+.tcg-slab-photos figcaption{margin-top:4px}
