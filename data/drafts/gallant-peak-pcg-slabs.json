@@ -136,15 +136,15 @@
       "card_number": "167",
       "grader": "PCG",
       "grade": 9.5,
-      "certificate_number": "000176299",
-      "certificate_verified": false,
+      "certificate_number": "000176298",
+      "certificate_verified": true,
       "price_nzd": 35,
       "price_approved": true,
       "quantity": 1,
       "availability": "available",
       "publication_status": "draft",
       "image_asset": null,
-      "verification_url": null
+      "verification_url": "https://pcgpopreport.com/report/000176298"
     },
     {
       "id": "gp-pcg-vaporeon",
@@ -153,15 +153,15 @@
       "card_number": "168",
       "grader": "PCG",
       "grade": 9.5,
-      "certificate_number": "000176298",
-      "certificate_verified": false,
+      "certificate_number": "000176299",
+      "certificate_verified": true,
       "price_nzd": 35,
       "price_approved": true,
       "quantity": 1,
       "availability": "available",
       "publication_status": "draft",
       "image_asset": null,
-      "verification_url": null
+      "verification_url": "https://pcgpopreport.com/report/000176299"
     }
   ]
 }

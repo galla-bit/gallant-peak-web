@@ -22,15 +22,15 @@ describe('Gallant Peak draft slab inventory',()=>{
     expect(screen.getByRole('heading',{name:'Gyarados VMAX'})).toBeTruthy();
     expect(screen.getByRole('heading',{name:'Kangaskhan'})).toBeTruthy();
     expect(screen.getAllByRole('link')).toHaveLength(9);
-    expect(screen.getAllByRole('link',{name:/view pcg grading report/i})).toHaveLength(7);
+    expect(screen.getAllByRole('link',{name:/view pcg grading report/i})).toHaveLength(9);
     for (const item of inventory.items.filter(item=>item.certificate_verified)) {
       const link=screen.getByRole('link',{name:`View PCG Grading Report for ${item.name}`});
       expect(link.getAttribute('href')).toBe(`https://pcgpopreport.com/report/${item.certificate_number}`);
     }
-    for (const name of ['Flareon','Vaporeon']) {
+    for (const [name, certificate] of [['Flareon','000176298'],['Vaporeon','000176299']]) {
       const article=screen.getByRole('heading',{name}).closest('article')!;
-      expect(within(article).getByRole('link').getAttribute('href')).toBe('https://pcgpopreport.com/');
-      expect(within(article).getByText(/pending slab label review/i)).toBeTruthy();
+      expect(within(article).getByText(certificate)).toBeTruthy();
+      expect(within(article).getByRole('link').getAttribute('href')).toBe(`https://pcgpopreport.com/report/${certificate}`);
     }
     expect(screen.queryByRole('button',{name:/buy|checkout|purchase/i})).toBeNull();
     fireEvent.change(screen.getByLabelText('PCG grade'),{target:{value:'9.5'}});
